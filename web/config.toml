@@ -21,4 +21,6 @@ theme = "hyde"
 	github = "https://github.com/svett"
   linkedin = "http://uk.linkedin.com/in/svettralchev"
 	disqus = "ralch"
+  googletrackingid = "UA-31800936-1"
+  domain = "blog.ralch.com"
 
