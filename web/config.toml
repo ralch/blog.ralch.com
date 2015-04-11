@@ -1,6 +1,7 @@
 baseurl = "http://blog.ralch.com/"
 languageCode = "en-us"
 title = "Svett Ralchev"
+theme = "hyde"
 
 [Author]
 	name = "Svett Ralchev"
