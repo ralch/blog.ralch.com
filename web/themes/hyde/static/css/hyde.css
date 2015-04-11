@@ -85,6 +85,10 @@ pre {
   font-weight:300;
 }
 
+.sidebar-about a {
+  text-decoration: none
+}
+
 /* Sidebar nav */
 .sidebar-nav {
   margin-top: 2rem;

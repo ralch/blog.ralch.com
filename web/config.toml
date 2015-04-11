@@ -1,6 +1,6 @@
 baseurl = "http://blog.ralch.com/"
 languageCode = "en-us"
-title = "Svett Ralchev"
+title = "Software adventures and thoughts"
 theme = "hyde"
 
 [Author]
@@ -16,9 +16,9 @@ theme = "hyde"
 	series-desc = "series-desc"
 
 [params]
-	description = "code by Nate Finch"
-	twitter = "https://twitter.com/natethefinch"
-	github = "https://github.com/natefinch"
+  info = "http://www.ralch.com"
+	twitter = "https://twitter.com/ralch"
+	github = "https://github.com/svett"
   linkedin = "http://uk.linkedin.com/in/svettralchev"
 	disqus = "ralch"
 
