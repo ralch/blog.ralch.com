@@ -7,23 +7,14 @@
       </p>
     </div>
 
-
-
     <ul class="sidebar-nav">
       <li><a href="/">Home</a></li>
       {{ range .Site.Menus.main }}
         <li><a href="{{.Url}}">{{ .Name }} </a></li>
       {{end}}
-      <br/>
-      {{with .Site.Menus.code}}
-      <li>Code:</li>
-        {{ range . }}
-          <li><a href="{{.Url}}">{{ .Name }} </a></li>
-        {{end}}
-      {{end}}
     </ul>
-      {{ with .Site.Params.info }}<a href="{{.}}"><i class="fa fa-envelope"></i></a>&nbsp;&nbsp;{{end}}
       {{ with .Site.Params.linkedin }}<a href="{{.}}"><i class="fa fa-linkedin-square"></i></a>&nbsp;&nbsp;{{end}}
+      {{ with .Site.Params.info }}<a href="{{.}}"><i class="fa fa-link"></i></a>&nbsp;&nbsp;{{end}}
       {{ with .Site.Params.twitter }}<a href="{{.}}"><i class="fa fa-twitter-square"></i></a>&nbsp;&nbsp;{{end}}
       {{ with .Site.Params.facebook }}<a href="{{.}}"><i class="fa fa-facebook-square"></i></a>&nbsp;&nbsp;{{end}}
       {{ with .Site.Params.github }}<a href="{{.}}"><i class="fa fa-github-square"></i></a>&nbsp;&nbsp;{{end}}
