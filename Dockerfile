@@ -2,11 +2,11 @@ FROM ubuntu:14.04
 
 MAINTAINER Svett Ralchev <svetlin.ralchev@gmail.com>
 
-ENV TMP_DIR /var/tmp
+ENV TMP_DIR /tmp
 ENV HOME_DIR /var/vcap
-ENV LOG_DIR $HOME_DIR/sys/log
-ENV JOB_DIR $HOME_DIR/jobs
-ENV WEB_DIR $JOB_DIR/ralch-blog
+ENV LOG_DIR ${HOME_DIR}/sys/log
+ENV JOB_DIR ${HOME_DIR}/jobs
+ENV WEB_DIR ${JOB_DIR}/ralch-blog
 
 ENV HUGO_VERSION 0.13
 ENV HUGO_ARCHIVE hugo_${HUGO_VERSION}_linux_amd64.tar.gz
@@ -28,7 +28,10 @@ WORKDIR $TMP_DIR
 
 RUN wget $HUGO_URL 
 RUN tar xzvf $HUGO_ARCHIVE
-COPY $HUGO_DIR/$HUGO_BINARY /bin/hugo
+RUN cp $TMP_DIR/$HUGO_DIR/$HUGO_BINARY /bin/hugo
+
+RUN rm -fr $HUGO_ARCHIVE
+RUN rm -fr $HUGO_DIR
 
 ADD  ./web $WEB_DIR
 
@@ -36,5 +39,5 @@ WORKDIR $WEB_DIR
 
 EXPOSE 1313
 
-ENTRYPOINT ["/bin/hugo", "server", "-w", "-s", "$WEB_DIR"]
+ENTRYPOINT ["hugo", "server", "-w"]
 
