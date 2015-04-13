@@ -10,5 +10,5 @@ if [ $ARG == "--with-build-image" ]; then
   docker build -t ralch/blog .
 fi
 
-docker run -e VIRTUAL_HOST=ralch.com,www.ralch.com -e VIRTUAL_PORT=1314 --restart="always" --name blog -d ralch/blog
+docker run -e VIRTUAL_HOST=blog.ralch.com -e VIRTUAL_PORT=1313 --restart="always" --name blog -d ralch/blog
 
