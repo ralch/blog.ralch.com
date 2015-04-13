@@ -1,4 +1,4 @@
-FROM ubuntu:14.04
+FROM busybox 
 
 MAINTAINER Svett Ralchev <svetlin.ralchev@gmail.com>
 

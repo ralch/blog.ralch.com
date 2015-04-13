@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="description" content="">
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+
+<meta name="keywords" content="">
+
+ 
+<meta property="og:type" content="article"/>
+<meta property="og:description" content=""/>
+<meta property="og:title" content="Software adventures and thoughts : "/>
+<meta property="og:site_name" content="Svett Ralchev"/>
+<meta property="og:image" content="" />
+<meta property="og:image:type" content="image/jpeg" />
+<meta property="og:image:width" content="" />
+<meta property="og:image:height" content="" />
+<meta property="og:url" content="http://localhost:1313/">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="0001-01-01"/>
+<meta property="article:modified_time" content="0001-01-01"/>
+
+
+
+  <title> Software adventures and thoughts &middot; Software adventures and thoughts </title>
+
+  
+  <link rel="stylesheet" href="http://localhost:1313//css/poole.css">
+  <link rel="stylesheet" href="http://localhost:1313//css/syntax.css">
+  <link rel="stylesheet" href="http://localhost:1313//css/hyde.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+  <link href='http://fonts.googleapis.com/css?family=Raleway:400,300' rel='stylesheet' type='text/css'>
+
+  
+  <link href="http://localhost:1313/index.xml" rel="alternate" type="application/rss+xml" title="Software adventures and thoughts" />
+
+  
+  <script src="//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
+</head>
+
+<body>
+
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1 class="brand"><a href="http://localhost:1313/">Svett Ralchev</a></h1>
+      <p class="lead">
+       Software adventures and thoughts 
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="/">Home</a></li>
+      
+        <li><a href="/about/">About </a></li>
+      
+    </ul>
+      <a href="http://uk.linkedin.com/in/svettralchev"><i class="fa fa-linkedin-square"></i></a>&nbsp;&nbsp;
+      <a href="http://www.ralch.com"><i class="fa fa-link"></i></a>&nbsp;&nbsp;
+      <a href="https://twitter.com/ralch"><i class="fa fa-twitter-square"></i></a>&nbsp;&nbsp;
+      
+      <a href="https://github.com/svett"><i class="fa fa-github-square"></i></a>&nbsp;&nbsp;
+      
+
+    <p class="footnote">powered by <a href="http://hugo.spf13.com">Hugo</a> <br/>
+      &copy; 2015 Svett Ralchev. All rights reserved.</p>
+    
+  </div>
+</div>
+
+
+    <div class="content container">
+<div class="posts">
+
+      
+  <div class="post">
+    <h1 class="post-title">
+      <a href="http://localhost:1313/post/fast-run-time-emitting-with-dynamic-methods/">
+        Fast run time emitting with dynamic methods in .NET
+      </a>
+    </h1>
+
+    <span class="post-date">Sat, Apr 11, 2015</span>
+
+    <p>It was a long time since, I have blogged. Nevertheless, I did not loose the enthusiasm to share the interesting stuff that I face.
+As component software developer, you should know how to access the properties of data source, when you create bound able controls (such as list control, combo box control or even grid control).
+The performance has always been a issue due to the fact that the control should work with any type of data source (ex. DataSet, DataTable or Entity Objects).
+Such requirements cause usage of reflection to access all properties of unknown object type. Therefore, you should use the PropertyInfo or PropertyDescriptor  classes.
+The disadvantage of the reflection has been always the performance. However, there is good alterative that can give satisfactory speed and
+unlimited power of the reflection. The Dynamic Methods provide lightweight code generation and execution of method at run-time via delegates.</p>
+
+<p><a href="https://href.li/?http://msdn.microsoft.com/en-us/library/sfk2s47t.aspx">Dynamic methods</a> expand the functionality of the types in the System.Reflection.Emit namespace in several ways:</p>
+
+<ul>
+<li>They have less overhead, because there is no need to generate dynamic assemblies, modules, and types to contain the methods.</li>
+<li>In long-running applications, they provide better resource utilization because the memory used by method bodies can be reclaimed when the method is no longer needed.</li>
+<li>Given sufficient security permissions, they provide the ability to associate code with an existing assembly or type, and that code can have the same visibility as internal types or private members.</li>
+<li>Given sufficient security permissions, they allow code to skip just-in-time (JIT) visibility checks and access the private and protected data of objects.</li>
+</ul>
+
+<p>Before you define the method body, you should declare the delegate types that you should use to access the properties of the unknown type:</p>
+
+<pre><code>protected delegate void SetValueHandler(object component, object value);
+protected delegate object GetValueHandler(object component);
+</code></pre>
+
+<p>Implementation of this methods requires Microsoft Intermediate Language (IL):</p>
+
+<pre><code>protected virtual GetValueHandler CreateGetValueHandler(PropertyInfo propertyInfo)
+{
+    MethodInfo getMethodInfo = propertyInfo.GetGetMethod();
+    DynamicMethod getMethod = new DynamicMethod(&quot;GetValue&quot;, typeof(object), new Type[] { typeof(object) }, typeof(PropertyAccessor), true);
+    ILGenerator ilGenerator = getMethod.GetILGenerator();
+
+    ilGenerator.Emit(OpCodes.Ldarg_0);
+    ilGenerator.Emit(OpCodes.Call, getMethodInfo);
+
+    Type returnType = getMethodInfo.ReturnType;
+
+    if (returnType.IsValueType)
+    {
+        ilGenerator.Emit(OpCodes.Box, returnType);
+    }
+
+    ilGenerator.Emit(OpCodes.Ret);
+
+    return getMethod.CreateDelegate(typeof(GetValueHandler)) as GetValueHandler;
+
+}   
+</code></pre>
+
+<p>Also, the body of the setter method should be created as it’s shown in the following code snippet:</p>
+
+<pre><code>protected virtual SetValueHandler CreateSetValueHandler(PropertyInfo propertyInfo)
+{
+    MethodInfo setMethodInfo = propertyInfo.GetSetMethod(false);
+    DynamicMethod setPropertyValue = new DynamicMethod(&quot;SetValue&quot;, typeof(void), new Type[] { typeof(object), typeof(object) }, typeof(PropertyAccessor), true);
+    ILGenerator ilGenerator = setPropertyValue.GetILGenerator();
+
+    ilGenerator.Emit(OpCodes.Ldarg_0);
+    ilGenerator.Emit(OpCodes.Ldarg_1);
+
+    Type parameterType = setMethodInfo.GetParameters()[0].ParameterType;
+
+    if (parameterType.IsValueType)
+    {
+        ilGenerator.Emit(OpCodes.Unbox_Any, parameterType);
+    }
+
+    ilGenerator.Emit(OpCodes.Call, setMethodInfo);
+    ilGenerator.Emit(OpCodes.Ret);
+
+    return setPropertyValue.CreateDelegate(typeof(SetValueHandler)) as SetValueHandler;
+}
+</code></pre>
+
+<p>I have encapsulated the dynamic method accesses in the <code>PropertyAccessor</code> class, which declaration looks as follows:</p>
+
+<pre><code>public class PropertyAccessor
+{
+    protected delegate void SetValueHandler(object component, object value);
+    protected delegate object GetValueHandler(object component);
+
+    private SetValueHandler setValueHandler;
+    private GetValueHandler getValueHandler;
+
+    public PropertyAccessor(Type ownerType, string propertyName)
+    {
+        PropertyInfo propertyInfo = ownerType.GetProperty(propertyName);
+
+        if (propertyInfo.CanRead)
+        {
+            this.getValueHandler = this.CreateGetValueHandler(propertyInfo);
+        }
+
+        if (propertyInfo.CanWrite)
+        {
+            this.setValueHandler = this.CreateSetValueHandler(propertyInfo);
+        }
+    }
+
+    public object GetValue(object component)
+    {
+        if (this.getValueHandler == null)
+        {
+            throw new InvalidOperationException();
+        }
+
+        return this.getValueHandler(component);
+    }
+
+    public void SetValue(object component, object value)
+    {
+        if (this.setValueHandler == null)
+        {
+            throw new InvalidOperationException();
+        }
+
+        this.setValueHandler(component, value);
+    }
+}
+</code></pre>
+
+<p>I measured the performance among the three approaches against 1 000 000 times invocation of the <code>Employee</code> property:</p>
+
+<p>
+<figure >
+    
+        <img src="/media/dynamic_method_emit_diagram.png" alt="Dynamic methods performance diagram" />
+    
+    
+</figure>
+</p>
+
+<p>Notice that the direct access approach followed by the Dynamic Methods implementation are the fastest.</p>
+
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="http://localhost:1313/post/how-to-prevent-memory-leaks-when-we-are-using-events/">
+        How to prevent memory leaks when we are using events?
+      </a>
+    </h1>
+
+    <span class="post-date">Sat, Apr 11, 2015</span>
+
+    <p>In the average development lifecycle is possible that event handlers that are attached to events of sources to not be destroyed in
+coordination with the listener object that attached the handler to the source. This can lead to memory leaks. The developers to take
+care about memory management not only when they use unmanaged resources but also when they attach new event handlers to specified event.</p>
+
+<p>This problem was solved by Microsoft in Windows Presentation Foundation. They implmented
+<a href="https://href.li/?http://msdn.microsoft.com/en-us/library/aa970850.aspx">Weak Event Design Pattern</a>.</p>
+
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="http://localhost:1313/post/pinvoke-getting-all-child-handles-of-window/">
+        PINVOKE: Getting all child handles of window
+      </a>
+    </h1>
+
+    <span class="post-date">Sat, Apr 11, 2015</span>
+
+    <p>If you don’t know I have a new job in Bulgaria. I went away form Web Development and now I’m working as Windows Developer.
+However, we had a client that exceed the number of window handles (more than 10 000) due to bad design of application.
+While diagnosing his application, we needed to understand how many handles are created per window.</p>
+
+<p>Windows API provide the availability to get all child handles for specified handle.
+We should use <code>EnumChildWindows</code> function provided by <code>user32.dll</code>.</p>
+
+<p><code>EnumChildWindows</code> function enumerates the child windows that belong to the specified parent window by passing the handle to each child window, in turn,
+to an application-defined callback function. <code>EnumChildWindows</code> continues until the last child window is enumerated or the callback function returns FALSE.</p>
+
+<pre><code>BOOL EnumChildWindows( 
+         HWND hWndParent, 
+         WNDENUMPROC lpEnumFunc, 
+         LPARAM lParam 
+);
+</code></pre>
+
+<ul>
+<li><code>hWndParent</code> - [in] Handle to the parent window whose child windows are to be enumerated.</li>
+<li><code>lpEnumFunc</code> - [in] Pointer to an application-defined callback function.</li>
+<li><code>lParam</code> - [in] Specifies an application-defined value to be passed to the callback function.</li>
+</ul>
+
+<p>If a child window has created child windows of its own, <code>EnumChildWindows</code> enumerates those windows as well.</p>
+
+<pre><code>public class WindowHandleInfo
+{
+    private delegate bool EnumWindowProc(IntPtr hwnd, IntPtr lParam);
+ 
+    [DllImport(&quot;user32&quot;)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool EnumChildWindows(IntPtr window, EnumWindowProc callback, IntPtr lParam);
+ 
+    private IntPtr _MainHandle;
+ 
+    public WindowHandleInfo(IntPtr handle)
+    {
+        this._MainHandle = handle;
+    }
+ 
+    public List&lt;IntPtr&gt; GetAllChildHandles()
+    {
+        List&lt;IntPtr&gt; childHandles = new List&lt;IntPtr&gt;();
+ 
+        GCHandle gcChildhandlesList = GCHandle.Alloc(childHandles);
+        IntPtr pointerChildHandlesList = GCHandle.ToIntPtr(gcChildhandlesList);
+ 
+        try
+        {
+            EnumWindowProc childProc = new EnumWindowProc(EnumWindow);
+            EnumChildWindows(this._MainHandle, childProc, pointerChildHandlesList);
+        }
+        finally
+        {
+            gcChildhandlesList.Free();
+        }
+ 
+        return childHandles;
+    }
+ 
+    private bool EnumWindow(IntPtr hWnd, IntPtr lParam)
+    {
+        GCHandle gcChildhandlesList = GCHandle.FromIntPtr(lParam);
+ 
+        if (gcChildhandlesList == null || gcChildhandlesList.Target == null)
+        {
+            return false;
+        }
+ 
+        List&lt;IntPtr&gt; childHandles = gcChildhandlesList.Target as List&lt;IntPtr&gt;;
+        childHandles.Add(hWnd);
+ 
+        return true;
+    }
+}
+</code></pre>
+
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="http://localhost:1313/post/ado-net-xmlserialization-of-extended-datatable/">
+        ADO.NET XmlSerialization of extended DataTable
+      </a>
+    </h1>
+
+    <span class="post-date">Sat, Apr 11, 2015</span>
+
+    <p>We are migrating communication protocol from .NET Remoting to WCF.
+Due to legacy fo this project, domain object is a DataTable that has some additional fields.
+In .NET Remoting serialization of that kind of object works perfectly, but in WCF these additional fields are not serialized.
+Instead of binary serialization in .NET Remoting, XML serialization is used in WCF.</p>
+
+<p>Lets have a class that derives DataTable type:</p>
+
+<pre><code>public class WcfDataTable : DataTable
+{
+    private string _ServerName;
+ 
+    public WcfDataTable()
+        : base()
+    { }
+ 
+    public WcfDataTable(string tableName)
+        : base(tableName)
+    { }
+ 
+    public string ServerName
+    {
+        get { return this._ServerName; }
+        set { this._ServerName = value; }
+    }
+}
+</code></pre>
+
+<p>
+<figure >
+    
+        <img src="/media/wcf_table_screen.jpg" alt="WCF DataTable" />
+    
+    
+</figure>
+</p>
+
+<p>As you can see I’m creating dummy <code>WcfDataTable</code> object, which I’m cloning using xml serialization and deserialization.
+The cloned object is not identical with the original object, because this additional field is not initialized with the original value (it’s null).
+The existing xml serialization doesn’t catch the new field in the class.
+To make possible this field for xml serialization we should override the existing xml serialization, but how to do it?
+The solution is really simple. You have to implement the interface <code>IXmlSerializable</code> with explicit override of all its methods.</p>
+
+<pre><code>public class WcfDataTable : DataTable, IXmlSerializable
+{
+    private string _ServerName;
+ 
+    public WcfDataTable()
+        : base()
+    { }
+ 
+    public WcfDataTable(string tableName)
+        : base(tableName)
+    { }
+ 
+    public string ServerName
+    {
+        get { return this._ServerName; }
+        set { this._ServerName = value; }
+    }
+ 
+    void IXmlSerializable.ReadXml(System.Xml.XmlReader reader)
+    {
+        base.ReadXmlSchema(reader);
+ 
+        XmlSerializer xmlSerializer = new XmlSerializer(typeof(string));
+        this._ServerName = xmlSerializer.Deserialize(reader) as string;
+ 
+        base.ReadXml(reader);
+    }
+ 
+    void IXmlSerializable.WriteXml(System.Xml.XmlWriter writer)
+    {
+        base.WriteXmlSchema(writer);
+ 
+        XmlSerializer xmlSerializer = new XmlSerializer(typeof(string));
+        xmlSerializer.Serialize(writer, this._ServerName);
+ 
+        base.WriteXml(writer, XmlWriteMode.DiffGram);
+    }
+}
+</code></pre>
+
+<p>To make this workaround we have to override WriteXml and ReadXml method explicitly.
+The methods ReadXmlSchema and WriteXmlSchema are used to read and write the schema of data table.
+Then we can write/read our new field and then to invoke basic logic for serialization or deserializtion.</p>
+
+<p>
+<figure >
+    
+        <img src="/media/wcf_table_screen_done.jpg" alt="WCF DataTable" />
+    
+    
+</figure>
+</p>
+
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="http://localhost:1313/post/linq-to-sql-create-generic-method-to-load-entity-by-primary-key/">
+        LINQ to SQL: Create generic method to load entity by primary key
+      </a>
+    </h1>
+
+    <span class="post-date">Sat, Apr 11, 2015</span>
+
+    
+
+<h1 id="scenario:1dbf5425e9da49dc7817a5a2949312e5">Scenario</h1>
+
+<p>We are implementing our data access layer based on LINQ TO SQL. In the specifications that were created by our software architect is required to have generic method that load from the data base any record into entity object by primary key.</p>
+
+<pre><code>public class LINQGateway&lt;TEntity&gt; where TEntity : class
+{
+    private IDbConnection _DbConnection;
+    public LINQGateway(IDbConnection connection)
+    {
+        this._DbConnection = connection;
+    }
+    public TEntity GetEntityByPrimaryKey(object pkKey, params object[] pkKeys)
+    {
+        // TO DO
+    }
+}
+</code></pre>
+
+<h1 id="problem:1dbf5425e9da49dc7817a5a2949312e5">Problem</h1>
+
+<p>Every table has different primary key (count, name and data type of the primary key columns).</p>
+
+<h1 id="algorithm:1dbf5425e9da49dc7817a5a2949312e5">Algorithm</h1>
+
+<ol>
+<li>Get tha mapping of the entity type</li>
+<li>Use information for the mapping
+2.1 to get the name of the columns
+2.2 to get the name of the columns included in the primary key</li>
+<li>Generate the T-SQL Query</li>
+<li>Execute the Query via LINQ Framework to retrive the result as entity object</li>
+</ol>
+
+<h1 id="solutions:1dbf5425e9da49dc7817a5a2949312e5">Solutions</h1>
+
+<h2 id="building-t-sql-query:1dbf5425e9da49dc7817a5a2949312e5">Building T-SQL query</h2>
+
+<pre><code>TEntity GetEntityByPrimaryKey(object pkKey, params object[] pkKeys)
+{
+    List&lt;object&gt; primaryKeys = new List&lt;object&gt;();
+    primaryKeys.Add(pkKey);
+    primaryKeys.AddRange(pkKeys);
+
+    TEntity entity = null;
+    Type entityType = typeof(TEntity);
+
+    using (DataContext dataContext = new DataContext(this._DbConnection))
+    {
+        dataContext.Log = new DebuggerWriter();
+        dataContext.ObjectTrackingEnabled = false;
+
+        Table&lt;TEntity&gt; table = dataContext.GetTable&lt;TEntity&gt;();
+
+        MetaType metaEntityType = dataContext.Mapping.GetMetaType(entityType);
+
+        var primaryKeyColumns = from pkColumn in metaEntityType.DataMembers
+                                where pkColumn.IsPrimaryKey
+                                select pkColumn;
+
+        var columns = from col in metaEntityType.DataMembers
+                      where col.IsPersistent &amp;&amp; !col.IsAssociation
+                      orderby col.Ordinal
+                      select &quot;[t0].[&quot; + col.MappedName + &quot;]&quot;;
+
+        string selectColumns = String.Join(&quot;, &quot;, columns.ToArray());
+
+        int pkColumnsCount = 0;
+
+        if (primaryKeyColumns != null)
+            pkColumnsCount = primaryKeyColumns.Count();
+
+        if (pkColumnsCount == 0)
+            throw new InvalidOperationException(&quot;Table doesn’t have primary key&quot;);
+
+        if (pkColumnsCount != primaryKeys.Count)
+            throw new InvalidOperationException(&quot;Primary key values doesn’t match primary key columns.&quot;);
+
+
+        string tableName = metaEntityType.Table.TableName;
+
+        if (tableName.Contains(‘.’))
+        {
+            string[] splittedTablename = metaEntityType.Table.TableName.Split(‘.’).Select(p =&gt; &quot;[&quot; + p + &quot;]&quot;).ToArray();
+            tableName = String.Join(&quot;.&quot;, splittedTablename);
+        }
+
+        StringBuilder builder = new StringBuilder(&quot;SELECT &quot; + selectColumns + Environment.NewLine + &quot;FROM &quot; + tableName + &quot; AS [t0]&quot; + Environment.NewLine + &quot;WHERE &quot;);
+
+        int index = 0;
+
+        foreach (MetaDataMember pkColumn in primaryKeyColumns)
+        {
+            string columnName = pkColumn.Name;
+            string paramID = index.ToString(CultureInfo.InvariantCulture);
+            builder.Append(&quot;[t0].[&quot; + columnName + &quot;] = {&quot; + paramID + &quot;}&quot;);
+
+            if (index + 1 != pkColumnsCount)
+                builder.Append(&quot; AND &quot;);
+
+            index++;
+        }
+
+        string query = builder.ToString();
+        entity = dataContext.ExecuteQuery&lt;TEntity&gt;(query, primaryKeys.ToArray()).SingleOrDefault();
+    }
+
+    return entity;
+}
+</code></pre>
+
+<h2 id="dynamic-linq-expression:1dbf5425e9da49dc7817a5a2949312e5">Dynamic LINQ expression</h2>
+
+<pre><code>TEntity GetEntityByPrimaryKey(object pkKey, params object[] pkKeys)
+{
+    List&lt;object&gt; primaryKeys = new List&lt;object&gt;();
+    primaryKeys.Add(pkKey);
+    primaryKeys.AddRange(pkKeys);
+ 
+    TEntity entity = null;
+    Type entityType = typeof(TEntity);
+ 
+    using (DataContext dataContext = new DataContext(this._DbConnection))
+    {
+        dataContext.Log = new DebuggerWriter();
+        dataContext.ObjectTrackingEnabled = false;
+ 
+        Table&lt;TEntity&gt; table = dataContext.GetTable&lt;TEntity&gt;();
+ 
+        MetaType metaEntityType = dataContext.Mapping.GetMetaType(entityType);
+ 
+        var primaryKeyColumns = from pkColumn in metaEntityType.DataMembers
+                                where pkColumn.IsPrimaryKey
+                                select pkColumn;
+ 
+        int pkColumnsCount = 0;
+ 
+        if (primaryKeyColumns != null)
+            pkColumnsCount = primaryKeyColumns.Count();
+ 
+        if (pkColumnsCount == 0)
+            throw new InvalidOperationException(&quot;Table doesn’t have primary key&quot;);
+ 
+        if (pkColumnsCount != primaryKeys.Count)
+            throw new InvalidOperationException(&quot;Primary key value doesn’t match primary key columns.&quot;);
+ 
+        ParameterExpression paramExpression = Expression.Parameter(entityType, &quot;entity&quot;);
+ 
+        BinaryExpression whereExpression = null;
+ 
+        int index = 0;
+ 
+        foreach (MetaDataMember pkColumn in primaryKeyColumns)
+        {
+            object value = primaryKeys[index];
+            string columnName = pkColumn.Name;
+ 
+            if (value != null &amp;&amp; value.GetType() != pkColumn.Type)
+            {
+                Type paramType = value.GetType();
+                string exceptionMsg = String.Format(&quot;The type ‘{0}’ of parameter ‘{1}’ is different than its column ‘{2}’ type ‘{3}’&quot;, paramType, value, columnName, pkColumn.Type);
+                throw new InvalidOperationException(exceptionMsg);
+            }
+ 
+            BinaryExpression condition = Expression.Equal(Expression.Property(paramExpression, columnName), Expression.Constant(value));
+ 
+            if (whereExpression != null)
+                whereExpression = Expression.And(whereExpression, condition);
+            else
+                whereExpression = condition;
+ 
+            index++;
+        }
+ 
+        Expression&lt;Func&lt;TEntity, bool&gt;&gt; predicate = Expression.Lambda&lt;Func&lt;TEntity, bool&gt;&gt;(whereExpression, new ParameterExpression[] { paramExpression });
+        entity = table.SingleOrDefault(predicate);
+    }
+ 
+    return entity;
+}
+</code></pre>
+
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="http://localhost:1313/post/funny-csharp-code/">
+        Funny C# code
+      </a>
+    </h1>
+
+    <span class="post-date">Sat, Apr 11, 2015</span>
+
+    <p>Even though I don’t know the author of the lines below I would say “Thank you man. You made day”.</p>
+
+<pre><code>try
+{
+ HOME:
+   do
+   {
+     Play(“World of Warcraft”);
+   }
+   while (!asleep);
+ 
+   Thread.Sleep(12 * 60 * 60 * 1000);
+ 
+   WakeUp(coffee);
+ 
+   if (you_still_give_a_shit())
+     goto WORK;
+   else
+     goto OUT;
+ 
+ WORK:
+   do
+   {
+     if (got_something_to_do())
+     {
+       LookAtTheMonitor();
+       Press_Some_Keys(new string[] { “Ctrl+C”, “Ctrl+V” });
+     }
+ 
+     Browse(“vbox7.com”);
+     Browse(“topsport.bg”);
+     Browse(“youtube.com”);
+ 
+     Have_a_Break();
+     Have_a_Kitkat();
+ 
+   }
+   while (DateTime.Now.Hour &lt; 5);
+ 
+   if (DateTime.Now.Day == 1)
+   {
+     // at least
+     GetSomeCash(3000);
+   }
+ OUT:
+   switch (mood)
+   {
+ 
+     case Mood.Horny:
+       ChaseChicks(“hot!”);
+       break;
+     case Mood.Dull:
+       SmokeSomeStuff(new Stuff[] { “Grass”, “Serious Stuff” });
+       break;
+     default:
+       DrinkBeer(5);
+       break;
+ 
+   }
+   goto HOME;
+}
+catch (HealthException x)
+{
+    SeeTheDoctor(x);
+}
+catch (NoMoneyException)
+{
+    ShitHappens();
+}
+</code></pre>
+
+  </div>
+  
+  <div class="post">
+    <h1 class="post-title">
+      <a href="http://localhost:1313/about/">
+        About
+      </a>
+    </h1>
+
+    <span class="post-date">Sat, Apr 11, 2015</span>
+
+    <p>I am a software craftsman with experiance in development mobile applications, desktop applications and distributed systems.
+I do love UI/UX development as well as backend/system level development. I enjoy coding in C#, Go, Ruby, Objective-C both at work and in my spare time. You can read more about me <a href="http://www.ralch.com">here</a>.</p>
+
+  </div>
+  
+</div>
+</div>
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+  (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+  m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','//www.google-analytics.com/analytics.js','ga');
+
+  ga('create', 'UA-31800936-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+  <script>document.write('<script src="http://'
+        + (location.host || 'localhost').split(':')[0]
+		+ ':1313/livereload.js?mindelay=10"></'
+        + 'script>')</script></body>
+</html>
