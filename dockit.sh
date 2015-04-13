@@ -1,8 +1,14 @@
 #!/usr/bin/env bash
 
-if [$1 == "--with-build-image"]; then
-  docker build -t ralch-blog .
+ARG=$1
+
+if [ -z "$ARG" ]; then
+  ARG="-no-image"
 fi
 
-docker run --name blog -e VIRTUAL_HOST=blog.ralch.com --restart="always" -d ralch-blog 
+if [ $ARG == "--with-build-image" ]; then
+  docker build -t ralch/blog .
+fi
+
+docker run -e VIRTUAL_HOST=ralch.com,www.ralch.com -e VIRTUAL_PORT=1314 --restart="always" --name web -d ralch/blog
 
