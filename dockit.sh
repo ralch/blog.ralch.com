@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
-docker build -t ralch-blog .
-docker run --name blog -p 1313:1313 --restart="always" -d ralch-blog 
+if [$1 == "--with-build-image"]; then
+  docker build -t ralch-blog .
+fi
+
+docker run --name blog -e VIRTUAL_HOST=blog.ralch.com --restart="always" -d ralch-blog 
 
