@@ -5,16 +5,13 @@ set -x
 SERVER_HOST=ralch.com
 SERVER_USERNAME=vcap
 SERVER_DESTINATION_DIR=/var/vcap/jobs/
-OUTPUT_DIR=../public
+OUTPUT_DIR=../ralch-blog
 
 echo "-- Building blog.ralch.com"
 
 mkdir -p $OUTPUT_DIR
 
 hugo -D -v -s ../web -d $OUTPUT_DIR
-
-go get $REPOSITORY
-GOOS=linux GOARCH=386 CGO_ENABLED=0 go build -o $OUTPUT_BINARY $REPOSITORY
 
 cp dockit.sh $OUTPUT_DIR
 
