@@ -5,11 +5,7 @@ set -x
 SERVER_HOST=ralch.com
 SERVER_USERNAME=vcap
 SERVER_DESTINATION_DIR=/var/vcap/jobs/
-
-OUTPUT_DIR=/tmp/ralch-blog
-OUTPUT_BINARY=$OUTPUT_DIR/ralch-blog-server
-REPOSITORY=github.com/golang-id/gost
-REPOSITORY_DIR=$GOPATH/src/$REPOSITORY
+OUTPUT_DIR=../public
 
 echo "-- Building blog.ralch.com"
 
