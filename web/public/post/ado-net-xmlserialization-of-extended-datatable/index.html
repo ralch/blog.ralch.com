@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="description" content="">
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+
+<meta name="keywords" content="">
+
+ 
+<meta property="og:type" content="article"/>
+<meta property="og:description" content=""/>
+<meta property="og:title" content="ADO.NET XmlSerialization of extended DataTable : blog.ralch.com"/>
+<meta property="og:site_name" content="Svett Ralchev"/>
+<meta property="og:image" content="" />
+<meta property="og:image:type" content="image/jpeg" />
+<meta property="og:image:width" content="" />
+<meta property="og:image:height" content="" />
+<meta property="og:url" content="http://localhost:1313/post/ado-net-xmlserialization-of-extended-datatable/">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2015-04-11"/>
+<meta property="article:modified_time" content="2015-04-11"/>
+
+
+
+  <title> ADO.NET XmlSerialization of extended DataTable &middot; Software adventures and thoughts </title>
+
+  
+  <link rel="stylesheet" href="http://localhost:1313//css/poole.css">
+  <link rel="stylesheet" href="http://localhost:1313//css/syntax.css">
+  <link rel="stylesheet" href="http://localhost:1313//css/hyde.css">
+  <link rel="stylesheet" href="http://localhost:1313//css/categories.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+  <link href='http://fonts.googleapis.com/css?family=Raleway:400,300' rel='stylesheet' type='text/css'>
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="Software adventures and thoughts" />
+
+  
+  <script src="//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
+  
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/github.min.css">
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+</head>
+
+<body>
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1 class="brand"><a href="http://localhost:1313/">Svett Ralchev</a></h1>
+      <p class="lead">
+       Software adventures and thoughts 
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="/">Home</a></li>
+      
+        <li><a href="/about/">About </a></li>
+      
+    </ul>
+      <a href="http://uk.linkedin.com/in/svettralchev"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;
+      <a href="http://www.ralch.com"><i class="fa fa-link"></i></a>&nbsp;&nbsp;
+      <a href="https://twitter.com/ralch"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;
+      
+      <a href="https://github.com/svett"><i class="fa fa-github"></i></a>&nbsp;&nbsp;
+      
+      <a href="http://localhost:1313/index.xml"><i class="fa fa-rss"></i></a>&nbsp;&nbsp;
+
+    <p class="footnote">powered by <a href="http://hugo.spf13.com">Hugo</a> <br/>
+      &copy; 2015 Svett Ralchev. All rights reserved.</p>
+    
+  </div>
+</div>
+
+  <div class="content container">
+  <div class="post">
+    <h1 class="post-title">ADO.NET XmlSerialization of extended DataTable</h1>
+    
+
+
+
+    <p>We are migrating communication protocol from .NET Remoting to WCF.
+Due to legacy fo this project, domain object is a DataTable that has some additional fields.
+In .NET Remoting serialization of that kind of object works perfectly, but in WCF these additional fields are not serialized.
+Instead of binary serialization in .NET Remoting, XML serialization is used in WCF.</p>
+
+<p>Lets have a class that derives DataTable type:</p>
+
+<pre><code>public class WcfDataTable : DataTable
+{
+    private string _ServerName;
+ 
+    public WcfDataTable()
+        : base()
+    { }
+ 
+    public WcfDataTable(string tableName)
+        : base(tableName)
+    { }
+ 
+    public string ServerName
+    {
+        get { return this._ServerName; }
+        set { this._ServerName = value; }
+    }
+}
+</code></pre>
+
+<p>
+<figure >
+    
+        <img src="/media/wcf_table_screen.jpg" alt="WCF DataTable" />
+    
+    
+</figure>
+</p>
+
+<p>As you can see I’m creating dummy <code>WcfDataTable</code> object, which I’m cloning using xml serialization and deserialization.
+The cloned object is not identical with the original object, because this additional field is not initialized with the original value (it’s null).
+The existing xml serialization doesn’t catch the new field in the class.
+To make possible this field for xml serialization we should override the existing xml serialization, but how to do it?
+The solution is really simple. You have to implement the interface <code>IXmlSerializable</code> with explicit override of all its methods.</p>
+
+<pre><code>public class WcfDataTable : DataTable, IXmlSerializable
+{
+    private string _ServerName;
+ 
+    public WcfDataTable()
+        : base()
+    { }
+ 
+    public WcfDataTable(string tableName)
+        : base(tableName)
+    { }
+ 
+    public string ServerName
+    {
+        get { return this._ServerName; }
+        set { this._ServerName = value; }
+    }
+ 
+    void IXmlSerializable.ReadXml(System.Xml.XmlReader reader)
+    {
+        base.ReadXmlSchema(reader);
+ 
+        XmlSerializer xmlSerializer = new XmlSerializer(typeof(string));
+        this._ServerName = xmlSerializer.Deserialize(reader) as string;
+ 
+        base.ReadXml(reader);
+    }
+ 
+    void IXmlSerializable.WriteXml(System.Xml.XmlWriter writer)
+    {
+        base.WriteXmlSchema(writer);
+ 
+        XmlSerializer xmlSerializer = new XmlSerializer(typeof(string));
+        xmlSerializer.Serialize(writer, this._ServerName);
+ 
+        base.WriteXml(writer, XmlWriteMode.DiffGram);
+    }
+}
+</code></pre>
+
+<p>To make this workaround we have to override WriteXml and ReadXml method explicitly.
+The methods ReadXmlSchema and WriteXmlSchema are used to read and write the schema of data table.
+Then we can write/read our new field and then to invoke basic logic for serialization or deserializtion.</p>
+
+<p>
+<figure >
+    
+        <img src="/media/wcf_table_screen_done.jpg" alt="WCF DataTable" />
+    
+    
+</figure>
+</p>
+
+    
+<div class="social-sharing">
+	<a class="share-button-facebook" onClick="return popupShare(this.href);" href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fpost%2fado-net-xmlserialization-of-extended-datatable%2f" target="_blank"><i class="fa fa-facebook"><span>Like</span></i></a>
+	<a class="share-button-google-plus" onClick="return popupShare(this.href);" href="https://plus.google.com/share?url=http%3a%2f%2flocalhost%3a1313%2fpost%2fado-net-xmlserialization-of-extended-datatable%2f" target="_blank"><i class="fa fa-google-plus"><span>Google +1</span></i></a>
+	<a class="share-button-linkedin" onClick="return popupShare(this.href);" href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2flocalhost%3a1313%2fpost%2fado-net-xmlserialization-of-extended-datatable%2f&title=ADO.NET%20XmlSerialization%20of%20extended%20DataTable&summary=We%20are%20migrating%20communication%20protocol%20from%20.NET%20Remoting%20to%20WCF.%20Due%20to%20legacy%20fo%20this%20project%2c%20domain%20object%20is%20a%20DataTable%20that%20has%20some%20additional%20fields.%20In%20.NET%20Remoting%20serialization%20of%20that%20kind%20of%20object%20works%20perfectly%2c%20but%20in%20WCF%20these%20additional%20fields%20are%20not%20serialized.%20Instead%20of%20binary%20serialization%20in%20.NET%20Remoting%2c%20XML%20serialization%20is%20used%20in%20WCF.%20Lets%20have%20a%20class%20that%20derives%20DataTable%20type%3a%20public%20class%20WcfDataTable%20%3a%20DataTable%20%7b%20private%20string%20_ServerName%3b%20public%20WcfDataTable%28%29%20%3a%20base%28%29%20%7b%20%7d%20public%20WcfDataTable%28string%20tableName%29%20%3a%20base%28tableName%29%20%7b%20%7d%20public%20string%20ServerName%20%7b%20get%20%7b%20return%20this._ServerName%3b%20%7d%20set%20%7b%20this._ServerName%20%3d%20value%3b%20%7d%20%7d%20%7d%20As%20you%20can%20see%20I%e2%80%99m%20creating%20dummy%20WcfDataTable%20object%2c%20which%20I%e2%80%99m%20cloning%20using%20xml%20serialization%20and%20deserialization.}&source=Software%20adventures%20and%20thoughts" target="_blank"><i class="fa fa-linkedin"><span>Share on LinkedIn</span></i></a>
+	<a class="share-button-twitter" onClick="return popupShare(this.href);" href="http://twitter.com/share?text=ADO.NET%20XmlSerialization%20of%20extended%20DataTable&url=http%3a%2f%2flocalhost%3a1313%2fpost%2fado-net-xmlserialization-of-extended-datatable%2f" target="_blank"><i class="fa fa-twitter"><span>Tweet</span></i></a>	
+</div>
+<script type="text/javascript">
+    function popupShare(url) {
+        window.open(url, '_blank', 'scrollbars,resizable,height=525,width=600');
+        return false;
+    }
+</script>
+
+
+    
+
+
+
+    
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost") 
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'ralch';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the comments powered by <a href="http://disqus.com/?ref_noscript">Disqus.</a></noscript>
+
+
+  </div>
+  </div>
+  <script>document.write('<script src="http://'
+        + (location.host || 'localhost').split(':')[0]
+		+ ':1313/livereload.js?mindelay=10"></'
+        + 'script>')</script></body>
+</html>

@@ -3,7 +3,7 @@ Description = ""
 date = "2015-04-11T17:53:10+01:00"
 menu = "main"
 title = "About"
-
+tags = ["myself", "info"]
 +++
 
 I am a software craftsman with experiance in development mobile applications, desktop applications and distributed systems.

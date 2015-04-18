@@ -1,9 +1,12 @@
 +++
+title = "ADO.NET XmlSerialization of extended DataTable"
 Description = ""
 date = "2015-04-11T21:10:37+01:00"
 menu = "post"
-title = "ADO.NET XmlSerialization of extended DataTable"
-
+comments = "yes"
+share = "yes"
+tags = ["msnet", "csharp", "soap", "adonet"]
+categories = ["frameworks", "programming languages"]
 +++
 
 We are migrating communication protocol from .NET Remoting to WCF. 

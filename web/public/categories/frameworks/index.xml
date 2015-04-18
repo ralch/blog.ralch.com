@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+      <title>Software adventures and thoughts</title>
+      <generator uri="https://hugo.spf13.com">Hugo</generator>
+    <link>http://localhost:1313/categories/frameworks/</link>
+    <language>en-us</language>
+    <author>Svett Ralchev</author>
+    
+    <updated>Sat, 11 Apr 2015 22:11:18 BST</updated>
+    
+    
+    <item>
+      <title>Fast run time emitting with dynamic methods in .NET</title>
+      <link>http://localhost:1313/2015/04/fast-run-time-emitting-with-dynamic-methods/</link>
+      <pubDate>Sat, 11 Apr 2015 22:11:18 BST</pubDate>
+      <author>Svett Ralchev</author>
+      <guid>http://localhost:1313/2015/04/fast-run-time-emitting-with-dynamic-methods/</guid>
+      <description>&lt;p&gt;It was a long time since, I have blogged. Nevertheless, I did not loose the enthusiasm to share the interesting stuff that I face.
+As component software developer, you should know how to access the properties of data source, when you create bound able controls (such as list control, combo box control or even grid control).
+The performance has always been a issue due to the fact that the control should work with any type of data source (ex. DataSet, DataTable or Entity Objects).
+Such requirements cause usage of reflection to access all properties of unknown object type. Therefore, you should use the PropertyInfo or PropertyDescriptor  classes.
+The disadvantage of the reflection has been always the performance. However, there is good alterative that can give satisfactory speed and
+unlimited power of the reflection. The Dynamic Methods provide lightweight code generation and execution of method at run-time via delegates.&lt;/p&gt;
+
+&lt;p&gt;&lt;a href=&#34;http://msdn.microsoft.com/en-us/library/sfk2s47t.aspx&#34;&gt;Dynamic methods&lt;/a&gt; expand the functionality of the types in the System.Reflection.Emit namespace in several ways:&lt;/p&gt;
+
+&lt;ul&gt;
+&lt;li&gt;They have less overhead, because there is no need to generate dynamic assemblies, modules, and types to contain the methods.&lt;/li&gt;
+&lt;li&gt;In long-running applications, they provide better resource utilization because the memory used by method bodies can be reclaimed when the method is no longer needed.&lt;/li&gt;
+&lt;li&gt;Given sufficient security permissions, they provide the ability to associate code with an existing assembly or type, and that code can have the same visibility as internal types or private members.&lt;/li&gt;
+&lt;li&gt;Given sufficient security permissions, they allow code to skip just-in-time (JIT) visibility checks and access the private and protected data of objects.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;Before you define the method body, you should declare the delegate types that you should use to access the properties of the unknown type:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;protected delegate void SetValueHandler(object component, object value);
+protected delegate object GetValueHandler(object component);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Implementation of this methods requires Microsoft Intermediate Language (IL):&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;protected virtual GetValueHandler CreateGetValueHandler(PropertyInfo propertyInfo)
+{
+    MethodInfo getMethodInfo = propertyInfo.GetGetMethod();
+    DynamicMethod getMethod = new DynamicMethod(&amp;quot;GetValue&amp;quot;, typeof(object), new Type[] { typeof(object) }, typeof(PropertyAccessor), true);
+    ILGenerator ilGenerator = getMethod.GetILGenerator();
+
+    ilGenerator.Emit(OpCodes.Ldarg_0);
+    ilGenerator.Emit(OpCodes.Call, getMethodInfo);
+
+    Type returnType = getMethodInfo.ReturnType;
+
+    if (returnType.IsValueType)
+    {
+        ilGenerator.Emit(OpCodes.Box, returnType);
+    }
+
+    ilGenerator.Emit(OpCodes.Ret);
+
+    return getMethod.CreateDelegate(typeof(GetValueHandler)) as GetValueHandler;
+
+}   
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;Also, the body of the setter method should be created as it’s shown in the following code snippet:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;protected virtual SetValueHandler CreateSetValueHandler(PropertyInfo propertyInfo)
+{
+    MethodInfo setMethodInfo = propertyInfo.GetSetMethod(false);
+    DynamicMethod setPropertyValue = new DynamicMethod(&amp;quot;SetValue&amp;quot;, typeof(void), new Type[] { typeof(object), typeof(object) }, typeof(PropertyAccessor), true);
+    ILGenerator ilGenerator = setPropertyValue.GetILGenerator();
+
+    ilGenerator.Emit(OpCodes.Ldarg_0);
+    ilGenerator.Emit(OpCodes.Ldarg_1);
+
+    Type parameterType = setMethodInfo.GetParameters()[0].ParameterType;
+
+    if (parameterType.IsValueType)
+    {
+        ilGenerator.Emit(OpCodes.Unbox_Any, parameterType);
+    }
+
+    ilGenerator.Emit(OpCodes.Call, setMethodInfo);
+    ilGenerator.Emit(OpCodes.Ret);
+
+    return setPropertyValue.CreateDelegate(typeof(SetValueHandler)) as SetValueHandler;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I have encapsulated the dynamic method accesses in the &lt;code&gt;PropertyAccessor&lt;/code&gt; class, which declaration looks as follows:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public class PropertyAccessor
+{
+    protected delegate void SetValueHandler(object component, object value);
+    protected delegate object GetValueHandler(object component);
+
+    private SetValueHandler setValueHandler;
+    private GetValueHandler getValueHandler;
+
+    public PropertyAccessor(Type ownerType, string propertyName)
+    {
+        PropertyInfo propertyInfo = ownerType.GetProperty(propertyName);
+
+        if (propertyInfo.CanRead)
+        {
+            this.getValueHandler = this.CreateGetValueHandler(propertyInfo);
+        }
+
+        if (propertyInfo.CanWrite)
+        {
+            this.setValueHandler = this.CreateSetValueHandler(propertyInfo);
+        }
+    }
+
+    public object GetValue(object component)
+    {
+        if (this.getValueHandler == null)
+        {
+            throw new InvalidOperationException();
+        }
+
+        return this.getValueHandler(component);
+    }
+
+    public void SetValue(object component, object value)
+    {
+        if (this.setValueHandler == null)
+        {
+            throw new InvalidOperationException();
+        }
+
+        this.setValueHandler(component, value);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;I measured the performance among the three approaches against 1 000 000 times invocation of the &lt;code&gt;Employee&lt;/code&gt; property:&lt;/p&gt;
+
+&lt;p&gt;
+&lt;figure &gt;
+    
+        &lt;img src=&#34;http://localhost:1313/media/dynamic_method_emit_diagram.png&#34; alt=&#34;Dynamic methods performance diagram&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+&lt;/p&gt;
+
+&lt;p&gt;Notice that the direct access approach followed by the Dynamic Methods implementation are the fastest.&lt;/p&gt;
+</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>How to prevent memory leaks when we are using events?</title>
+      <link>http://localhost:1313/2015/04/how-to-prevent-memory-leaks-when-we-are-using-events/</link>
+      <pubDate>Sat, 11 Apr 2015 22:03:54 BST</pubDate>
+      <author>Svett Ralchev</author>
+      <guid>http://localhost:1313/2015/04/how-to-prevent-memory-leaks-when-we-are-using-events/</guid>
+      <description>&lt;p&gt;In the average development lifecycle is possible that event handlers that are attached to events of sources to not be destroyed in
+coordination with the listener object that attached the handler to the source. This can lead to memory leaks. The developers to take
+care about memory management not only when they use unmanaged resources but also when they attach new event handlers to specified event.&lt;/p&gt;
+
+&lt;p&gt;This problem was solved by Microsoft in Windows Presentation Foundation. They implmented
+&lt;a href=&#34;http://msdn.microsoft.com/en-us/library/aa970850.aspx&#34;&gt;Weak Event Design Pattern&lt;/a&gt;.&lt;/p&gt;
+</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>PINVOKE: Getting all child handles of window</title>
+      <link>http://localhost:1313/2015/04/pinvoke-getting-all-child-handles-of-window/</link>
+      <pubDate>Sat, 11 Apr 2015 21:51:58 BST</pubDate>
+      <author>Svett Ralchev</author>
+      <guid>http://localhost:1313/2015/04/pinvoke-getting-all-child-handles-of-window/</guid>
+      <description>&lt;p&gt;If you don’t know I have a new job in Bulgaria. I went away form Web Development and now I’m working as Windows Developer.
+However, we had a client that exceed the number of window handles (more than 10 000) due to bad design of application.
+While diagnosing his application, we needed to understand how many handles are created per window.&lt;/p&gt;
+
+&lt;p&gt;Windows API provide the availability to get all child handles for specified handle.
+We should use &lt;code&gt;EnumChildWindows&lt;/code&gt; function provided by &lt;code&gt;user32.dll&lt;/code&gt;.&lt;/p&gt;
+
+&lt;p&gt;&lt;code&gt;EnumChildWindows&lt;/code&gt; function enumerates the child windows that belong to the specified parent window by passing the handle to each child window, in turn,
+to an application-defined callback function. &lt;code&gt;EnumChildWindows&lt;/code&gt; continues until the last child window is enumerated or the callback function returns FALSE.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;BOOL EnumChildWindows( 
+         HWND hWndParent, 
+         WNDENUMPROC lpEnumFunc, 
+         LPARAM lParam 
+);
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;hWndParent&lt;/code&gt; - [in] Handle to the parent window whose child windows are to be enumerated.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;lpEnumFunc&lt;/code&gt; - [in] Pointer to an application-defined callback function.&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;lParam&lt;/code&gt; - [in] Specifies an application-defined value to be passed to the callback function.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;p&gt;If a child window has created child windows of its own, &lt;code&gt;EnumChildWindows&lt;/code&gt; enumerates those windows as well.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public class WindowHandleInfo
+{
+    private delegate bool EnumWindowProc(IntPtr hwnd, IntPtr lParam);
+ 
+    [DllImport(&amp;quot;user32&amp;quot;)]
+    [return: MarshalAs(UnmanagedType.Bool)]
+    private static extern bool EnumChildWindows(IntPtr window, EnumWindowProc callback, IntPtr lParam);
+ 
+    private IntPtr _MainHandle;
+ 
+    public WindowHandleInfo(IntPtr handle)
+    {
+        this._MainHandle = handle;
+    }
+ 
+    public List&amp;lt;IntPtr&amp;gt; GetAllChildHandles()
+    {
+        List&amp;lt;IntPtr&amp;gt; childHandles = new List&amp;lt;IntPtr&amp;gt;();
+ 
+        GCHandle gcChildhandlesList = GCHandle.Alloc(childHandles);
+        IntPtr pointerChildHandlesList = GCHandle.ToIntPtr(gcChildhandlesList);
+ 
+        try
+        {
+            EnumWindowProc childProc = new EnumWindowProc(EnumWindow);
+            EnumChildWindows(this._MainHandle, childProc, pointerChildHandlesList);
+        }
+        finally
+        {
+            gcChildhandlesList.Free();
+        }
+ 
+        return childHandles;
+    }
+ 
+    private bool EnumWindow(IntPtr hWnd, IntPtr lParam)
+    {
+        GCHandle gcChildhandlesList = GCHandle.FromIntPtr(lParam);
+ 
+        if (gcChildhandlesList == null || gcChildhandlesList.Target == null)
+        {
+            return false;
+        }
+ 
+        List&amp;lt;IntPtr&amp;gt; childHandles = gcChildhandlesList.Target as List&amp;lt;IntPtr&amp;gt;;
+        childHandles.Add(hWnd);
+ 
+        return true;
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+</description>
+    </item>
+    
+    
+    
+    <item>
+      <title>ADO.NET XmlSerialization of extended DataTable</title>
+      <link>http://localhost:1313/2015/04/ado-net-xmlserialization-of-extended-datatable/</link>
+      <pubDate>Sat, 11 Apr 2015 21:10:37 BST</pubDate>
+      <author>Svett Ralchev</author>
+      <guid>http://localhost:1313/2015/04/ado-net-xmlserialization-of-extended-datatable/</guid>
+      <description>&lt;p&gt;We are migrating communication protocol from .NET Remoting to WCF.
+Due to legacy fo this project, domain object is a DataTable that has some additional fields.
+In .NET Remoting serialization of that kind of object works perfectly, but in WCF these additional fields are not serialized.
+Instead of binary serialization in .NET Remoting, XML serialization is used in WCF.&lt;/p&gt;
+
+&lt;p&gt;Lets have a class that derives DataTable type:&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public class WcfDataTable : DataTable
+{
+    private string _ServerName;
+ 
+    public WcfDataTable()
+        : base()
+    { }
+ 
+    public WcfDataTable(string tableName)
+        : base(tableName)
+    { }
+ 
+    public string ServerName
+    {
+        get { return this._ServerName; }
+        set { this._ServerName = value; }
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;
+&lt;figure &gt;
+    
+        &lt;img src=&#34;http://localhost:1313/media/wcf_table_screen.jpg&#34; alt=&#34;WCF DataTable&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+&lt;/p&gt;
+
+&lt;p&gt;As you can see I’m creating dummy &lt;code&gt;WcfDataTable&lt;/code&gt; object, which I’m cloning using xml serialization and deserialization.
+The cloned object is not identical with the original object, because this additional field is not initialized with the original value (it’s null).
+The existing xml serialization doesn’t catch the new field in the class.
+To make possible this field for xml serialization we should override the existing xml serialization, but how to do it?
+The solution is really simple. You have to implement the interface &lt;code&gt;IXmlSerializable&lt;/code&gt; with explicit override of all its methods.&lt;/p&gt;
+
+&lt;pre&gt;&lt;code&gt;public class WcfDataTable : DataTable, IXmlSerializable
+{
+    private string _ServerName;
+ 
+    public WcfDataTable()
+        : base()
+    { }
+ 
+    public WcfDataTable(string tableName)
+        : base(tableName)
+    { }
+ 
+    public string ServerName
+    {
+        get { return this._ServerName; }
+        set { this._ServerName = value; }
+    }
+ 
+    void IXmlSerializable.ReadXml(System.Xml.XmlReader reader)
+    {
+        base.ReadXmlSchema(reader);
+ 
+        XmlSerializer xmlSerializer = new XmlSerializer(typeof(string));
+        this._ServerName = xmlSerializer.Deserialize(reader) as string;
+ 
+        base.ReadXml(reader);
+    }
+ 
+    void IXmlSerializable.WriteXml(System.Xml.XmlWriter writer)
+    {
+        base.WriteXmlSchema(writer);
+ 
+        XmlSerializer xmlSerializer = new XmlSerializer(typeof(string));
+        xmlSerializer.Serialize(writer, this._ServerName);
+ 
+        base.WriteXml(writer, XmlWriteMode.DiffGram);
+    }
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;To make this workaround we have to override WriteXml and ReadXml method explicitly.
+The methods ReadXmlSchema and WriteXmlSchema are used to read and write the schema of data table.
+Then we can write/read our new field and then to invoke basic logic for serialization or deserializtion.&lt;/p&gt;
+
+&lt;p&gt;
+&lt;figure &gt;
+    
+        &lt;img src=&#34;http://localhost:1313/media/wcf_table_screen_done.jpg&#34; alt=&#34;WCF DataTable&#34; /&gt;
+    
+    
+&lt;/figure&gt;
+&lt;/p&gt;
+</description>
+    </item>
+    
+    
+  </channel>
+</rss>

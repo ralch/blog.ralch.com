@@ -1,9 +1,12 @@
 +++
+title = "Fast run time emitting with dynamic methods in .NET"
 Description = ""
 date = "2015-04-11T22:11:18+01:00"
 menu = "post"
-title = "Fast run time emitting with dynamic methods in .NET"
-
+comments = "yes"
+share = "yes"
+tags = ["msnet", "csharp","reflection"]
+categories = ["frameworks", "programming languages"]
 +++
 
 It was a long time since, I have blogged. Nevertheless, I did not loose the enthusiasm to share the interesting stuff that I face.
@@ -13,7 +16,7 @@ Such requirements cause usage of reflection to access all properties of unknown 
 The disadvantage of the reflection has been always the performance. However, there is good alterative that can give satisfactory speed and
 unlimited power of the reflection. The Dynamic Methods provide lightweight code generation and execution of method at run-time via delegates.
 
-[Dynamic methods](https://href.li/?http://msdn.microsoft.com/en-us/library/sfk2s47t.aspx) expand the functionality of the types in the System.Reflection.Emit namespace in several ways:
+[Dynamic methods](http://msdn.microsoft.com/en-us/library/sfk2s47t.aspx) expand the functionality of the types in the System.Reflection.Emit namespace in several ways:
 
 - They have less overhead, because there is no need to generate dynamic assemblies, modules, and types to contain the methods.
 - In long-running applications, they provide better resource utilization because the memory used by method bodies can be reclaimed when the method is no longer needed.

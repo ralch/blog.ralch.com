@@ -1,9 +1,12 @@
 +++
+title = "Funny C# code"
 Description = ""
 date = "2015-04-11T20:10:50+01:00"
+tags = ["coding", "fun", "csharp", "msnet"]
+categories = ["misc"]
 menu = "post"
-title = "Funny C# code"
-
+comments = "yes"
+share = "yes"
 +++
 
 Even though I don’t know the author of the lines below I would say “Thank you man. You made day”.

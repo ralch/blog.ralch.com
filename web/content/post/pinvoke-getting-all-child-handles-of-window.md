@@ -1,9 +1,12 @@
 +++
+title = "PINVOKE: Getting all child handles of window"
 Description = ""
 date = "2015-04-11T21:51:58+01:00"
 menu = "post"
-title = "PINVOKE: Getting all child handles of window"
-
+comments = "yes"
+share = "yes"
+categories = ["frameworks", "api"]
+tags = ["windows", "debug"]
 +++
 
 If you don’t know I have a new job in Bulgaria. I went away form Web Development and now I’m working as Windows Developer. 

@@ -2,15 +2,30 @@
 <body>
   {{ partial "sidebar.html" . }}
   <div class="content container">
-    <h1 class="title">Blog Posts</h1> 
-    <ul class="posts">
-      {{ range .Data.Pages }}
-      <li><span>{{if .Draft}}[draft] {{end}}<a href="{{ .Permalink }}">{{ .Title }}</a>
-          <time class="pull-right post-list">{{ .Date.Format "Mon, Jan 2, 2006" }}</h4></time>
-          </span>
-      </li>
+    <h1>{{ .Title }}</h1>
+    <div class="posts">
+     {{ range .Data.Pages }}
+      <div class="post">
+        <h2 class="post-title">
+          <a href="{{ .Permalink }}">
+            {{ .Title }}
+          </a>
+        </h2>
+        <span class="post-date">{{ .Date.Format "Mon, Jan 2, 2006" }}</span>
+        {{ partial "categories.html" . }}
+        <article class="post-summary">
+          {{ .Summary }}
+        </article>
+        {{ partial "tags.html" . }}
+        {{ if .Truncated }}
+        <div class="read-more-link">
+          <a href="{{ .RelPermalink }}"></span>Read More...</a>
+        </div>
+        {{ end }}
+      </div>
       {{ end }}
-    </ul>
     </div>
-  </body>
+  </div>
+  {{ partial "footer.html" . }}
+</body>
 </html>

@@ -1,10 +1,12 @@
 +++
+title = "LINQ to SQL: Create generic method to load entity by primary key"
 Description = ""
 date = "2015-04-11T20:19:59+01:00"
+tags = ["CSharp", "MSNET", "LINQ"]
+categories = ["database", "orm", "programming languages"]
 menu = "post"
-tags = ["C#", "csharp"]
-title = "LINQ to SQL: Create generic method to load entity by primary key"
-
+comments = "yes"
+share = "yes"
 +++
 
 # Scenario

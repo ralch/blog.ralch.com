@@ -7,20 +7,16 @@ theme = "hyde"
 	name = "Svett Ralchev"
 
 [Permalinks]
-	blog = "/:year/:month/:filename/"
-	code = "/:filename/"
-
-[Taxonomies]
-	tag = "tags"
-	series = "post"
-	series-desc = "post-desc"
+ post = "/:year/:month/:filename/"
+ tutorials = "/:filename/"
 
 [params]
-  info = "http://www.ralch.com"
-	twitter = "https://twitter.com/ralch"
-	github = "https://github.com/svett"
-  linkedin = "http://uk.linkedin.com/in/svettralchev"
-	disqus = "ralch"
-  googletrackingid = "UA-31800936-1"
-  domain = "blog.ralch.com"
+ info = "http://www.ralch.com"
+ twitter = "https://twitter.com/ralch"
+ github = "https://github.com/svett"
+ linkedin = "http://uk.linkedin.com/in/svettralchev"
+ disqus = "ralch"
+ googletrackingid = "UA-31800936-1"
+ domain = "blog.ralch.com"
+
 

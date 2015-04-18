@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="description" content="">
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+
+<meta name="keywords" content="C#, .NET, ">
+
+ 
+<meta property="og:type" content="article"/>
+<meta property="og:description" content=""/>
+<meta property="og:title" content="LINQ to SQL: Create generic method to load entity by primary key : blog.ralch.com"/>
+<meta property="og:site_name" content="Svett Ralchev"/>
+<meta property="og:image" content="" />
+<meta property="og:image:type" content="image/jpeg" />
+<meta property="og:image:width" content="" />
+<meta property="og:image:height" content="" />
+<meta property="og:url" content="http://localhost:1313/post/linq-to-sql-create-generic-method-to-load-entity-by-primary-key/">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2015-04-11"/>
+<meta property="article:modified_time" content="2015-04-11"/>
+
+
+<meta property="article:tag" content="C#">
+<meta property="article:tag" content=".NET">
+
+
+
+  <title> LINQ to SQL: Create generic method to load entity by primary key &middot; Software adventures and thoughts </title>
+
+  
+  <link rel="stylesheet" href="http://localhost:1313//css/poole.css">
+  <link rel="stylesheet" href="http://localhost:1313//css/syntax.css">
+  <link rel="stylesheet" href="http://localhost:1313//css/hyde.css">
+  <link rel="stylesheet" href="http://localhost:1313//css/categories.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+  <link href='http://fonts.googleapis.com/css?family=Raleway:400,300' rel='stylesheet' type='text/css'>
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="Software adventures and thoughts" />
+
+  
+  <script src="//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
+  
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/github.min.css">
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+</head>
+
+<body>
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1 class="brand"><a href="http://localhost:1313/">Svett Ralchev</a></h1>
+      <p class="lead">
+       Software adventures and thoughts 
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="/">Home</a></li>
+      
+        <li><a href="/about/">About </a></li>
+      
+    </ul>
+      <a href="http://uk.linkedin.com/in/svettralchev"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;
+      <a href="http://www.ralch.com"><i class="fa fa-link"></i></a>&nbsp;&nbsp;
+      <a href="https://twitter.com/ralch"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;
+      
+      <a href="https://github.com/svett"><i class="fa fa-github"></i></a>&nbsp;&nbsp;
+      
+      <a href="http://localhost:1313/index.xml"><i class="fa fa-rss"></i></a>&nbsp;&nbsp;
+
+    <p class="footnote">powered by <a href="http://hugo.spf13.com">Hugo</a> <br/>
+      &copy; 2015 Svett Ralchev. All rights reserved.</p>
+    
+  </div>
+</div>
+
+  <div class="content container">
+  <div class="post">
+    <h1 class="post-title">LINQ to SQL: Create generic method to load entity by primary key</h1>
+    
+
+
+
+    
+
+<h1 id="scenario:1dbf5425e9da49dc7817a5a2949312e5">Scenario</h1>
+
+<p>We are implementing our data access layer based on LINQ TO SQL. In the specifications that were created by our software architect is required to have generic method that load from the data base any record into entity object by primary key.</p>
+
+<pre><code>public class LINQGateway&lt;TEntity&gt; where TEntity : class
+{
+    private IDbConnection _DbConnection;
+    public LINQGateway(IDbConnection connection)
+    {
+        this._DbConnection = connection;
+    }
+    public TEntity GetEntityByPrimaryKey(object pkKey, params object[] pkKeys)
+    {
+        // TO DO
+    }
+}
+</code></pre>
+
+<h1 id="problem:1dbf5425e9da49dc7817a5a2949312e5">Problem</h1>
+
+<p>Every table has different primary key (count, name and data type of the primary key columns).</p>
+
+<h1 id="algorithm:1dbf5425e9da49dc7817a5a2949312e5">Algorithm</h1>
+
+<ol>
+<li>Get tha mapping of the entity type</li>
+<li>Use information for the mapping
+2.1 to get the name of the columns
+2.2 to get the name of the columns included in the primary key</li>
+<li>Generate the T-SQL Query</li>
+<li>Execute the Query via LINQ Framework to retrive the result as entity object</li>
+</ol>
+
+<h1 id="solutions:1dbf5425e9da49dc7817a5a2949312e5">Solutions</h1>
+
+<h2 id="building-t-sql-query:1dbf5425e9da49dc7817a5a2949312e5">Building T-SQL query</h2>
+
+<pre><code>TEntity GetEntityByPrimaryKey(object pkKey, params object[] pkKeys)
+{
+    List&lt;object&gt; primaryKeys = new List&lt;object&gt;();
+    primaryKeys.Add(pkKey);
+    primaryKeys.AddRange(pkKeys);
+
+    TEntity entity = null;
+    Type entityType = typeof(TEntity);
+
+    using (DataContext dataContext = new DataContext(this._DbConnection))
+    {
+        dataContext.Log = new DebuggerWriter();
+        dataContext.ObjectTrackingEnabled = false;
+
+        Table&lt;TEntity&gt; table = dataContext.GetTable&lt;TEntity&gt;();
+
+        MetaType metaEntityType = dataContext.Mapping.GetMetaType(entityType);
+
+        var primaryKeyColumns = from pkColumn in metaEntityType.DataMembers
+                                where pkColumn.IsPrimaryKey
+                                select pkColumn;
+
+        var columns = from col in metaEntityType.DataMembers
+                      where col.IsPersistent &amp;&amp; !col.IsAssociation
+                      orderby col.Ordinal
+                      select &quot;[t0].[&quot; + col.MappedName + &quot;]&quot;;
+
+        string selectColumns = String.Join(&quot;, &quot;, columns.ToArray());
+
+        int pkColumnsCount = 0;
+
+        if (primaryKeyColumns != null)
+            pkColumnsCount = primaryKeyColumns.Count();
+
+        if (pkColumnsCount == 0)
+            throw new InvalidOperationException(&quot;Table doesn’t have primary key&quot;);
+
+        if (pkColumnsCount != primaryKeys.Count)
+            throw new InvalidOperationException(&quot;Primary key values doesn’t match primary key columns.&quot;);
+
+
+        string tableName = metaEntityType.Table.TableName;
+
+        if (tableName.Contains(‘.’))
+        {
+            string[] splittedTablename = metaEntityType.Table.TableName.Split(‘.’).Select(p =&gt; &quot;[&quot; + p + &quot;]&quot;).ToArray();
+            tableName = String.Join(&quot;.&quot;, splittedTablename);
+        }
+
+        StringBuilder builder = new StringBuilder(&quot;SELECT &quot; + selectColumns + Environment.NewLine + &quot;FROM &quot; + tableName + &quot; AS [t0]&quot; + Environment.NewLine + &quot;WHERE &quot;);
+
+        int index = 0;
+
+        foreach (MetaDataMember pkColumn in primaryKeyColumns)
+        {
+            string columnName = pkColumn.Name;
+            string paramID = index.ToString(CultureInfo.InvariantCulture);
+            builder.Append(&quot;[t0].[&quot; + columnName + &quot;] = {&quot; + paramID + &quot;}&quot;);
+
+            if (index + 1 != pkColumnsCount)
+                builder.Append(&quot; AND &quot;);
+
+            index++;
+        }
+
+        string query = builder.ToString();
+        entity = dataContext.ExecuteQuery&lt;TEntity&gt;(query, primaryKeys.ToArray()).SingleOrDefault();
+    }
+
+    return entity;
+}
+</code></pre>
+
+<h2 id="dynamic-linq-expression:1dbf5425e9da49dc7817a5a2949312e5">Dynamic LINQ expression</h2>
+
+<pre><code>TEntity GetEntityByPrimaryKey(object pkKey, params object[] pkKeys)
+{
+    List&lt;object&gt; primaryKeys = new List&lt;object&gt;();
+    primaryKeys.Add(pkKey);
+    primaryKeys.AddRange(pkKeys);
+ 
+    TEntity entity = null;
+    Type entityType = typeof(TEntity);
+ 
+    using (DataContext dataContext = new DataContext(this._DbConnection))
+    {
+        dataContext.Log = new DebuggerWriter();
+        dataContext.ObjectTrackingEnabled = false;
+ 
+        Table&lt;TEntity&gt; table = dataContext.GetTable&lt;TEntity&gt;();
+ 
+        MetaType metaEntityType = dataContext.Mapping.GetMetaType(entityType);
+ 
+        var primaryKeyColumns = from pkColumn in metaEntityType.DataMembers
+                                where pkColumn.IsPrimaryKey
+                                select pkColumn;
+ 
+        int pkColumnsCount = 0;
+ 
+        if (primaryKeyColumns != null)
+            pkColumnsCount = primaryKeyColumns.Count();
+ 
+        if (pkColumnsCount == 0)
+            throw new InvalidOperationException(&quot;Table doesn’t have primary key&quot;);
+ 
+        if (pkColumnsCount != primaryKeys.Count)
+            throw new InvalidOperationException(&quot;Primary key value doesn’t match primary key columns.&quot;);
+ 
+        ParameterExpression paramExpression = Expression.Parameter(entityType, &quot;entity&quot;);
+ 
+        BinaryExpression whereExpression = null;
+ 
+        int index = 0;
+ 
+        foreach (MetaDataMember pkColumn in primaryKeyColumns)
+        {
+            object value = primaryKeys[index];
+            string columnName = pkColumn.Name;
+ 
+            if (value != null &amp;&amp; value.GetType() != pkColumn.Type)
+            {
+                Type paramType = value.GetType();
+                string exceptionMsg = String.Format(&quot;The type ‘{0}’ of parameter ‘{1}’ is different than its column ‘{2}’ type ‘{3}’&quot;, paramType, value, columnName, pkColumn.Type);
+                throw new InvalidOperationException(exceptionMsg);
+            }
+ 
+            BinaryExpression condition = Expression.Equal(Expression.Property(paramExpression, columnName), Expression.Constant(value));
+ 
+            if (whereExpression != null)
+                whereExpression = Expression.And(whereExpression, condition);
+            else
+                whereExpression = condition;
+ 
+            index++;
+        }
+ 
+        Expression&lt;Func&lt;TEntity, bool&gt;&gt; predicate = Expression.Lambda&lt;Func&lt;TEntity, bool&gt;&gt;(whereExpression, new ParameterExpression[] { paramExpression });
+        entity = table.SingleOrDefault(predicate);
+    }
+ 
+    return entity;
+}
+</code></pre>
+
+    
+<div class="social-sharing">
+	<a class="share-button-facebook" onClick="return popupShare(this.href);" href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2fpost%2flinq-to-sql-create-generic-method-to-load-entity-by-primary-key%2f" target="_blank"><i class="fa fa-facebook"><span>Like</span></i></a>
+	<a class="share-button-google-plus" onClick="return popupShare(this.href);" href="https://plus.google.com/share?url=http%3a%2f%2flocalhost%3a1313%2fpost%2flinq-to-sql-create-generic-method-to-load-entity-by-primary-key%2f" target="_blank"><i class="fa fa-google-plus"><span>Google +1</span></i></a>
+	<a class="share-button-linkedin" onClick="return popupShare(this.href);" href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2flocalhost%3a1313%2fpost%2flinq-to-sql-create-generic-method-to-load-entity-by-primary-key%2f&title=LINQ%20to%20SQL%3a%20Create%20generic%20method%20to%20load%20entity%20by%20primary%20key&summary=Scenario%20We%20are%20implementing%20our%20data%20access%20layer%20based%20on%20LINQ%20TO%20SQL.%20In%20the%20specifications%20that%20were%20created%20by%20our%20software%20architect%20is%20required%20to%20have%20generic%20method%20that%20load%20from%20the%20data%20base%20any%20record%20into%20entity%20object%20by%20primary%20key.%20public%20class%20LINQGateway%26lt%3bTEntity%26gt%3b%20where%20TEntity%20%3a%20class%20%7b%20private%20IDbConnection%20_DbConnection%3b%20public%20LINQGateway%28IDbConnection%20connection%29%20%7b%20this._DbConnection%20%3d%20connection%3b%20%7d%20public%20TEntity%20GetEntityByPrimaryKey%28object%20pkKey%2c%20params%20object%5b%5d%20pkKeys%29%20%7b%20%2f%2f%20TO%20DO%20%7d%20%7d%20Problem%20Every%20table%20has%20different%20primary%20key%20%28count%2c%20name%20and%20data%20type%20of%20the%20primary%20key%20columns%29.}&source=Software%20adventures%20and%20thoughts" target="_blank"><i class="fa fa-linkedin"><span>Share on LinkedIn</span></i></a>
+	<a class="share-button-twitter" onClick="return popupShare(this.href);" href="http://twitter.com/share?text=LINQ%20to%20SQL%3a%20Create%20generic%20method%20to%20load%20entity%20by%20primary%20key&url=http%3a%2f%2flocalhost%3a1313%2fpost%2flinq-to-sql-create-generic-method-to-load-entity-by-primary-key%2f" target="_blank"><i class="fa fa-twitter"><span>Tweet</span></i></a>	
+</div>
+<script type="text/javascript">
+    function popupShare(url) {
+        window.open(url, '_blank', 'scrollbars,resizable,height=525,width=600');
+        return false;
+    }
+</script>
+
+
+    
+
+<div class="tags-list">
+    <span class="dark-red">Tags</span><span class="decorative-marker">#</span>
+    
+    <a class="post-tag post-tag-c" href="http://localhost:1313//tags/c">C#</a>,
+    
+    <a class="post-tag post-tag-.net" href="http://localhost:1313//tags/.net">.NET</a>,
+    
+</div>
+
+
+
+    
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost") 
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'ralch';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the comments powered by <a href="http://disqus.com/?ref_noscript">Disqus.</a></noscript>
+
+
+  </div>
+  </div>
+  <script>document.write('<script src="http://'
+        + (location.host || 'localhost').split(':')[0]
+		+ ':1313/livereload.js?mindelay=10"></'
+        + 'script>')</script></body>
+</html>
