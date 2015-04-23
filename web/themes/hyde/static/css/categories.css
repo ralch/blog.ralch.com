@@ -29,6 +29,14 @@ a.post-category:hover {
  * You should add any new category here
  */
 
+.post-category-devop {
+  background: #1F596E
+}
+
+.post-category-tutorial {
+  background: #478C85
+}
+
 .post-category-orm {
   background: #300030 
 }
