@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en-us">
+<head>
+  <link href="http://gmpg.org/xfn/11" rel="profile">
+  <meta http-equiv="content-type" content="text/html; charset=utf-8">
+
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+<meta name="description" content="">
+<meta name="HandheldFriendly" content="True">
+<meta name="MobileOptimized" content="320">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+
+
+<meta name="keywords" content="busybox, ssl, ">
+
+ 
+<meta property="og:type" content="article"/>
+<meta property="og:description" content=""/>
+<meta property="og:title" content="SSL support for Busybox docker containers : blog.ralch.com"/>
+<meta property="og:site_name" content="Svett Ralchev"/>
+<meta property="og:image" content="" />
+<meta property="og:image:type" content="image/jpeg" />
+<meta property="og:image:width" content="" />
+<meta property="og:image:height" content="" />
+<meta property="og:url" content="http://localhost:1313/tutorial/devop-busybox-ca-certificats/">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2015-04-23"/>
+<meta property="article:modified_time" content="2015-04-23"/>
+
+
+<meta property="article:tag" content="busybox">
+<meta property="article:tag" content="ssl">
+
+
+
+  <title> SSL support for Busybox docker containers &middot; Software adventures and thoughts </title>
+
+  
+  <link rel="stylesheet" href="http://localhost:1313//css/poole.css">
+  <link rel="stylesheet" href="http://localhost:1313//css/syntax.css">
+  <link rel="stylesheet" href="http://localhost:1313//css/hyde.css">
+  <link rel="stylesheet" href="http://localhost:1313//css/categories.css">
+  <link rel="stylesheet" href="http://fonts.googleapis.com/css?family=PT+Sans:400,400italic,700|Abril+Fatface">
+
+  
+  <link rel="apple-touch-icon-precomposed" sizes="144x144" href="/apple-touch-icon-144-precomposed.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link href="//netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css" rel="stylesheet">
+  <link href='http://fonts.googleapis.com/css?family=Raleway:400,300' rel='stylesheet' type='text/css'>
+
+  
+  <link href="" rel="alternate" type="application/rss+xml" title="Software adventures and thoughts" />
+
+  
+  <script src="//ajax.googleapis.com/ajax/libs/webfont/1.4.7/webfont.js"></script>
+  
+
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/styles/github.min.css">
+
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/8.4/highlight.min.js"></script>
+<script>hljs.initHighlightingOnLoad();</script>
+
+</head>
+
+<body>
+<div class="sidebar">
+  <div class="container sidebar-sticky">
+    <div class="sidebar-about">
+      <h1 class="brand"><a href="http://localhost:1313/">Svett Ralchev</a></h1>
+      <p class="lead">
+       Software adventures and thoughts 
+      </p>
+    </div>
+
+    <ul class="sidebar-nav">
+      <li><a href="/">Home</a></li>
+      
+        <li><a href="/about/">About </a></li>
+      
+        <li><a href="/tutorial/devop-busybox-ca-certificats/">SSL support for Busybox docker containers </a></li>
+      
+    </ul>
+      <a href="http://uk.linkedin.com/in/svettralchev"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;
+      <a href="http://www.ralch.com"><i class="fa fa-link"></i></a>&nbsp;&nbsp;
+      <a href="https://twitter.com/ralch"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;
+      
+      <a href="https://github.com/svett"><i class="fa fa-github"></i></a>&nbsp;&nbsp;
+      
+      <a href="http://localhost:1313/index.xml"><i class="fa fa-rss"></i></a>&nbsp;&nbsp;
+
+    <p class="footnote">powered by <a href="http://hugo.spf13.com">Hugo</a> <br/>
+      &copy; 2015 Svett Ralchev. All rights reserved.</p>
+    
+  </div>
+</div>
+
+  <div class="content container">
+  <div class="post">
+    <h1 class="post-title">SSL support for Busybox docker containers</h1>
+    
+
+<div class="post-categories">
+    
+    <a class="post-category post-category-devop" href="http://localhost:1313//categories/devop">devop</a>
+    
+    <a class="post-category post-category-tutorial" href="http://localhost:1313//categories/tutorial">tutorial</a>
+    
+</div>
+
+
+
+    <p>I am running my <a href="http://www.ralch.com">official website</a> and this blog on busybox
+docker containers. I noticed today that this image does not support
+certificate trust stores and therefore cannot request an SSL-enabled web services.</p>
+
+<p>My website is using <a href="https://www.google.com/recaptcha/intro/index.html">Google recaptcha</a>
+to handle spam requests on its contact form. However, the website throws the following
+exception when recaptch API is requested:</p>
+
+<p><code>x509: failed to load system roots and no roots provided</code></p>
+
+<p>First approach would be to use <a href="https://docs.docker.com/reference/builder/#copy">COPY</a>
+command to load the certificate store bundle in to the image.</p>
+
+<p>I do not want to keep the certificates on docker image, so I fixed the issue
+by mounting the host&rsquo;s certificate store in to the container file system.</p>
+
+<p>The following command is solving the issue for me:</p>
+
+<pre><code>CERT_DIR=/etc/ssl/certs
+
+docker run -v $CERT_DIR:$CERT_DIR --name web -d busybox
+</code></pre>
+
+    
+<div class="social-sharing">
+	<a class="share-button-facebook" onClick="return popupShare(this.href);" href="https://www.facebook.com/sharer/sharer.php?u=http%3a%2f%2flocalhost%3a1313%2ftutorial%2fdevop-busybox-ca-certificats%2f" target="_blank"><i class="fa fa-facebook"><span>Like</span></i></a>
+	<a class="share-button-google-plus" onClick="return popupShare(this.href);" href="https://plus.google.com/share?url=http%3a%2f%2flocalhost%3a1313%2ftutorial%2fdevop-busybox-ca-certificats%2f" target="_blank"><i class="fa fa-google-plus"><span>Google +1</span></i></a>
+	<a class="share-button-linkedin" onClick="return popupShare(this.href);" href="http://www.linkedin.com/shareArticle?mini=true&url=http%3a%2f%2flocalhost%3a1313%2ftutorial%2fdevop-busybox-ca-certificats%2f&title=SSL%20support%20for%20Busybox%20docker%20containers&summary=I%20am%20running%20my%20official%20website%20and%20this%20blog%20on%20busybox%20docker%20containers.%20I%20noticed%20today%20that%20this%20image%20does%20not%20support%20certificate%20trust%20stores%20and%20therefore%20cannot%20request%20an%20SSL-enabled%20web%20services.%20My%20website%20is%20using%20Google%20recaptcha%20to%20handle%20spam%20requests%20on%20its%20contact%20form.%20However%2c%20the%20website%20throws%20the%20following%20exception%20when%20recaptch%20API%20is%20requested%3a%20x509%3a%20failed%20to%20load%20system%20roots%20and%20no%20roots%20provided%20First%20approach%20would%20be%20to%20use%20COPY%20command%20to%20load%20the%20certificate%20store%20bundle%20in%20to%20the%20image.}&source=Software%20adventures%20and%20thoughts" target="_blank"><i class="fa fa-linkedin"><span>Share on LinkedIn</span></i></a>
+	<a class="share-button-twitter" onClick="return popupShare(this.href);" href="http://twitter.com/share?text=SSL%20support%20for%20Busybox%20docker%20containers&url=http%3a%2f%2flocalhost%3a1313%2ftutorial%2fdevop-busybox-ca-certificats%2f" target="_blank"><i class="fa fa-twitter"><span>Tweet</span></i></a>	
+</div>
+<script type="text/javascript">
+    function popupShare(url) {
+        window.open(url, '_blank', 'scrollbars,resizable,height=525,width=600');
+        return false;
+    }
+</script>
+
+
+    
+
+<div class="tags-list">
+    <span class="dark-red">Tags</span><span class="decorative-marker">#</span>
+    
+    <a class="post-tag post-tag-busybox" href="http://localhost:1313//tags/busybox">busybox</a>,
+    
+    <a class="post-tag post-tag-ssl" href="http://localhost:1313//tags/ssl">ssl</a>,
+    
+</div>
+
+
+
+    
+<div id="disqus_thread"></div>
+<script type="text/javascript">
+
+(function() {
+    
+    
+    if (window.location.hostname == "localhost") 
+        return;
+
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    var disqus_shortname = 'ralch';
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+})();
+</script>
+<noscript>Please enable JavaScript to view the comments powered by <a href="http://disqus.com/?ref_noscript">Disqus.</a></noscript>
+
+
+  </div>
+  </div>
+  <script>document.write('<script src="http://'
+        + (location.host || 'localhost').split(':')[0]
+		+ ':1313/livereload.js?mindelay=10"></'
+        + 'script>')</script></body>
+</html>
