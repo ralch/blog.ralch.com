@@ -32,7 +32,7 @@ func main() {
 Once all flags are declared, call `flag.Parse()` to execute 
 the command-line parsing.
 
-Good way to organize an command line arguments are *subcommands*. They are 
+Good way to organize an command line arguments are `subcommands`. They are 
 an auxiliary commands of the main application. They group an application 
 functionalities in logical units. 
 
@@ -73,7 +73,7 @@ error handling behavior:
 Each application has `os.Args` array that includes all arguments passed to it. 
 The first item is always the application name. 
 
-We are use `os.Args` to determine, which subcommand should be executed:
+We are using `os.Args` to determine, which subcommand should be executed:
 
 ```
 if len(os.Args) == 1 {
