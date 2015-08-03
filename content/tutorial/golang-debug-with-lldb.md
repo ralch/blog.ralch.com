@@ -120,9 +120,7 @@ You can watch the illustrates steps in the following video:
 ### Conclusion 
 
 Even though `LLDB` is very powerful and commonly used debugger, it does not work properly in the context of `Go`.
-It crashes sometimes. It made for `C\C++` not for `Go`. 
-
-It cannot follow the execution flow properly due to
-the fact that the debugger is not aware about `defer` statement. In addition sometimes `go scheduler` changes
-the context of current executing `go routine`. This is changing the stack frame and the current executing thread
-of the debugged `go routine`.
+It crashes sometimes. It made for `C\C++` not for `Go`.  It cannot follow the execution 
+flow properly due to the fact that the debugger is not aware about `defer` statement. 
+In addition sometimes `go scheduler` changes the context of current executing `go routine`. 
+It changes the stack frame by moving `go routine` from one thread to another.
