@@ -60,7 +60,7 @@ If you need more detailed guidelines, you should follow [the official documentat
 
 ### Integration
 
-Right now the debugger does not integration with any IDE. Nevertheless, the contributors
+Right now the debugger does not have integration with any IDE. Nevertheless, the contributors
 are working hard to release an API interface that will allow that. For now `Delve` can 
 be started from a command line.
 
