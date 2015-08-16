@@ -26,7 +26,7 @@ starts with
 package api 
 ```
 
-The following rules are applied to build constraints:
+Declaration of build constraints follows the following rules:
 
 1. Each tag is alphanumeric word
 2. Tag preceded by `!` defines its negation.
@@ -130,11 +130,11 @@ container_windows_test.go // windows specific container tests
 container_linux_test.go // linux specific container tests
 ```
 
-## Using C/C++ preprocessor in Go
+## Experimenting with C/C++ preprocessor and Go
 
 Go does not have a preprocessor to control the inclusion of platform specific code. 
 Even though C preprocessor is intended to be used only with C, C++, and Objective-C source code,
-we will use it as a general text processor of Go source code.
+we will use it as a general text processor of Go source code. 
 
 Lets have the following code snippet:
 
@@ -158,7 +158,8 @@ func main() {
 If we execute the C preprocessor on `app.pgo` file:
 
 ```
-cpp -P app.pgo app.go
+// -P disable linemaker output.
+$ cpp -P app.pgo app.go
 ```
 
 We will produce a new file `app.go`:
@@ -173,6 +174,7 @@ func main() {
   fmt.Println("Application is executed.")
 }
 ```
+
 
 If we define `PRINT_DATE` variable for the preprocessor by using `-D` flag:
 
@@ -203,7 +205,7 @@ $ cpp -DPRINT_DATE -P app.pgo app.go | go build app.go
 
 ## Verdict
 
-We should aim to develop and build our Go application by following all Go idioms.
+We should aim to develop and build our Go applications by following Go idioms.
 If the source file targets a specific platform, we should choose file suffix 
 approach. Otherwise, if the source file is applicable for multiple platforms and
 we want to exclude a specific feature or platform, we should use build constraints instead.
