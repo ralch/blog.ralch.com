@@ -133,8 +133,8 @@ container_linux_test.go // linux specific container tests
 ## Using C/C++ preprocessor in Go
 
 Go does not have a preprocessor to control the inclusion of platform specific code. 
-The C preprocessor is intended to be used only with C, C++, and Objective-C source code. 
-We will use `cpp` macro processor as a general text processor of Go source code.
+Even though C preprocessor is intended to be used only with C, C++, and Objective-C source code,
+we will use it as a general text processor of Go source code.
 
 Lets have the following code snippet:
 
@@ -198,7 +198,7 @@ func main() {
 We can combine the preprocessor operation with go build step:
 
 ```
-cpp -DPRINT_DATE -P app.pgo app.go | go build app.go
+$ cpp -DPRINT_DATE -P app.pgo app.go | go build app.go
 ```
 
 ## Verdict
