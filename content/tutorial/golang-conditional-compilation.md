@@ -139,7 +139,7 @@ We will use `cpp` macro processor as a general text processor of Go source code.
 Lets have the following code snippet:
 
 ```
-// @file: app.go.p
+// filename: app.pgo
 package main
 
 import "fmt"
@@ -155,16 +155,16 @@ func main() {
 }
 ```
 
-If we execute the C preprocessor on `app.go.p` file:
+If we execute the C preprocessor on `app.pgo` file:
 
 ```
-cpp -P app.go.p app.go
+cpp -P app.pgo app.go
 ```
 
 We will produce a new file `app.go`:
 
 ```
-// @file: app.go
+// filename: app.go
 package main
 
 import "fmt"
@@ -177,13 +177,13 @@ func main() {
 If we define `PRINT_DATE` variable for the preprocessor by using `-D` flag:
 
 ```
-cpp -DPRINT_DATE -P app.go.p app.go
+cpp -DPRINT_DATE -P app.pgo app.go
 ```
 
 We will produce a new file `app.go` that has includes additional print statment:
 
 ```
-// @file: app.go
+// filename: app.go
 package main
 
 import "fmt"
@@ -198,7 +198,7 @@ func main() {
 We can combine the preprocessor operation with go build step:
 
 ```
-cpp -DPRINT_DATE -P app.go.p app.go | go build app.go
+cpp -DPRINT_DATE -P app.pgo app.go | go build app.go
 ```
 
 ## Verdict
