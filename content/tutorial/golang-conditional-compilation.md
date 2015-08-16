@@ -180,7 +180,7 @@ If we define `PRINT_DATE` variable for the preprocessor by using `-D` flag:
 cpp -DPRINT_DATE -P app.pgo app.go
 ```
 
-We will produce a new file `app.go` that has includes additional print statment:
+We will produce a new file that has includes additional print statment:
 
 ```
 // filename: app.go
