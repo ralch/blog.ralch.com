@@ -60,8 +60,10 @@ The evaluated constraint is a logical `AND` of the individual build tags:
 (linux OR freebsd) AND 386
 ```
 
-*Note that the build tag line should be associated with a trailing new line. That makes
-it non-associated with any declaration. You can verify this by using `go vet` tool.*
+*Note that the build tags do not have strict validation. Be aware that they 
+should be formatted as the provided samples. In addition the last build tags should
+be associated with a trailing new line. That makes it non-associated with any declaration. 
+Fortunately you can verify them by using `go vet` tool.*
 
 ## File suffixes
 
