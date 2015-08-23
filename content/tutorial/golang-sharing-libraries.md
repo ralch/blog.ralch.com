@@ -3,7 +3,7 @@ Description = ""
 comments = "yes"
 date = "2015-08-23T11:04:50+01:00"
 share = "yes"
-title = "Sharing Golang packages in C and Go"
+title = "Sharing Golang packages to C and Go"
 tags = ["go", "cgo", "c", "compilation"]
 categories = ["programming languages", "tutorial"]
 
