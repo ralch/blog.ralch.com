@@ -1,6 +1,6 @@
 +++
 comments = "yes"
-date = "2015-08-27T12:41:34+01:00"
+date = "2015-08-30T12:41:34+01:00"
 share = "yes"
 title = "Golang refactoring tools"
 Description = ""
