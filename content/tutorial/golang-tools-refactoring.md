@@ -26,11 +26,11 @@ your program in a standard coding style. In addition, it provides some additiona
 refactoring capabilities, which will explore in detail.
 
 ```
-// The -w flag overwrites the files instead of prints out the result on the scree
+// The -w flag overwrites the files instead of prints out the result on the screen
 $ gofmt -w message.go
 ```
 
-formats the following code snippet:
+It formats the following code snippet:
 
 ```
 // filename: message.go
@@ -41,7 +41,7 @@ if len(name) == 0 { return "Welcome" } else { return fmt.Sprintf("Hi, %s", name)
 }
 ```
 
-As:
+Output:
 
 ```
 // filename: message.go
@@ -78,7 +78,7 @@ In the next two paragraphs we will explore how to simplify and apply rewrites ru
 to a source code.
 
 Simplifing source code is applied when `-s` flag is presented. It improves the
-code readibility by replacing blocks of code with their sipliefied syntax version.
+code readability by replacing blocks of code with their sipliefied syntax version.
 
 Executing `go fmt -s -w transport.go`:
 
@@ -152,7 +152,7 @@ will be simplified to `[]T{{}, {}}`.
 - A range of the form `for x, _ = range v {...}` will be simplified to `for x = range v {...}`.
 - A range of the form `for _ = range v {...}` will be simplified to `for range v {...}`.
 
-To define speficied rewrite rule the `-r` flag must be used. It should be in
+To define specified rewrite rule the `-r` flag must be used. It should be in
 the following format:
 
 ```
@@ -204,13 +204,15 @@ func ListServers(startIndex int) {
 
 ## Gorename
 
-The `gorename` command performs precise type-safe renaming of identifiers in Go source code.
-
-The tool is installed with the following command:
+The `gorename` is another tool for code refactoring. It command performs precise 
+type-safe renaming of identifiers in Go source code. It is installed with 
+the following command:
 
 ```
 $ go get golang.org/x/tools/refactor/rename
 ```
+
+Lets use the tool with the following code snippet:
 
 ```
 // package: university
@@ -241,8 +243,8 @@ func main() {
 }
 ```
 
-To rename `Fullname` function of `Student` struct the following command should be
-executed:
+Renaming `Fullname` function of `Student` struct to `String` can be done by
+executing `gorename`:
 
 ```
 $ gorename -from '"university".Student.Fullname' -to String
@@ -320,7 +322,7 @@ func (s *Student) Fullname() string {
 
 ## Conclusion
 
-As part of our job is not only to develop new features as well as refactor 
+As part of our job is not only to develop new features, but also improve
 existing code base. `Gofmt`, `gorename` and `eg` are tools that can help to 
 boost the productivity and keep source code in well formatted shape 
 that fits the `Go` coding style standard.
