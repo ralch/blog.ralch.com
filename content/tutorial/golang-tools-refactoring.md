@@ -4,8 +4,8 @@ date = "2015-08-30T12:41:34+01:00"
 share = "yes"
 title = "Golang refactoring tools"
 Description = ""
-tags = ["go", "tools"]
-categories = ["programming languages", "tutorial"]
+tags = ["go"]
+categories = ["programming languages", "tutorial", "tools"]
 
 +++
 
