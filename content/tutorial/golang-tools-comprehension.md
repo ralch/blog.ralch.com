@@ -14,10 +14,10 @@ Indeed, most of the time it takes to develop a program is spent reading it and
 making logical conclusion about what it does.  
 
 `Go` programmers are no exception. Thanks to [gofmt](http://blog.ralch.com/tutorial/golang-tools-refactoring/) 
-they should not worry about source code formatting. Indeed, the machines are 
+they should not worry about source code formatting. The machines are 
 better suited to analyse source code and accomplish comprehension tasks than us. 
 
-In this article we will explore a couple of `Go` comprehension tools that are 
+In this article we will explore several of `Go` comprehension tools that are 
 responsible for locating definitions, ascertaining types of expressions, deducing implementation
 relation, computing method sets, finding callers/callees, jumping through channels, 
 understanding aliasing.
@@ -128,7 +128,7 @@ The command above will produce the following graphics:
 The `godepgraph` tools can be controlled with these flags:
 
 - `-d` show dependencies of packages in the Go standard library
-- `horizontal` lay out the dependency graph horizontally instead of vertically
+- `-horizontal` lay out the dependency graph horizontally instead of vertically
 - `-i` string a comma-separated list of packages to ignore
 - `-p` string a comma-separated list of prefixes to ignore
 - `-s` ignore packages in the Go standard library
