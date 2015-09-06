@@ -1,4 +1,4 @@
-baseurl = "http://blog.ralch.com/"
+baseurl = "http://blog.ralch.com"
 languageCode = "en-us"
 title = "Software adventures and thoughts"
 theme = "hyde"
