@@ -42,12 +42,13 @@ These are the subcommands that determines the query to perform:
 - `definition` show declaration of selected identifier
 - `describe` describe selected syntax: definition, methods, etc
 - `freevars` show free variables of selection
-- `implements` show 'implements' relation for selected type or method
+- `implements` show relation for selected type or method
 - `peers` show send/receive corresponding to selected channel op
 - `referrers` show all refs to entity denoted by selected identifier
 - `what` show basic information about the selected syntax node
 
 The `-format` flag set the output format to:
+
 - `plain` an editor-friendly format in which every line of output
 - `json` structured data in JSON syntax.
 - `xml` structured data in XML syntax.
