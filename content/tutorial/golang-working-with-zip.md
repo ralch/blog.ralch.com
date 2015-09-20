@@ -8,7 +8,7 @@ tags = ["go"]
 categories = ["programming languages", "tutorial"]
 +++
 
-Golang has several packages to work with different type of archives.
+Golang has several packages that work with different type of archives.
 In this post I will show you how to use `archive/zip` package to compress and 
 uncompress `zip` archives.
 
@@ -16,15 +16,11 @@ uncompress `zip` archives.
 file formats. It supports `lossless data compression` of one ore more files and 
 directories.
 
-### Unzipping
+### Extracting
 
-You can read the content of `zip` package via zip
-reader. It exposes all files and directories of particular zip package via its
-`File` property. Unzip the package, you should recreate all
-directories and files and use some feature of `io` package. You should call
-`io.Copy` to copy archived content.
-
-The following sample code illustrates this approach:
+You can read the content of `zip` package by using zip reader. Its `File` property 
+exposes all files and directories of particular zip package. If you want to extract 
+the package, you should recreate all directories and files:
 
 ```
 func unzip(archive, target string) error {
@@ -65,13 +61,13 @@ func unzip(archive, target string) error {
 }
 ```
 
-### Zipping
+### Compressing
 
-This operation is more complicated thatn `unzipping` due to the fact that you
-can zip a single file or an hierarchy of directories. To handle both cases, you
-should change the file header name depending on its type. If the copied content
-is directory, you should change the header name to `<directory_name>/`. For a regular
-files, you change it to the file's relative path `<directory_name>/<file_name>`.
+This operation is more complicated than `extracing`. You can compress a single file 
+or an hierarchy of directories. Handling both cases requires to change the file 
+header name depending on its type. If the copied content is directory, the header name
+should be changed to `<directory_name>/`. For a regular files, its header name is relative 
+path `<directory_name>/<file_name>`.
 
 The following function illustrates the algorithm:
 
@@ -140,7 +136,7 @@ func zipit(source, target string) error {
 
 ### Usage
 
-You can use both functions in the following way:
+Lets see both functions in action:
 
 ```
 zipit("/tmp/documents", "/tmp/backup.zip")
