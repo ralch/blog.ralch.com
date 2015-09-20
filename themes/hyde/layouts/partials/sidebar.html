@@ -10,7 +10,7 @@
     <ul class="sidebar-nav">
       <li><a href="/">Home</a></li>
       {{ range .Site.Menus.main }}
-        <li><a href="{{.Url}}">{{ .Name }} </a></li>
+        <li><a href="{{.URL}}">{{ .Name }} </a></li>
       {{end}}
     </ul>
       {{ with .Site.Params.linkedin }}<a href="{{.}}"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;{{end}}
