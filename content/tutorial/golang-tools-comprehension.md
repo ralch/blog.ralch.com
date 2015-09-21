@@ -59,7 +59,7 @@ development editor: [Vim](https://github.com/fatih/vim-go), [Emacs](https://www.
 
 Let see `oracle` in action:
 
-<iframe name='quickcast' src='http://quick.as/embed/o6gncq10x' scrolling='no' frameborder='0' width='100%' allowfullscreen></iframe><script src='http://quick.as/embed/script/1.76'></script>
+{{< youtube TQhd_9RjdLs >}}
 
 ## Pythia
 
