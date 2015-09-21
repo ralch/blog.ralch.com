@@ -132,7 +132,7 @@ In debug session, you can use the following commands:
 
 In the demo video, I am using the [same application](https://gist.github.com/svett/4b95e8d1631fd0a93dfe) that I debugged in [the LLDB article](http://bit.ly/1DjLPNp).
 
-[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/TNAs5emCR7M/0.jpg)](http://www.youtube.com/watch?v=TNAs5emCR7M)
+{{< youtube zgLjVD5ZSOc >}}
 
 *Note that parts of this article are taken from the official `Delve` 
 [commands](https://github.com/derekparker/delve/wiki/Commands) documentation and 

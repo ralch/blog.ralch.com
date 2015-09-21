@@ -115,7 +115,7 @@ shortcut.
 
 You can watch the illustrates steps in the following video:
 
-[![IMAGE ALT TEXT HERE](http://img.youtube.com/vi/7Sw29wGbsJY/0.jpg)](http://www.youtube.com/watch?v=7Sw29wGbsJY)
+{{< youtube Efk2OImodO0 >}}
 
 ### Conclusion 
 
