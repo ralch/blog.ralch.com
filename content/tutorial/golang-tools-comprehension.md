@@ -59,7 +59,7 @@ development editor: [Vim](https://github.com/fatih/vim-go), [Emacs](https://www.
 
 Let see `oracle` in action:
 
-{{< youtube TQhd_9RjdLs >}}
+{{< youtube F0ZLIxKWSYo >}}
 
 ## Pythia
 
