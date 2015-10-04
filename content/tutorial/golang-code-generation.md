@@ -1,7 +1,7 @@
 +++
 Description = ""
 comments = "yes"
-date = "2015-10-4T08:49:59+01:00"
+date = "2015-10-04T08:49:59+01:00"
 share = "yes"
 title = "Golang code generation"
 categories = ["programming languages", "tutorial"]
