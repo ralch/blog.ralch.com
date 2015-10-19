@@ -332,8 +332,8 @@ stack.Push(&Student{FirstName: "John", LastName: "Smith"})
 student, err := stack.Pop()
 ```
 
-A complete implementation of the custom type writer can be downloaded from fetched
-from [this repository](https://github.com/svett/gen).
+A complete implementation of the custom type writer can be pulled from
+[this repository](https://github.com/svett/gen).
 
 ### Genny
 
