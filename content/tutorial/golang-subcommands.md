@@ -51,7 +51,7 @@ siri send -recipient=john@example.com -message="Call me?"
 siri ask -question="What is the whether in London?"
 ```
 
-We have four subcommands: `send` and `ask`. For each of them,
+We have these subcommands: `send` and `ask`. For each of them,
 we should create a `flag.FlagSet` object that represents a set of defined flags:
 
 ```
