@@ -4,7 +4,7 @@
   <div class="content container">
     <div class="posts">
      {{ $Site := .Site }}
-     {{ range .Site.Pages }}
+     {{ range .Paginator.Pages }}
       <div class="post">
         <h1 class="post-title">
           <a href="{{ .Permalink }}">
@@ -25,6 +25,18 @@
       </div>
       {{ end }}
     </div>
+  </div>
+  <div class="pagination">
+    {{ if .Paginator.HasPrev }}
+    <a class="pagination-item" href="{{ .Paginator.Prev.Url }}">Next</a>
+    {{ else }}
+    <span class="pagination-item">Next</span>
+    {{ end }}
+    {{ if .Paginator.HasNext }}
+    <a class="pagination-item" href="{{ .Paginator.Next.Url }}">Previous</a>
+    {{ else }}
+    <span class="pagination-item">Previous</span>
+    {{ end }}
   </div>
   {{ partial "footer.html" . }}
 </body>
