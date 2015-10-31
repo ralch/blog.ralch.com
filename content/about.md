@@ -6,5 +6,15 @@ title = "About"
 tags = ["myself", "info"]
 +++
 
-I am a software craftsman with experiance in development mobile applications, desktop applications and distributed systems.
-I do love UI/UX development as well as backend/system level development. I enjoy coding in C#, Go, Ruby, Objective-C both at work and in my spare time. You can read more about me [here](http://www.ralch.com).
+Svett is an accomplished full-stack software engineer, open source contributor
+and project leader. He has hands on experience in building everything from the
+ground to the clouds. For the last 9+ years, he is heavy weight champion in
+design, development and delivering a low level critical systems, scalable
+platforms as service, reliable infrastructure, front-end desktop, web and
+mobile applications.
+
+I enjoy coding in Go, Ruby, Swift, Objective-C, C# both at work and in my spare
+time.
+
+You can read more about me [here](http://www.ralch.com).
+
