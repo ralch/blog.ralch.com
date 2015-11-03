@@ -36,11 +36,7 @@ We will build a command line tool that generates an implementation of
 [io.WriterTo](https://golang.org/pkg/io/#WriterTo) interface for concrete type
 and format. 
 
-Lets name the tool `wordsmith`. It has the following arguments:
-- `type` defines the type that will implement `io.WriterTo` interface
-- `format` defines the encoding format used by interface's `WriteTo` function
-
-Note that in the sample we will use only `json`.
+Lets name the tool `wordsmith`. Note that in the sample we will use only `json`.
 
 `io.WriterTo` provides a function that writes data to a writer. The return value
 n is the number of bytes written. Any error encountered during the write is
