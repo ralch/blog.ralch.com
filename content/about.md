@@ -13,8 +13,12 @@ design, development and delivering a low level critical systems, scalable
 platforms as service, reliable infrastructure, front-end desktop, web and
 mobile applications.
 
-I enjoy coding in Go, Ruby, Swift, Objective-C, C# both at work and in my spare
+He enjoys coding in Go, Ruby, Swift, Objective-C, C# both at work and in his spare
 time.
 
-You can read more about me [here](http://www.ralch.com).
+You can clone his curriculum vitae or visit his [#website](http://www.ralch.com):
+
+```
+$ git clone https://github.com/svett/whoami
+```
 
