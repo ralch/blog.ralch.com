@@ -28,12 +28,12 @@
   </div>
   <div class="pagination">
     {{ if .Paginator.HasPrev }}
-    <a class="pagination-item" href="{{ .Paginator.Prev.Url }}">Next</a>
+    <a class="pagination-item" href="{{ .Paginator.Prev.URL }}">Next</a>
     {{ else }}
     <span class="pagination-item">Next</span>
     {{ end }}
     {{ if .Paginator.HasNext }}
-    <a class="pagination-item" href="{{ .Paginator.Next.Url }}">Previous</a>
+    <a class="pagination-item" href="{{ .Paginator.Next.URL }}">Previous</a>
     {{ else }}
     <span class="pagination-item">Previous</span>
     {{ end }}
