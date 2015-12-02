@@ -107,7 +107,7 @@ func zipit(source, target string) error {
 		}
 
 		if info.IsDir() {
-			header.Name += string(os.PathSeparator)
+			header.Name += "/"
 		} else {
 			header.Method = zip.Deflate
 		}
