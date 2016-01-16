@@ -58,6 +58,10 @@ execute the following command:
 ```
 If you need more detailed guidelines, you should follow [the official documentation](https://github.com/derekparker/delve/wiki/Building).
 
+You can watch the following video that demonstrates the installation process:
+
+{{< youtube 4ndjybtBg74 >}}
+
 ### Integration
 
 Right now the debugger does not have integration with any IDE. Nevertheless, the contributors
