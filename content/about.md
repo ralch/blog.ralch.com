@@ -8,7 +8,7 @@ tags = ["myself", "info"]
 
 Svett is an accomplished full-stack software engineer, open source contributor
 and project leader. He has hands on experience in building everything from the
-ground to the clouds. For the last 9+ years, he is heavy weight champion in
+ground to the clouds. For the last 10+ years, he is heavy weight champion in
 design, development and delivering a low level critical systems, scalable
 platforms as service, reliable infrastructure, front-end desktop, web and
 mobile applications.
@@ -18,7 +18,7 @@ time.
 
 You can clone his curriculum vitae or visit his [#website](http://www.ralch.com):
 
-```
+```bash
 $ git clone https://github.com/svett/whoami
 ```
 
