@@ -82,16 +82,16 @@ func Repository() *repository {
 }
 ```
 
-The function `Repository` instance the singleton object once if it has not been
-instance. It checks whether the `repository` global variable is `nil`.
+The function `Repository` instanciate the singleton object once if it has not
+been instance. It checks whether the `repository` global variable is `nil`.
 
 #### Thread safety
 
 A robust singleton implementation should work in any circumstances. This is why
 we need to ensure it works when multiple go routines use it.
 
-The standard implementation requires to synchronize the action that instance the
-singleton object for first time.
+The standard implementation requires to synchronize the action that instanciate
+the singleton object once.
 
 In order to achieve that we should use the [sync](https://golang.org/pkg/sync/)
 package. It provides a [sync.Once](https://golang.org/pkg/sync/#Once) struct
