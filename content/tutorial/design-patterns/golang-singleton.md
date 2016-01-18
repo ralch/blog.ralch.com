@@ -54,6 +54,10 @@ type repository struct {
 	items map[string]string
 }
 
+func (r *repository) Set(key, data string) {
+	r.items[key] = data
+}
+
 func (r *repository) Get(key string) (string, error) {
 	item, ok := r.items[key]
 	if !ok {
