@@ -170,6 +170,8 @@ doc := &svg.Document{
 doc.Draw(os.Stdout)
 ```
 
+You can get the full source code from [github](https://github.com/svett/golang-design-patterns/tree/master/creational-patterns/factory-method).
+
 Important aspects when we implement the Factory Method design pattern are:
 
 - Designing the arguments of the factory method
