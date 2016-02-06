@@ -12,26 +12,26 @@ Recently I started a series of articles about [Gang of Four Design
 Patterns](https://en.wikipedia.org/wiki/Design_Patterns) and their adoption in
 Golang. They made a lot of noise in the community. I read a lot
 of contradictionary opionions whether should be used or not. I am publishing those
-articles as show case how the commond desing patterns can be adopted and implemented
+articles as show case how the common design patterns can be adopted and implemented
 in Golang. I don't encourage or promote their usage. Every developer has own style
 of programming, architecture desing and problem solving solutions.
 
 Well, I don't have a strong opionion about that. However, I have my own angle
 of view about this topic. I have never been a strong believer that they should
-be used intensively in any project. For me they have alwayse been a language for
+be used intensively in any project. For me they have always been a language for
 communication among development teams. Yes, they solve particular problems. But
 I don't think we should use them, because they exist and ar good practice.
 
 Particular pattern should be used only in concrete case, when we gain benefit of
 that. I don't encourage applying it by the book.
 
-The `Desing Patterns` have never been something encourage by the Golang community.
+The `Design Patterns` have never been something encourage by the Golang community.
 They are not idiomatic for the language. Everybody knows that the language itself
 is very opioninated and idiomatic. There are no so many ways to achieve particular
 task or solve particular problem.
 
 But let's explore. Are they used in the existing Golang packages? I will give
-you a few examples for their usage in Golang libraries:
+you a few examples how they are used in Golang libraries:
 
 #### Singleton Design Pattern
 
