@@ -178,6 +178,9 @@ fmt.Print(engManagerNode.Clone())
 The sample above creates a tree from the subtree pointed by `engManagerNode`
 variable.
 
+You can get the full source code from
+[github](https://github.com/svett/golang-design-patterns/tree/master/creational-patterns/prototype).
+
 #### Verdict
 
 One of the disadvantages of this pattern is that the process of copying an object
