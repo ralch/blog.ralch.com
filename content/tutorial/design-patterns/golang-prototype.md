@@ -80,16 +80,16 @@ The goal is to be able to generate different configuration files without loosing
 the flexibility of customizing them without mutation of the initial default
 configuration.
 
-As you can see the functions `WithWorkDir`, `WithUserID` and `WithGroupID` are
-declared for the struct `Config` (not for `*Config`). At the time, when they are
-called the object is copied by the `Golang` runtime. This allows us to modify it
+As you can see the functions `WithWorkDir`, `WithUser` are declared for the
+struct `Config` (not for `*Config`). At the time, when they are called the
+object is copied by the `Golang` runtime. This allows us to modify it
 without affecting the original object.
 
 Lets see it's usage in action:
 
 ```Golang
-config := configurer.NewConfig(10, 10, "/home/guest")
-rootConfig := config.WithUserID(0).WithGroupID(0).WithWorkDir("/root")
+config := configurer.NewConfig("guest", "/home/guest")
+rootConfig := config.WithUser("root").WithWorkDir("/root")
 
 fmt.Println("Guest Config", config)
 fmt.Println("Root Config", rootConfig)
