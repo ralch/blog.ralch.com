@@ -28,7 +28,7 @@ as and when needed thus reducing database calls.
 - Specify the kind of objects to create using a prototypical instance, and
 	create new objects by copying this prototype.
 
-#### Desing Pattern Diagram
+#### Design Pattern Diagram
 
 {{< figure src="/media/golang/design-patterns/prototype.gif" alt="Prototype Class Diagram" >}}
 

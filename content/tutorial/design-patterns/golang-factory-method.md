@@ -23,7 +23,7 @@ creates or how to create it.
 - Promotes the loose-coupling by eliminating the need to bind
 	application-specific structs into the code
 
-#### Desing Pattern Diagram
+#### Design Pattern Diagram
 
 The structs and objects participating in this pattern are: product,
 concreate product, creator and concrete creator. The Creator contains one

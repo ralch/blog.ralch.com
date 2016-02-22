@@ -22,7 +22,7 @@ suited for constructing different representations of the same class.
 - A common software creational design pattern that's used to encapsulate the
 	construction logic for an object.
 
-#### Desing Pattern Diagram
+#### Design Pattern Diagram
 
 The Builder Pattern is comprised of four components: a builder interface, a
 concrete builder, a director and a product.

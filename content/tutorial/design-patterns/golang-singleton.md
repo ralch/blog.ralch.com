@@ -24,7 +24,7 @@ not more than one instance. The same instance can be used from everywhere.
 - Ensure that only one instance of a class is created for application lifecycle.
 - Provide a single point of access to the object.
 
-#### Desing Pattern Diagram
+#### Design Pattern Diagram
 
 {{< figure src="/media/golang/design-patterns/singleton.gif" alt="Singleton Class Diagram" >}}
 
