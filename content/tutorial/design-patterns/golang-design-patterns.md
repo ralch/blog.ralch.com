@@ -50,7 +50,7 @@ still Golang idiomatic.
 
 #### Factory Design Pattern
 
-Did you used [PostrgreSQL]() library like that?
+Did you used [PostrgreSQL](https://github.com/lib/pq) library like that?
 
 ```Golang
 import (
@@ -76,7 +76,7 @@ registered driver via `Factory` Design Pattern. The driver is registered by
 
 The `Factory` function is [db.Open](https://golang.org/src/database/sql/sql.go?s=805:853#L468).
 
-#### Interator Design Pattern
+#### Iterator Design Pattern
 
 Golang has a [token package](https://golang.org/pkg/go/token/) that defines
 constants representing the lexical tokens of the Go programming language and
@@ -113,7 +113,7 @@ were added until it returns false.
 The Golang has an [image](https://golang.org/pkg/image/) package that can
 generate and manipulate different formats of images. The package exposes
 interfaces [image.Image](https://golang.org/pkg/image/#Image) and
-subpackage [draw]() that has
+subpackage [draw](https://golang.org/pkg/image/draw/) that has
 [draw.Drawer](https://golang.org/pkg/image/draw/#Drawer) interface.
 
 These interfaces allow composition of different shapes and draw strategies:
