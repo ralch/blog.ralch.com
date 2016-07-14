@@ -44,13 +44,13 @@ func unzip(archive, target string) error {
 		if err != nil {
 			return err
 		}
-		fileReader.Close()
+		defer fileReader.Close()
 
 		targetFile, err := os.OpenFile(path, os.O_WRONLY|os.O_CREATE|os.O_TRUNC, file.Mode())
 		if err != nil {
 			return err
 		}
-		targetFile.Close()
+		defer targetFile.Close()
 
 		if _, err := io.Copy(targetFile, fileReader); err != nil {
 			return err
