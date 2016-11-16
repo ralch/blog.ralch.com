@@ -231,6 +231,6 @@ You can download the `tar` code snippets from [here](https://gist.github.com/sve
 You can use call the functions in the following way:
 
 ```
-tarit("/tmp/utils, "/tmp")
+tarit("/tmp/utils", "/tmp")
 untar("/tmp/utils.tar", "/tmp")
 ```
