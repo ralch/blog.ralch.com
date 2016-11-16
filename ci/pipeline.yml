@@ -8,22 +8,22 @@ jobs:
   - name: publish
     plan:
       - get: concourse-tasks
-      - get: ralch-blog
+      - get: blog
         trigger: true
       - task: generate
         file: concourse-tasks/blog/generate.yml
         input_mapping: {blog-source: ralch-blog}
-      - put: ralch-web
+      - put: ralch.github.io
         params: {repository: blog-website, rebase: true}
 
 resources:
-  - name: ralch-blog
+  - name: blog
     type: git
     source:
       uri: git@github.com:ralch/blog.git
       branch: master
       private_key: {{git-private-key}}
-  - name: ralch-web
+  - name: ralch.github.io
     type: git
     source:
       uri: git@github.com:ralch/ralch.github.io.git
