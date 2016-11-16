@@ -12,7 +12,7 @@ jobs:
         trigger: true
       - task: generate
         file: concourse-tasks/blog/generate.yml
-        input_mapping: {blog-source: ralch-blog}
+        input_mapping: {blog-source: blog}
       - put: ralch.github.io
         params: {repository: blog-website, rebase: true}
 
