@@ -1,0 +1,36 @@
+---
+groups:
+  - name: ralch-blog
+    jobs:
+    - publish 
+
+jobs:
+  - name: publish
+    plan:
+      - get: concourse-tasks
+      - get: ralch-blog
+        trigger: true
+      - task: generate
+        file: concourse-tasks/blog/generate.yml
+        input_mapping: {blog-source: ralch-blog}
+      - put: ralch-web
+        params: {repository: blog-website, rebase: true}
+
+resources:
+  - name: ralch-blog
+    type: git
+    source:
+      uri: git@github.com:ralch/blog.git
+      branch: master
+      private_key: {{git-private-key}}
+  - name: ralch-web
+    type: git
+    source:
+      uri: git@github.com:ralch/ralch.github.io.git
+      branch: master
+      private_key: {{git-private-key}}
+  - name: concourse-tasks
+    type: git
+    source:
+      uri: https://github.com/phogolabs/concourse-tasks.git
+      branch: master
