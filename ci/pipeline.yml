@@ -2,33 +2,40 @@
 groups:
   - name: ralch-blog
     jobs:
-    - publish 
+    - publish
 
 jobs:
   - name: publish
     plan:
       - get: concourse-tasks
-      - get: blog
+      - get: blog.ralch.com
+      - get: blog-source
         trigger: true
       - task: generate
         file: concourse-tasks/blog/generate.yml
-        input_mapping: {blog-source: blog}
-      - put: ralch.github.io
-        params: {repository: blog-website, rebase: true}
+        params:
+          GIT_USERNAME: {{github-bot-name}}
+          GIT_EMAIL: {{github-bot-email}}
+        input_mapping:
+          blog-content: blog.ralch.com
+      - put: blog.ralch.com
+        params: {repository: blog-website}
 
 resources:
-  - name: blog
+  - name: blog-source
     type: git
     source:
-      uri: git@github.com:ralch/blog.git
+      uri: git@github.com:phogolabs/blog.git
       branch: master
       private_key: {{git-private-key}}
-  - name: ralch.github.io
+
+  - name: blog.ralch.com
     type: git
     source:
       uri: git@github.com:ralch/ralch.github.io.git
       branch: master
       private_key: {{git-private-key}}
+
   - name: concourse-tasks
     type: git
     source:
