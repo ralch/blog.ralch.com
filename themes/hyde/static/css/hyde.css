@@ -137,7 +137,8 @@ a.sidebar-nav-item:focus {
   width: 100%;
 }
 
-.banner-footer {
+.strong {
+  font-weight: bold;
 }
 
 /* Button
