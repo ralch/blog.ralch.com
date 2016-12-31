@@ -25,7 +25,7 @@ resources:
   - name: blog-source
     type: git
     source:
-      uri: git@github.com:phogolabs/blog.git
+      uri: git@github.com:ralch/blog.git
       branch: master
       private_key: {{git-private-key}}
 
