@@ -5,7 +5,7 @@ theme = "hyde"
 Paginate = 5
 
 [Author]
-	name = "Svett Ralchev"
+	name = "Svetlin Ralchev"
 
 [Permalinks]
  post = "/:year/:month/:filename/"
