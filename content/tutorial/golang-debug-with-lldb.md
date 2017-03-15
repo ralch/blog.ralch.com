@@ -23,7 +23,7 @@ You should compile the application by emitting the debug information and disable
 The `-N` flag enables debug information emitting and `-l` disables compiler inlining:
 
 ```
-go build -gcflag '-N -l' <file_or_package>
+go build -gcflags '-N -l' <file_or_package>
 ```
 
 The compiled binary supports [DWARF](https://en.wikipedia.org/wiki/DWARF) debugging
@@ -99,7 +99,7 @@ func FormatMessage(user User, message string) string {
 
 1. Compile the application:
 	```
-	$ go build -gcflag '-N -l' -o app main.go
+	$ go build -gcflags '-N -l' -o app main.go
 	```
 2. Open the source code:
 	```
