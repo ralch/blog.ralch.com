@@ -1,9 +1,10 @@
 +++
 date = "2017-04-03T14:10:06+01:00"
 share = "yes"
+comments = "yes"
 title = "Working with FTP protocol in Golang"
-tags: [golang, backend]
-categories: ['golang', 'ftp', 'package']
+tags = ["golang", "backend"]
+categories = ["golang", "ftp", "package"]
 +++
 
 One of the benefits of using [Golang](www.golang.org) is its
