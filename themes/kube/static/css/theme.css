@@ -1,0 +1,9 @@
+hr {
+    margin-top: 5px;
+    margin-bottom: 5px;
+    border-bottom: 1px dashed rgba(0, 0, 0, 0.15);
+}
+
+#top-nav-main a.active {
+  font-weight: 700;
+}

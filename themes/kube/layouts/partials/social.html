@@ -1,0 +1,9 @@
+<div class="form-subscribe-social">
+    {{ with .Site.Params.linkedin }}<a href="{{.}}"><i class="fa fa-linkedin"></i></a>&nbsp;&nbsp;{{end}}
+    {{ with .Site.Params.info }}<a href="{{.}}"><i class="fa fa-link"></i></a>&nbsp;&nbsp;{{end}}
+    {{ with .Site.Params.twitter }}<a href="{{.}}"><i class="fa fa-twitter"></i></a>&nbsp;&nbsp;{{end}}
+    {{ with .Site.Params.facebook }}<a href="{{.}}"><i class="fa fa-facebook-official"></i></a>&nbsp;&nbsp;{{end}}
+    {{ with .Site.Params.github }}<a href="{{.}}"><i class="fa fa-github"></i></a>&nbsp;&nbsp;{{end}}
+    {{ with .Site.Params.gplus }}<a href="{{.}}"><i class="fa fa-google-plus"></i></a>&nbsp;&nbsp;{{end}}
+    {{ with .Site.BaseURL }}<a href="{{.}}/index.xml"><i class="fa fa-rss"></i></a>&nbsp;&nbsp;{{end}}
+</div>
