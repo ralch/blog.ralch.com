@@ -23,7 +23,7 @@
       {{ with .Site.BaseURL }}<a href="{{.}}/index.xml"><i class="fa fa-rss"></i></a>&nbsp;&nbsp;{{end}}
 
     <p class="footnote">powered by <a href="http://hugo.spf13.com">Hugo</a> <br/>
-      &copy; {{.Now.Format "2006"}} {{.Site.Author.name}}. All rights reserved.</p>
+      &copy; {{ now.Format "2006" }} {{.Site.Author.name}}. All rights reserved.</p>
     
   </div>
 </div>
