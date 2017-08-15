@@ -4,9 +4,10 @@
 
 <div id="hero" class="wrap">
   <h1>{{ .Title }} by {{ .Site.Params.author }}</h1>
-  <p>Question everything. Learn something. Answer nothing. <br> 
-    <a href="{{.Params.twitter}}">Follow us on Twitter</a>
+  <p>
+    Question everything. Learn something. Answer nothing.
   </p> 
+  {{ partial "social" . }}
 </div>
 <ul id="posts">
   {{ range .Paginator.Pages.ByWeight }} 

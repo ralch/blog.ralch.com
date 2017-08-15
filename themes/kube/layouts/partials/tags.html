@@ -1,0 +1,11 @@
+{{ $Site := .Site }}
+{{ if .Params.tags }}
+<span class="icon">
+    <i class="fa fa-hashtag" aria-hidden="true"></i>
+</span>
+<span class="dark-red">Tagged:</span>
+{{ range .Params.tags }}
+<span><a class="post-tag post-tag-{{ . | urlize }}" href="{{ $Site.BaseURL }}/tags/{{ . | urlize }}">{{ . }}</a></span>
+{{ end }}
+{{ end }}
+

@@ -3,13 +3,15 @@
         <a href="{{ .Permalink }}" itemprop="headline">{{ .Title }}</a>
     </h2>
     <hr>
-    <time class="post-time">{{ partial "post/meta" . }}</time>
+    <time class="post-time">
+        {{ partial "post/meta" . }}
+        {{ partial "tags.html" . }}
+    </time>
     {{ if .Description }}
-    <p itemprop="about">{{ .Description }}</p>
+    <blockquote itemprop="about">{{ .Description }}</blockquote>
     {{ end }}
     <p itemprop="about">{{ .Summary | safeHTML }}</p>
     </div>
 </div>
-
 
 
