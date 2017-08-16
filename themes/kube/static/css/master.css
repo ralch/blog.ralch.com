@@ -14,6 +14,15 @@ h1, h2, h3, h4, h5, h6 {
   max-width: 400px;
   margin: auto;
   margin-bottom: 140px; }
+.form-contact {
+  padding: 40px; }
+.form-contact .center {
+  text-align: center; }
+.form-contact h4 {
+  margin-bottom: 0; }
+.form-contact p {
+  color: rgba(0, 0, 0, 0.5);
+  margin-bottom: 20px; }
 
 .form-subscribe {
   text-align: center;
