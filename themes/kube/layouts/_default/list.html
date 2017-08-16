@@ -5,12 +5,12 @@
 <div id="hero" class="wrap">
   <h1>{{ .Title }} by {{ .Site.Params.author }}</h1>
   <p>
-    Question everything. Learn something. Answer nothing.
+    Question everything. Learn something. Answer everything.
   </p> 
   {{ partial "social" . }}
 </div>
 <ul id="posts">
-  {{ range .Paginator.Pages.ByWeight }} 
+  {{ range .Paginator.Pages.ByDate.Reverse }} 
   {{ partial "summary" . }} 
   {{ end }}
   <section>{{ partial "pagination" .}}</section>

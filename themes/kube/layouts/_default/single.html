@@ -1,16 +1,28 @@
 {{ define "title"}} {{ .Title}} {{end}}
 {{ define "header"}} {{ partial "header" .}} {{end}}
-
-{{ define "main" }}
-
-<div id="hero" class="wrap">
-    <h1>{{.Title }}</h1>
-    <p>{{.Params.description}}</p>
+{{ define "main"}}
+<div class="push-center" itemscope itemtype="http://schema.org/BlogPosting">
+  {{ template "_internal/schema.html" . }}
+  <div id="hero">
+    <h1 itemprop="headline">{{.Title}}</h1>
+    {{ if .Description }}
+    <blockquote itemprop="description">{{ .Description }}</blockquote>
+    {{ end }}
+    <time class="post-time">{{ partial "post/meta" . }}</time>
+  </div>
+  <div id="post-box">
+    <div id="post" itemprop="articleBody">
+      {{.Content | safeHTML}}
+    </div>
+    {{ partial "subscribe" . }}
+    <div class="">
+      {{ partial "post/byauthor" . }}
+      {{ partial "post/related-content" . }}
+    </div>
+    <article>
+      {{ partial "comments" . }}
+    </article>
+  </div>
 </div>
-<ul id="post-box">
-    {{ .Content }}
-</ul>
-{{ end }} 
-{{ define "footer" }} 
-{{ partial "footer" . }} 
 {{ end }}
+{{ define "footer"}} {{ partial "footer.html" .}} {{ end }}
