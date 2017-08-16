@@ -1,14 +1,21 @@
-<nav class="pagination pager align-center">
-    <hr>
-    <ul>
-        {{if .Paginator.HasPrev }}
-        <li class="prev"><a href="{{ .Paginator.Prev.URL }}">Previous</a></li>
-        {{ end }}
-        <li>
-            <a href="" class="button round small outline">Page {{ .Paginator.PageNumber }} of {{ .Paginator.TotalPages }}</a>
-        </li>
-        {{ if .Paginator.HasNext }}</a>
-    <li class="next"><a href="{{ .Paginator.Next.URL }}">Next</a></li>
-    {{ end }}
-</ul>
+<nav class="pagination align-center upper pager flat">
+  <ul>
+    <li class="prev">
+      {{ if .Paginator.HasPrev }}
+      <a href="{{ .Paginator.Prev.URL }}">&lt; Prev</a>
+      {{ else }}
+      <span>&lt; Prev</span>
+      {{ end }}
+    </li>
+    <li class="w100">
+      <ul><li><a href="{{ .Paginator.First.URL }}">Back to Catalog</a></li></ul>
+    </li>
+    <li class="next">
+      {{ if .Paginator.HasNext }}
+      <a href="{{ .Paginator.Next.URL }}">Next &gt;</a>
+      {{ else }}
+      <span>Next &gt;</span>
+      {{ end }}
+    </li>
+  </ul>
 </nav>
