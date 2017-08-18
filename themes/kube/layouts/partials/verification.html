@@ -1,12 +1,12 @@
-{{ if .Site.Params.seo.webmaster_verifications.google }}
-  <meta name="google-site-verification" content="{{ .Site.Params.seo.webmaster_verifications.google }}" />
+{{ if .Site.Params.verification_google }}
+  <meta name="google-site-verification" content="{{ .Site.Params.verification_google }}" />
 {{ end }}
-{{ if .Site.Params.seo.webmaster_verifications.bing }}
-  <meta name="msvalidate.01" content="{{ .Site.Params.seo.webmaster_verifications.bing }}">
+{{ if .Site.Params.verification_bing }}
+  <meta name="msvalidate.01" content="{{ .Site.Params.verification_bing }}">
 {{ end }}
-{{ if .Site.Params.seo.webmaster_verifications.alexa }}
-  <meta name="alexaVerifyID" content="{{ .Site.Params.seo.webmaster_verifications.alexa }}">
+{{ if .Site.Params.verification_alexa }}
+  <meta name="alexaVerifyID" content="{{ .Site.Params.verification_alexa }}">
 {{ end }}
-{{ if .Site.Params.seo.webmaster_verifications.yandex }}
-  <meta name="yandex-verification" content="{{ .Site.Params.seo.webmaster_verifications.yandex }}">
+{{ if .Site.Params.verification_yandex }}
+  <meta name="yandex-verification" content="{{ .Site.Params.verification_yandex }}">
 {{ end }}
