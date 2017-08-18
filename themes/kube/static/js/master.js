@@ -16,3 +16,8 @@ $("#mc-embedded-subscribe-form").ajaxChimp({
     }
 });
 
+$(document.links)
+    .filter(function() {
+        return !this.hostname.endsWith('ralch.com')
+    })
+    .attr('target', '_blank');
