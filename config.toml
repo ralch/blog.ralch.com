@@ -15,6 +15,7 @@ Paginate = 5
  googletrackingid = "UA-62134307-2"
  domain = "blog.ralch.com"
  email = "svet@ralch.com"
+ contact_email = "contact@ralch.com"
 
 [[menu.main]]
     name = "Articles"
