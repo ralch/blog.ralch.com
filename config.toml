@@ -1,7 +1,7 @@
 baseurl = "http://blog.ralch.com"
 languageCode = "en-us"
 title = "Software adventures and thoughts"
-theme = "hyde"
+theme = "kube"
 Paginate = 5
 
 [Params]
@@ -20,4 +20,4 @@ Paginate = 5
     name = "Articles"
     identifier = "articles"
     weight = -100
-    url = "/article/"
+    url = "/articles/"
