@@ -20,5 +20,4 @@ Paginate = 5
 [[menu.main]]
     name = "Articles"
     identifier = "articles"
-    weight = -100
     url = "/articles/"

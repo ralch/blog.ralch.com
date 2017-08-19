@@ -2,7 +2,6 @@
 Description = ""
 date = "2015-04-11T17:53:10+01:00"
 menu = "main"
-weight = -100
 title = "About"
 layout = "about"
 tags = ["myself", "info"]
