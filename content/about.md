@@ -9,15 +9,16 @@ tags = ["myself", "info"]
 
 Svetlin is an accomplished full-stack software engineer, open source contributor
 and project leader. He has hands on experience in building everything from the
-ground to the clouds. For the last 10+ years, he is heavy weight champion in
+ground to the clouds. For the last 12+ years, he is heavy weight champion in
 design, development and delivering a low level critical systems, scalable
 platforms as service, reliable infrastructure, front-end desktop, web and
-mobile applications.
+mobile applications. His knowledge is built in the UK, USA, UAE, Denmark
+and Bulgaria.
 
 He enjoys coding in Go, Ruby, Swift, Objective-C, C# both at work and in his spare
 time.
 
-You can clone his curriculum vitae or visit his [#website](http://www.ralch.com):
+You can clone his curriculum vitae:
 
 ```bash
 $ git clone https://github.com/svett/whoami
