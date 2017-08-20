@@ -1,0 +1,25 @@
+---
+baseurl: "http://blog.ralch.com"
+languageCode: "en-us"
+title: "Software adventures and thoughts"
+theme: "kube"
+paginate: 5
+
+params:
+ RSSLink: "/index.xml"
+ author: "Svetlin Ralchev"
+ info: "http://www.ralch.com"
+ twitter: "https://twitter.com/ralch"
+ github: "https://github.com/svett"
+ linkedin: "http://uk.linkedin.com/in/ralchev"
+ disqus: "ralch"
+ googletrackingid: "UA-62134307-2"
+ domain: "blog.ralch.com"
+ email: "svet@ralch.com"
+ contact_email: "contact@ralch.com"
+
+menu:
+ main:
+  - name: "Articles"
+    identifier: "articles"
+    url: "/articles/"
