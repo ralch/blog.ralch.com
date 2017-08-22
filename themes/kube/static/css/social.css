@@ -1,5 +1,5 @@
 ul.social-icons {
-    width: 350px;
+    max-width: 350px;
     display:block;
     margin: 0 auto;
     font-size: 1.4em;
