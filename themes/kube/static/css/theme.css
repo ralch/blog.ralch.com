@@ -21,3 +21,21 @@ hr {
 .pager.flat li.next {
   text-align: right;
 }
+
+@media all and (max-width: 600px) {
+  .append {
+    flex-flow: column wrap;
+  }
+
+  .append input {
+    min-height: 40px;
+    margin-bottom: 5px;
+    border-radius: 3px;
+  }
+
+  .append button {
+    margin: 0;
+    margin-left: -1px;
+    border-radius: 3px !important;
+  }
+}
