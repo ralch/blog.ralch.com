@@ -7,3 +7,17 @@ hr {
 #top-nav-main a.active {
   font-weight: 700;
 }
+
+.pager.flat ul {
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.pager.flat a, .pager.flat span {
+  padding: 0;
+  display: inline;
+}
+
+.pager.flat li.next {
+  text-align: right;
+}
