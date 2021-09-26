@@ -201,19 +201,19 @@ func (s *Stack) Pop() (TValue, error) {
 	return value, nil
 }
 </code></pre><p>Lets declare it for <code>Student</code> struct:</p>
-<pre tabindex=0><code>//go:generate gotemplate &quot;github.com/svett/gotemplate/stack&quot; StudentStack(*Student)
+<pre tabindex=0><code>//go:generate gotemplate &quot;github.com/iamralch/gotemplate/stack&quot; StudentStack(*Student)
 type Student struct {
 	FirstName string
 	LastName  string
 	BirthDate time.Time
 }
 </code></pre><p>Then you can instatiate:</p>
-<pre tabindex=0><code>$ go get github.com/svett/gotemplate/stack
+<pre tabindex=0><code>$ go get github.com/iamralch/gotemplate/stack
 $ go generate
 </code></pre><p>When the template is instantiated, a new file <code>gotemplate_StudentStack.go</code> is create.
 It is a result of substition of actual template with <code>StudentStack(*Student)</code> declaration.
 All <code>TValue</code> occurances are replaced with <code>Student</code>. The <code>Stack</code> struct is changed to <code>StudentStack</code>.</p>
-<p>The template can be downloaded from <a href=https://github.com/svett/gotemplate/>here</a>.</p>
+<p>The template can be downloaded from <a href=https://github.com/iamralch/gotemplate/>here</a>.</p>
 <h3 id=conclusion>Conclusion</h3>
 <p><code>Gotemplate</code> is great tool for automatic a common development tasks. Because of its
 extensibility, we can focus on what should be generated instead of how to generate it.</p>
@@ -237,7 +237,7 @@ extensibility, we can focus on what should be generated instead of how to genera
 <h4>Follow me on</h4>
 <ul class=social-icons>
 <li><a href=https://twitter.com/ralch class=social-icon> <i class="fa fa-twitter"></i></a></li>
-<li><a href=https://github.com/svett class=social-icon> <i class="fa fa-github"></i></a></li>
+<li><a href=https://github.com/iamralch class=social-icon> <i class="fa fa-github"></i></a></li>
 <li><a href=http://uk.linkedin.com/in/ralchev class=social-icon> <i class="fa fa-linkedin"></i></a></li>
 <li><a href=http://blog.ralch.com/index.xml class=social-icon> <i class="fa fa-rss"></i></a></li>
 </ul>
@@ -290,7 +290,7 @@ using <span itemprop=wordCount>613</span> words.
 <a href=https://twitter.com/ralch>Twitter</a>
 </li>
 <li>
-<a href=https://github.com/svett>Github</a>
+<a href=https://github.com/iamralch>Github</a>
 </li>
 </ul>
 </nav>
