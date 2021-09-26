@@ -1,2 +1,3 @@
 User-agent: *
 Disallow:
+Sitemap: http://blog.ralch.com/sitemap.xml

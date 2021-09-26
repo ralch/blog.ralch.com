@@ -1,260 +1,148 @@
-<!doctype html><html lang=en-us>
-<head>
-<meta name=generator content="Hugo 0.88.1">
-<meta charset=utf-8>
+<!doctype html><html lang=en dir=auto>
+<head><meta charset=utf-8>
 <meta http-equiv=x-ua-compatible content="IE=edge">
-<meta name=viewport content="width=device-width,initial-scale=1">
-<title> design patterns </title>
+<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
+<meta name=robots content="index, follow">
+<title>design patterns | Svetlin Ralchev</title>
+<meta name=keywords content>
+<meta name=description content>
 <meta name=author content="Svetlin Ralchev">
-<meta property="og:title" content="design patterns">
+<link rel=canonical href=http://blog.ralch.com/categories/design-patterns/>
+<link crossorigin=anonymous href=/assets/css/stylesheet.min.5e2b4101351c21e906f398ae96901791830f58d430f96f2659dab7eaef7b3cb7.css integrity="sha256-XitBATUcIekG85iulpAXkYMPWNQw+W8mWdq36u97PLc=" rel="preload stylesheet" as=style>
+<link rel=icon href=http://blog.ralch.com/favicon.ico>
+<link rel=icon type=image/png sizes=16x16 href=http://blog.ralch.com/favicon-16x16.png>
+<link rel=icon type=image/png sizes=32x32 href=http://blog.ralch.com/favicon-32x32.png>
+<link rel=apple-touch-icon href=http://blog.ralch.com/apple-touch-icon.png>
+<link rel=mask-icon href=http://blog.ralch.com/safari-pinned-tab.svg>
+<meta name=theme-color content="#2e2e33">
+<meta name=msapplication-TileColor content="#2e2e33">
+<meta name=generator content="Hugo 0.88.1">
+<link rel=alternate type=application/rss+xml href=http://blog.ralch.com/categories/design-patterns/index.xml>
+<noscript>
+<style>#theme-toggle,.top-link{display:none}</style>
+<style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--hljs-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style>
+</noscript>
+<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-62134307-2','auto'),ga('send','pageview'))</script><meta property="og:title" content="design patterns">
 <meta property="og:description" content>
 <meta property="og:type" content="website">
 <meta property="og:url" content="http://blog.ralch.com/categories/design-patterns/">
-<link href=http://blog.ralch.com/categories/design-patterns/index.xml rel=alternate type=application/rss+xml title="Software adventures and thoughts">
-<link rel=canonical href=http://blog.ralch.com/categories/design-patterns/>
-<link rel=apple-touch-icon sizes=57x57 href=/img/favicons/apple-icon-57x57.png>
-<link rel=apple-touch-icon sizes=60x60 href=/img/favicons/apple-icon-60x60.png>
-<link rel=apple-touch-icon sizes=72x72 href=/img/favicons/apple-icon-72x72.png>
-<link rel=apple-touch-icon sizes=76x76 href=/img/favicons/apple-icon-76x76.png>
-<link rel=apple-touch-icon sizes=114x114 href=/img/favicons/apple-icon-114x114.png>
-<link rel=apple-touch-icon sizes=120x120 href=/img/favicons/apple-icon-120x120.png>
-<link rel=apple-touch-icon sizes=144x144 href=/img/favicons/apple-icon-144x144.png>
-<link rel=apple-touch-icon sizes=152x152 href=/img/favicons/apple-icon-152x152.png>
-<link rel=apple-touch-icon sizes=180x180 href=/img/favicons/apple-icon-180x180.png>
-<link rel=icon type=image/png sizes=192x192 href=/img/favicons/android-icon-192x192.png>
-<link rel=icon type=image/png sizes=32x32 href=/img/favicons/favicon-32x32.png>
-<link rel=icon type=image/png sizes=96x96 href=/img/favicons/favicon-96x96.png>
-<link rel=icon type=image/png sizes=16x16 href=/img/favicons/favicon-16x16.png>
-<link rel=manifest href=/img/favicons/manifest.json>
-<meta name=msapplication-TileColor content="#ffffff">
-<meta name=msapplication-TileImage content="/img/favicons/ms-icon-144x144.png">
-<meta name=theme-color content="#ffffff">
-<link href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css rel=stylesheet>
-<link href=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css rel=stylesheet>
-<link href=/css/font.css rel=stylesheet type=text/css>
-<link href=/css/kube.min.css rel=stylesheet type=text/css>
-<link href=/css/kube.legenda.css rel=stylesheet type=text/css>
-<link href=/css/master.css rel=stylesheet type=text/css>
-<link href=/css/theme.css rel=stylesheet type=text/css>
-<link href=/css/social.css rel=stylesheet type=text/css>
-<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js type=text/javascript></script>
-<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js></script>
-<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js></script>
-<script src=/js/jquery.ajaxchimp.js></script>
-<script>hljs.initHighlightingOnLoad()</script>
+<meta name=twitter:card content="summary">
+<meta name=twitter:title content="design patterns">
+<meta name=twitter:description content>
 </head>
-<body class=page-kube>
-<header> <div class=show-sm>
-<div id=nav-toggle-box>
-<div id=nav-toggle-brand>
-<a href=/>Svetlin Ralchev</a>
+<body class=list id=top>
+<script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add('dark'):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove('dark'):window.matchMedia('(prefers-color-scheme: dark)').matches&&document.body.classList.add('dark')</script>
+<header class=header>
+<nav class=nav>
+<div class=logo>
+<a href=http://blog.ralch.com accesskey=h title="Svetlin Ralchev (Alt + H)">Svetlin Ralchev</a>
+<span class=logo-switches>
+<button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
+</button>
+</span>
 </div>
-<a data-component=toggleme data-target=#top href=# id=nav-toggle><i class=kube-menu></i></a>
-</div>
-</div>
-<div class=hide-sm id=top>
-<div id=top-brand>
-<a href=/ title=home>Svetlin Ralchev</a>
-</div>
-<nav id=top-nav-main>
-<ul>
-<li><a href=/about/>About</a></li>
-<li><a href=/articles/>Articles</a></li>
+<ul id=menu>
+<li>
+<a href=http://blog.ralch.com/archives title=Archive>
+<span>Archive</span>
+</a>
+</li>
+<li>
+<a href=http://blog.ralch.com/categories/ title=Categories>
+<span>Categories</span>
+</a>
+</li>
+<li>
+<a href=http://blog.ralch.com/tags/ title=Tags>
+<span>Tags</span>
+</a>
+</li>
 </ul>
 </nav>
-<nav id=top-nav-extra>
-</nav>
-</div>
 </header>
-<main>
-<div id=hero class=wrap>
-<h1>design patterns by Svetlin Ralchev</h1>
-<p>
-Question everything. Learn something. Answer everything.
-</p>
-<h4>Follow me on</h4>
-<ul class=social-icons>
-<li><a href=https://twitter.com/ralch class=social-icon> <i class="fa fa-twitter"></i></a></li>
-<li><a href=https://github.com/iamralch class=social-icon> <i class="fa fa-github"></i></a></li>
-<li><a href=http://uk.linkedin.com/in/ralchev class=social-icon> <i class="fa fa-linkedin"></i></a></li>
-<li><a href=http://blog.ralch.com/index.xml class=social-icon> <i class="fa fa-rss"></i></a></li>
-</ul>
-</div>
-<ul id=posts>
-<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
-<h2 class=title>
-<a href=http://blog.ralch.com/articles/design-patterns/golang-design-patterns/ itemprop=headline>Design Patterns in Golang: The Good, the Bad and the Ugly</a>
+<main class=main>
+<header class=page-header><div class=breadcrumbs><a href=http://blog.ralch.com>Home</a>&nbsp;»&nbsp;<a href=http://blog.ralch.com/categories/>Categories</a></div>
+<h1>design patterns</h1>
+</header>
+<article class="post-entry tag-entry">
+<header class=entry-header>
+<h2>Design Patterns in Golang: The Good, the Bad and the Ugly
 </h2>
-<hr>
-<time class=post-time>
-<span class=icon>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-</span>
-<span>4 minute read</span>
-<span class=icon>
-<i class="fa fa-pencil" aria-hidden=true></i>
-</span>
-Published: <time datetime=2016-02-03T13:34:23+00:00>3 Feb, 2016</time>
-<span class=icon>
-<i class="fa fa-hashtag" aria-hidden=true></i>
-</span>
-<span class=dark-red>Tagged:</span>
-<span><a class="post-tag post-tag-go" href=http://blog.ralch.com/tags/go>go</a></span>
-<span><a class="post-tag post-tag-opinion" href=http://blog.ralch.com/tags/opinion>opinion</a></span>
-</time>
-<p itemprop=about>Recently I started a series of articles about Gang of Four Design Patterns and their adoption in Golang. They made a lot of noise in the community. I read a lot of contradictionary opionions whether should be used or not. I am publishing those articles as show case how the common design patterns can be adopted and implemented in Golang. I don&rsquo;t encourage or promote their usage. Every developer has own style of programming, architecture desing and problem solving solutions.</p>
-</div>
-</div>
-<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
-<h2 class=title>
-<a href=http://blog.ralch.com/articles/design-patterns/golang-factory-method/ itemprop=headline>Desing Patterns in Golang: Factory Method</a>
+</header>
+<section class=entry-content>
+<p>Recently I started a series of articles about Gang of Four Design Patterns and their adoption in Golang. They made a lot of noise in the community. I read a lot of contradictionary opionions whether should be used or not. I am publishing those articles as show case how the common design patterns can be adopted and implemented in Golang. I don’t encourage or promote their usage. Every developer has own style of programming, architecture desing and problem solving solutions....</p>
+</section>
+<footer class=entry-footer>February 3, 2016&nbsp;·&nbsp;4 min&nbsp;·&nbsp;Svetlin Ralchev</footer>
+<a class=entry-link aria-label="post link to Design Patterns in Golang: The Good, the Bad and the Ugly" href=http://blog.ralch.com/articles/design-patterns/golang-design-patterns/></a>
+</article>
+<article class="post-entry tag-entry">
+<header class=entry-header>
+<h2>Desing Patterns in Golang: Factory Method
 </h2>
-<hr>
-<time class=post-time>
-<span class=icon>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-</span>
-<span>4 minute read</span>
-<span class=icon>
-<i class="fa fa-pencil" aria-hidden=true></i>
-</span>
-Published: <time datetime=2016-01-31T08:46:53+00:00>31 Jan, 2016</time>
-<span class=icon>
-<i class="fa fa-hashtag" aria-hidden=true></i>
-</span>
-<span class=dark-red>Tagged:</span>
-<span><a class="post-tag post-tag-go" href=http://blog.ralch.com/tags/go>go</a></span>
-<span><a class="post-tag post-tag-factory-method" href=http://blog.ralch.com/tags/factory-method>factory method</a></span>
-<span><a class="post-tag post-tag-creational-design-patterns" href=http://blog.ralch.com/tags/creational-design-patterns>creational design patterns</a></span>
-</time>
-<p itemprop=about>Introduction The Factory Method pattern is a design pattern used to define a runtime interface for creating an object. It’s called a factory because it creates various types of objects without necessarily knowing what kind of object it creates or how to create it.
-Purpose Allows the sub-classes to choose the type of objects to create at runtime It provides a simple way of extending the family of objects with minor changes in application code.</p>
-</div>
-</div>
-<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
-<h2 class=title>
-<a href=http://blog.ralch.com/articles/design-patterns/golang-builder/ itemprop=headline>Desing Patterns in Golang: Builder</a>
+</header>
+<section class=entry-content>
+<p>Introduction The Factory Method pattern is a design pattern used to define a runtime interface for creating an object. It’s called a factory because it creates various types of objects without necessarily knowing what kind of object it creates or how to create it.
+Purpose Allows the sub-classes to choose the type of objects to create at runtime It provides a simple way of extending the family of objects with minor changes in application code....</p>
+</section>
+<footer class=entry-footer>January 31, 2016&nbsp;·&nbsp;4 min&nbsp;·&nbsp;Svetlin Ralchev</footer>
+<a class=entry-link aria-label="post link to Desing Patterns in Golang: Factory Method" href=http://blog.ralch.com/articles/design-patterns/golang-factory-method/></a>
+</article>
+<article class="post-entry tag-entry">
+<header class=entry-header>
+<h2>Desing Patterns in Golang: Builder
 </h2>
-<hr>
-<time class=post-time>
-<span class=icon>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-</span>
-<span>4 minute read</span>
-<span class=icon>
-<i class="fa fa-pencil" aria-hidden=true></i>
-</span>
-Published: <time datetime=2016-01-24T08:46:53+00:00>24 Jan, 2016</time>
-<span class=icon>
-<i class="fa fa-hashtag" aria-hidden=true></i>
-</span>
-<span class=dark-red>Tagged:</span>
-<span><a class="post-tag post-tag-go" href=http://blog.ralch.com/tags/go>go</a></span>
-<span><a class="post-tag post-tag-builder" href=http://blog.ralch.com/tags/builder>builder</a></span>
-<span><a class="post-tag post-tag-creational-design-patterns" href=http://blog.ralch.com/tags/creational-design-patterns>creational design patterns</a></span>
-</time>
-<p itemprop=about>Introduction The Builder Pattern is a creational design pattern that&rsquo;s used to encapsulate the construction logic for an object. It is often used when the construction process of an object is complex. The patterns is well suited for constructing different representations of the same class.
-Purpose Separate the construction of a complex object from its representation so that the same construction process can create different representations. A common software creational design pattern that&rsquo;s used to encapsulate the construction logic for an object.</p>
-</div>
-</div>
-<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
-<h2 class=title>
-<a href=http://blog.ralch.com/articles/design-patterns/golang-singleton/ itemprop=headline>Design Patterns in Golang: Singleton</a>
+</header>
+<section class=entry-content>
+<p>Introduction The Builder Pattern is a creational design pattern that’s used to encapsulate the construction logic for an object. It is often used when the construction process of an object is complex. The patterns is well suited for constructing different representations of the same class.
+Purpose Separate the construction of a complex object from its representation so that the same construction process can create different representations. A common software creational design pattern that’s used to encapsulate the construction logic for an object....</p>
+</section>
+<footer class=entry-footer>January 24, 2016&nbsp;·&nbsp;4 min&nbsp;·&nbsp;Svetlin Ralchev</footer>
+<a class=entry-link aria-label="post link to Desing Patterns in Golang: Builder" href=http://blog.ralch.com/articles/design-patterns/golang-builder/></a>
+</article>
+<article class="post-entry tag-entry">
+<header class=entry-header>
+<h2>Design Patterns in Golang: Singleton
 </h2>
-<hr>
-<time class=post-time>
-<span class=icon>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-</span>
-<span>3 minute read</span>
-<span class=icon>
-<i class="fa fa-pencil" aria-hidden=true></i>
-</span>
-Published: <time datetime=2016-01-17T13:35:05+00:00>17 Jan, 2016</time>
-<span class=icon>
-<i class="fa fa-hashtag" aria-hidden=true></i>
-</span>
-<span class=dark-red>Tagged:</span>
-<span><a class="post-tag post-tag-go" href=http://blog.ralch.com/tags/go>go</a></span>
-<span><a class="post-tag post-tag-singleton" href=http://blog.ralch.com/tags/singleton>singleton</a></span>
-<span><a class="post-tag post-tag-creational-design-patterns" href=http://blog.ralch.com/tags/creational-design-patterns>creational design patterns</a></span>
-</time>
-<p itemprop=about>Introduction Sometimes it&rsquo;s important to have only one instance of an struct. This is useful when exactly one object is needed to coordinate actions across the system. Singletons provide a global point of access to themselves.
-The singleton pattern is one of the simplest design patterns. It requires only one type which is responsible to instantiate itself, to make sure it creates not more than one instance. The same instance can be used from everywhere.</p>
-</div>
-</div>
-<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
-<h2 class=title>
-<a href=http://blog.ralch.com/articles/golang-concurrency-patterns-context/ itemprop=headline>Concurrent patterns in Golang: Context</a>
+</header>
+<section class=entry-content>
+<p>Introduction Sometimes it’s important to have only one instance of an struct. This is useful when exactly one object is needed to coordinate actions across the system. Singletons provide a global point of access to themselves.
+The singleton pattern is one of the simplest design patterns. It requires only one type which is responsible to instantiate itself, to make sure it creates not more than one instance. The same instance can be used from everywhere....</p>
+</section>
+<footer class=entry-footer>January 17, 2016&nbsp;·&nbsp;3 min&nbsp;·&nbsp;Svetlin Ralchev</footer>
+<a class=entry-link aria-label="post link to Design Patterns in Golang: Singleton" href=http://blog.ralch.com/articles/design-patterns/golang-singleton/></a>
+</article>
+<article class="post-entry tag-entry">
+<header class=entry-header>
+<h2>Concurrent patterns in Golang: Context
 </h2>
-<hr>
-<time class=post-time>
-<span class=icon>
-<i class="fa fa-clock-o" aria-hidden=true></i>
-</span>
-<span>4 minute read</span>
-<span class=icon>
-<i class="fa fa-pencil" aria-hidden=true></i>
-</span>
-Published: <time datetime=2015-11-29T08:50:48+00:00>29 Nov, 2015</time>
-<span class=icon>
-<i class="fa fa-hashtag" aria-hidden=true></i>
-</span>
-<span class=dark-red>Tagged:</span>
-<span><a class="post-tag post-tag-go" href=http://blog.ralch.com/tags/go>go</a></span>
-<span><a class="post-tag post-tag-concurrency" href=http://blog.ralch.com/tags/concurrency>concurrency</a></span>
-</time>
-<p itemprop=about>What is concurrency? Concurrent applications have multiple computations executing during overlapping periods of time. Respectively sequential programs in which no computations can be executed in overlapping periods of time.
+</header>
+<section class=entry-content>
+<p>What is concurrency? Concurrent applications have multiple computations executing during overlapping periods of time. Respectively sequential programs in which no computations can be executed in overlapping periods of time.
 Getting started with Context package The Context package is responsible for signal cancelation and operation deadlines for processes and server requests.
 The package has an context.Context interface:
-type Context interface { Deadline() (deadline time.Time, ok bool) Done() &lt;-chan struct{} Err() error Value(key interface{}) interface{} } The interface provides four functions to observe the context state:</p>
-</div>
-</div>
-<section><nav class="pagination align-center upper pager flat">
-<ul>
-<li class=prev>
-<a href=/categories/design-patterns/>&lt; Prev</a>
-</li>
-<li class="w100 align-center">
-<a href=/categories/design-patterns/>Back to Catalog</a>
-</li>
-<li class=next>
-<span>Next ></span>
-</li>
-</ul>
-</nav>
+type Context interface { Deadline() (deadline time.Time, ok bool) Done() &lt;-chan struct{} Err() error Value(key interface{}) interface{} } The interface provides four functions to observe the context state:...</p>
 </section>
-</ul>
-</main>
-<footer>
-<footer id=footer>
-<nav>
-<ul>
-<li><span>Svetlin Ralchev</span></li>
-<li>
-<a href=https://www.phogolabs.com>Company</a>
-</li>
-<li>
-<a href=/articles/>Articles</a>
-</li>
-<li>
-<a href=https://twitter.com/ralch>Twitter</a>
-</li>
-<li>
-<a href=https://github.com/iamralch>Github</a>
-</li>
-</ul>
+<footer class=entry-footer>November 29, 2015&nbsp;·&nbsp;4 min&nbsp;·&nbsp;Svetlin Ralchev</footer>
+<a class=entry-link aria-label="post link to Concurrent patterns in Golang: Context" href=http://blog.ralch.com/articles/golang-concurrency-patterns-context/></a>
+</article>
+<footer class=page-footer>
+<nav class=pagination>
+<a class=prev href=http://blog.ralch.com/categories/design-patterns/>« Prev Page</a>
 </nav>
-<p>
-powered by <a href=http://www.gohugo.io>Hugo</a>
-based on <a href=https://github.com/jeblister/kube>Kube</a> theme
-&copy; 2021 Licence MIT modified by Svetlin Ralchev
-</p>
-<script>(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)})(window,document,'script','//www.google-analytics.com/analytics.js','ga'),ga('create','UA-62134307-2','auto'),ga('send','pageview')</script>
 </footer>
+</main>
+<footer class=footer>
+<span>&copy; 2021 <a href=http://blog.ralch.com>Svetlin Ralchev</a></span>
+<span>
+Powered by
+<a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
+        <a href=https://git.io/hugopapermod rel=noopener target=_blank>PaperMod</a>
+</span>
 </footer>
-<script src=/js/kube.js type=text/javascript></script>
-<script src=/js/kube.legenda.js type=text/javascript></script>
-<script src=/js/master.js type=text/javascript></script>
+<a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
+</a>
+<script>let menu=document.getElementById('menu');menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)},document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener("click",function(b){b.preventDefault();var a=this.getAttribute("href").substr(1);window.matchMedia('(prefers-reduced-motion: reduce)').matches?document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView({behavior:"smooth"}),a==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${a}`)})})</script>
+<script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script>
+<script>document.getElementById("theme-toggle").addEventListener("click",()=>{document.body.className.includes("dark")?(document.body.classList.remove('dark'),localStorage.setItem("pref-theme",'light')):(document.body.classList.add('dark'),localStorage.setItem("pref-theme",'dark'))})</script>
 </body>
 </html>
