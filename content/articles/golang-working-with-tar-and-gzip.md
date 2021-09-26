@@ -224,7 +224,7 @@ func untar(tarball, target string) error {
 
 *Note that `target` argument should be a directoy.*
 
-You can download the `tar` code snippets from [here](https://gist.github.com/svett/76799ba2edca89961be6).
+You can download the `tar` code snippets from [here](https://gist.github.com/iamralch/76799ba2edca89961be6).
 
 #### Usage
 

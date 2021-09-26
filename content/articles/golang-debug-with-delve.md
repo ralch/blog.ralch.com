@@ -134,7 +134,7 @@ In debug session, you can use the following commands:
 
 ### Demo
 
-In the demo video, I am using the [same application](https://gist.github.com/svett/4b95e8d1631fd0a93dfe) that I debugged in [the LLDB article](http://bit.ly/1DjLPNp).
+In the demo video, I am using the [same application](https://gist.github.com/iamralch/4b95e8d1631fd0a93dfe) that I debugged in [the LLDB article](http://bit.ly/1DjLPNp).
 
 {{< youtube zgLjVD5ZSOc >}}
 

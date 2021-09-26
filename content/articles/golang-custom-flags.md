@@ -109,4 +109,4 @@ for _, item := range arg.Urls() {
 }
 ```
 
-You can get the sample from [here](https://gist.github.com/svett/53a288bd5250b4d443ef).
+You can get the sample from [here](https://gist.github.com/iamralch/53a288bd5250b4d443ef).

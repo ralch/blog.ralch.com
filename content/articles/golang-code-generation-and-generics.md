@@ -333,7 +333,7 @@ student, err := stack.Pop()
 ```
 
 A complete implementation of the custom type writer can be pulled from
-[this repository](https://github.com/svett/gen).
+[this repository](https://github.com/iamralch/gen).
 
 ### Genny
 

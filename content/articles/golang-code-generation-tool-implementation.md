@@ -197,11 +197,11 @@ declared `wordsmith` submcommand:
 $ go generate ./...
 ```
 
-You can use the download the full source code from [github](http://github.com/svett/wordsmith)
+You can use the download the full source code from [github](http://github.com/iamralch/wordsmith)
 or install it immediatelly:
 
 ```
-$ go get github.com/svett/wordsmith
+$ go get github.com/iamralch/wordsmith
 ```
 
 #### Conclusion

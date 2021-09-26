@@ -153,4 +153,4 @@ reader := bufio.NewReader(conn)
 // ...
 ```
 
-You can download the example source code from [here](https://gist.github.com/svett/5d695dcc4cc6ad5dd275).
+You can download the example source code from [here](https://gist.github.com/iamralch/5d695dcc4cc6ad5dd275).

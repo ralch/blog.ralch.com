@@ -122,7 +122,7 @@ if sendCommand.Parsed() {
 }
 ```
 
-You can get the sample from [here](https://gist.github.com/svett/a6f02026270b443d5e46).
+You can get the sample from [here](https://gist.github.com/iamralch/a6f02026270b443d5e46).
 
 If you want more advanced features, there are many third party packages:
 

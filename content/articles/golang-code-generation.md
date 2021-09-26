@@ -86,7 +86,7 @@ if err != nil {
 }
 ```
 
-You can download the whole code snippet from [here](https://gist.github.com/svett/0053bab033a581f7675a).
+You can download the whole code snippet from [here](https://gist.github.com/iamralch/0053bab033a581f7675a).
 
 ### Fast JSON
 
@@ -166,7 +166,7 @@ func main() {
 }
 ```
 
-The sample code can be downloaded from [here](https://gist.github.com/svett/053b3bd64612a8677389).
+The sample code can be downloaded from [here](https://gist.github.com/iamralch/053b3bd64612a8677389).
 
 ### Stringer
 
@@ -205,7 +205,7 @@ func main() {
 }
 ```
 
-Full source code can be download from [here](https://gist.github.com/svett/b5194dfb109626579e77).
+Full source code can be download from [here](https://gist.github.com/iamralch/b5194dfb109626579e77).
 
 ## Conclusion
 

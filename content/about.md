@@ -21,6 +21,6 @@ time.
 You can clone his curriculum vitae:
 
 ```bash
-$ git clone https://github.com/svett/whoami
+$ git clone https://github.com/iamralch/whoami
 ```
 

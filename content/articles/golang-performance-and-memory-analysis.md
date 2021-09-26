@@ -67,7 +67,7 @@ memory.
 $ go tool pprof http://localhost:8080/debug/pprof/heap
 
 Fetching profile from http://127.0.0.1:8080/debug/pprof/heap
-Saved profile in /Users/svett/pprof/pprof.127.0.0.1:8080.inuse_objects.inuse_space.005.pb.gz
+Saved profile in /Users/iamralch/pprof/pprof.127.0.0.1:8080.inuse_objects.inuse_space.005.pb.gz
 Entering interactive mode (type "help" for commands)
 (pprof) top
 512.19kB of 512.19kB total (  100%)
@@ -91,7 +91,7 @@ of the program counters on the currently executing goroutine's stack:
 $ go tool pprof http://localhost:8080/debug/pprof/profile
 Fetching profile from http://127.0.0.1:8080/debug/pprof/profile
 Please wait... (30s)
-Saved profile in /Users/svett/pprof/pprof.127.0.0.1:8080.samples.cpu.004.pb.gz
+Saved profile in /Users/iamralch/pprof/pprof.127.0.0.1:8080.samples.cpu.004.pb.gz
 Entering interactive mode (type "help" for commands)
 (pprof)
 ```
@@ -144,7 +144,7 @@ Lets retrive the profile and explore the difference:
 ```
 $ go tool pprof http://127.0.0.1:8080/debug/pprof/payment
 Fetching profile from http://127.0.0.1:8080/debug/pprof/payment
-Saved profile in /Users/svett/pprof/pprof.127.0.0.1:8080.payment.008.pb.gz
+Saved profile in /Users/iamralch/pprof/pprof.127.0.0.1:8080.payment.008.pb.gz
 Entering interactive mode (type "help" for commands)
 (pprof) top
 ```
@@ -170,7 +170,7 @@ Passing `skip=1` begins the stack trace at the call to `Add` inside `ProcessPaym
          0     0%   100%          1   100%  runtime.main
 ```
 
-The sample application can be found [here](https://gist.github.com/svett/3babb3d65e9cf626d1d5).
+The sample application can be found [here](https://gist.github.com/iamralch/3babb3d65e9cf626d1d5).
 
 #### Generating reports
 
@@ -179,7 +179,7 @@ svg diagram. You should execute `web` command as part of `pprof` tool:
 
 ```
 Fetching profile from http://127.0.0.1:8080/debug/pprof/heap
-Saved profile in /Users/svett/pprof/pprof.127.0.0.1:8080.inuse_objects.inuse_space.005.pb.gz
+Saved profile in /Users/iamralch/pprof/pprof.127.0.0.1:8080.inuse_objects.inuse_space.005.pb.gz
 Entering interactive mode (type "help" for commands)
 (pprof) web
 ```

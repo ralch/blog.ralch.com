@@ -104,7 +104,7 @@ message Employee {
 ```
 
 Lets keep the declaration in
-[spec.proto](https://gist.github.com/svett/acdbc1b1429d97371609) file.
+[spec.proto](https://gist.github.com/iamralch/acdbc1b1429d97371609) file.
 
 In order to use protocol buffers, you should define a protocol buffer file that
 declare the messages that are going to be serialized. The protocol buffers
@@ -181,7 +181,7 @@ func (m *Company) GetAddress() *Company_Address {
 ```
 
 You can download the full implementation from
-[here](https://gist.github.com/svett/7632c3628ded96a1fc60).
+[here](https://gist.github.com/iamralch/7632c3628ded96a1fc60).
 
 #### Serialization objects
 

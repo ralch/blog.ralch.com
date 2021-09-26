@@ -205,4 +205,4 @@ if err := session.Setenv("LC_USR_DIR", "/usr"); err != nil {
 Note that in some cases the SSH server is configured to accepts only `env` variables
 with concrete suffix (such as `LC_`).
 
-You can find the sample source code [here](https://gist.github.com/svett/b7f56afc966a6b6ac2fc).
+You can find the sample source code [here](https://gist.github.com/iamralch/b7f56afc966a6b6ac2fc).

@@ -100,7 +100,7 @@ access to underlying hardware. They do not necessarily allow you to read or
 write single character at a time. Example: audio or graphics cards, 
 or input devices like keyboard and mouse.*
 
-You can get the sample source code from [here](https://gist.github.com/svett/a95595069e560173a3c8).
+You can get the sample source code from [here](https://gist.github.com/iamralch/a95595069e560173a3c8).
 
 
 

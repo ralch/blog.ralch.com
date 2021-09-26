@@ -161,7 +161,7 @@ func (s *Stack) Pop() (TValue, error) {
 Lets declare it for `Student` struct:
 
 ```
-//go:generate gotemplate "github.com/svett/gotemplate/stack" StudentStack(*Student)
+//go:generate gotemplate "github.com/iamralch/gotemplate/stack" StudentStack(*Student)
 type Student struct {
 	FirstName string
 	LastName  string
@@ -172,7 +172,7 @@ type Student struct {
 Then you can instatiate:
 
 ```
-$ go get github.com/svett/gotemplate/stack
+$ go get github.com/iamralch/gotemplate/stack
 $ go generate
 ```
 
@@ -180,7 +180,7 @@ When the template is instantiated, a new file `gotemplate_StudentStack.go` is cr
 It is a result of substition of actual template with `StudentStack(*Student)` declaration. 
 All `TValue` occurances are replaced with `Student`. The `Stack` struct is changed to `StudentStack`.
 
-The template can be downloaded from [here](https://github.com/svett/gotemplate/).
+The template can be downloaded from [here](https://github.com/iamralch/gotemplate/).
 
 ### Conclusion
 
