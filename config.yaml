@@ -1,23 +1,25 @@
 ---
 BaseUrl: "http://blog.ralch.com"
-LanguageCode: "en-us"
-Title: "Svetlin Ralchev | Blog"
-Theme: "PaperMod"
+GoogleAnalytics: "UA-62134307-2"
 
-Paginate: 5
+Theme: "PaperMod"
+LanguageCode: "en-us"
+
+Title: "Svetlin Ralchev | Blog"
+Copyright: "(c) 2021 Svetlin Ralchev"
+
+BuildDrafts: false
+BuildExpired: false
+BuildFuture: false
+EnableEmoji: true
 EnableInlineShortcodes: true
 EnableRobotsTXT: true
-BuildDrafts: false
-buildFuture: false
-buildExpired: false
-EnableEmoji: true
-
-GoogleAnalytics: "UA-62134307-2"
+Paginate: 5
 
 Params:
   Author: "Svetlin Ralchev"
 
-  label:
+  Label:
     text: "Svetlin Ralchev"
     icon: "/logo.png"
     iconHeight: 35
@@ -46,6 +48,7 @@ Params:
   ShowShareButtons: true
   ShowPostNavLinks: true
   ShowCodeCopyButtons: true
+  DisableThemeToggle: true
 
 menu:
   main:
