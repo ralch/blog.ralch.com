@@ -1,7 +1,7 @@
 ---
 BaseUrl: "http://blog.ralch.com"
 LanguageCode: "en-us"
-Title: "Svetlin Ralchev"
+Title: "Svetlin Ralchev | Blog"
 Theme: "PaperMod"
 
 Paginate: 5
@@ -30,7 +30,7 @@ Params:
       url: "index.xml"
 
   HomeInfoParams:
-    Title: Hello World!
+    Title: Hello World! Golang, Microservices, DevOps!
     Content: git clone https://github.com/iamralch/whoami
 
   Env: production
@@ -44,10 +44,10 @@ menu:
   main:
    - name: Archive
      url: archives
-     weight: 5
+     weight: 10
    - name: Tags
      url: tags/
-     weight: 10
+     weight: 15
    - name: Categories
      url: categories/
-     weight: 10
+     weight: 20
