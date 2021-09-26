@@ -17,6 +17,11 @@ GoogleAnalytics: "UA-62134307-2"
 Params:
   Author: "Svetlin Ralchev"
 
+  label:
+    text: "Svetlin Ralchev"
+    icon: "/logo.png"
+    iconHeight: 35
+
   SocialIcons:
     - name: "linkedin"
       url: "http://uk.linkedin.com/in/ralchev"
@@ -31,9 +36,11 @@ Params:
 
   HomeInfoParams:
     Title: Hello World! Golang, Microservices, DevOps!
-    Content: git clone https://github.com/iamralch/whoami
+    Content: "`git clone https://github.com/iamralch/whoami`"
 
   Env: production
+
+  ShowToc: true
   ShowReadingTime: true
   ShowBreadCrumbs: true
   ShowShareButtons: true
