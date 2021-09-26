@@ -1,0 +1,364 @@
+<!doctype html><html lang=en-us>
+<head>
+<meta name=generator content="Hugo 0.88.1">
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title> Object relation mapping with GORM </title>
+<meta name=author content="Svetlin Ralchev">
+<meta property="og:title" content="Object relation mapping with GORM">
+<meta property="og:description" content="What is object-relation mapping (ORM, O/RM, and O/R mapping)?  Object-relational mapping in computer science is a programming technique for converting data between incompatible type systems in object-oriented programming languages. This creates, in effect, a &ldquo;virtual object database&rdquo; that can be used from within the programming language.
+ source: Wikipedia
+What is GORM? GORM is object-relation package for Go. It supports the following databases:
+ FoundationDB PostgreSQL MySQL SQLite  Installation It is easy to install by invoking go get command:">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://blog.ralch.com/articles/golang-object-relation-mapping-with-gorm/"><meta property="article:section" content="articles">
+<meta property="article:published_time" content="2015-11-15T08:54:02+00:00">
+<meta property="article:modified_time" content="2015-11-15T08:54:02+00:00">
+<link rel=canonical href=http://blog.ralch.com/articles/golang-object-relation-mapping-with-gorm/>
+<link rel=apple-touch-icon sizes=57x57 href=/img/favicons/apple-icon-57x57.png>
+<link rel=apple-touch-icon sizes=60x60 href=/img/favicons/apple-icon-60x60.png>
+<link rel=apple-touch-icon sizes=72x72 href=/img/favicons/apple-icon-72x72.png>
+<link rel=apple-touch-icon sizes=76x76 href=/img/favicons/apple-icon-76x76.png>
+<link rel=apple-touch-icon sizes=114x114 href=/img/favicons/apple-icon-114x114.png>
+<link rel=apple-touch-icon sizes=120x120 href=/img/favicons/apple-icon-120x120.png>
+<link rel=apple-touch-icon sizes=144x144 href=/img/favicons/apple-icon-144x144.png>
+<link rel=apple-touch-icon sizes=152x152 href=/img/favicons/apple-icon-152x152.png>
+<link rel=apple-touch-icon sizes=180x180 href=/img/favicons/apple-icon-180x180.png>
+<link rel=icon type=image/png sizes=192x192 href=/img/favicons/android-icon-192x192.png>
+<link rel=icon type=image/png sizes=32x32 href=/img/favicons/favicon-32x32.png>
+<link rel=icon type=image/png sizes=96x96 href=/img/favicons/favicon-96x96.png>
+<link rel=icon type=image/png sizes=16x16 href=/img/favicons/favicon-16x16.png>
+<link rel=manifest href=/img/favicons/manifest.json>
+<meta name=msapplication-TileColor content="#ffffff">
+<meta name=msapplication-TileImage content="/img/favicons/ms-icon-144x144.png">
+<meta name=theme-color content="#ffffff">
+<link href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css rel=stylesheet>
+<link href=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css rel=stylesheet>
+<link href=/css/font.css rel=stylesheet type=text/css>
+<link href=/css/kube.min.css rel=stylesheet type=text/css>
+<link href=/css/kube.legenda.css rel=stylesheet type=text/css>
+<link href=/css/master.css rel=stylesheet type=text/css>
+<link href=/css/theme.css rel=stylesheet type=text/css>
+<link href=/css/social.css rel=stylesheet type=text/css>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js type=text/javascript></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js></script>
+<script src=/js/jquery.ajaxchimp.js></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</head>
+<body class=page-kube>
+<header> <div class=show-sm>
+<div id=nav-toggle-box>
+<div id=nav-toggle-brand>
+<a href=/>Svetlin Ralchev</a>
+</div>
+<a data-component=toggleme data-target=#top href=# id=nav-toggle><i class=kube-menu></i></a>
+</div>
+</div>
+<div class=hide-sm id=top>
+<div id=top-brand>
+<a href=/ title=home>Svetlin Ralchev</a>
+</div>
+<nav id=top-nav-main>
+<ul>
+<li><a href=/about/>About</a></li>
+<li><a href=/articles/>Articles</a></li>
+</ul>
+</nav>
+<nav id=top-nav-extra>
+</nav>
+</div>
+</header>
+<main>
+<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
+<meta itemprop=name content="Object relation mapping with GORM">
+<meta itemprop=description content="What is object-relation mapping (ORM, O/RM, and O/R mapping)?  Object-relational mapping in computer science is a programming technique for converting data between incompatible type systems in object-oriented programming languages. This creates, in effect, a &ldquo;virtual object database&rdquo; that can be used from within the programming language.
+ source: Wikipedia
+What is GORM? GORM is object-relation package for Go. It supports the following databases:
+ FoundationDB PostgreSQL MySQL SQLite  Installation It is easy to install by invoking go get command:"><meta itemprop=datePublished content="2015-11-15T08:54:02+00:00">
+<meta itemprop=dateModified content="2015-11-15T08:54:02+00:00">
+<meta itemprop=wordCount content="1056">
+<meta itemprop=keywords content>
+<div id=hero>
+<h1 itemprop=headline>Object relation mapping with GORM</h1>
+<time class=post-time><span class=icon>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+</span>
+<span>5 minute read</span>
+<span class=icon>
+<i class="fa fa-pencil" aria-hidden=true></i>
+</span>
+Published: <time datetime=2015-11-15T08:54:02+00:00>15 Nov, 2015</time>
+</time>
+</div>
+<div id=post-box>
+<div id=post itemprop=articleBody>
+<h3 id=what-is-object-relation-mapping-orm-orm-and-or-mapping>What is object-relation mapping (ORM, O/RM, and O/R mapping)?</h3>
+<blockquote>
+<p>Object-relational mapping in computer science is a programming technique for
+converting data between incompatible type systems in object-oriented
+programming languages. This creates, in effect, a &ldquo;virtual object database&rdquo;
+that can be used from within the programming language.</p>
+</blockquote>
+<p><em>source: <a href=https://en.wikipedia.org/wiki/Object-relational_mapping>Wikipedia</a></em></p>
+<h3 id=what-is-gorm>What is GORM?</h3>
+<p><a href=https://github.com/jinzhu/gorm>GORM</a> is object-relation package for <code>Go</code>. It
+supports the following databases:</p>
+<ul>
+<li><a href=http://www.foundationdb.com>FoundationDB</a></li>
+<li><a href=http://www.postgresql.org>PostgreSQL</a></li>
+<li><a href=http://dev.mysql.com>MySQL</a></li>
+<li><a href=https://www.sqlite.org>SQLite</a></li>
+</ul>
+<h4 id=installation>Installation</h4>
+<p>It is easy to install by invoking <code>go get</code> command:</p>
+<pre tabindex=0><code>$ go get -u github.com/jinzhu/gorm
+</code></pre><h4 id=model-declaration>Model declaration</h4>
+<p>Models in <code>GORM</code> are a simple <code>Go</code> structs that declare a set of public fields.
+Every model is representent as table and every field is column in this table.</p>
+<p>In this blog we will define all models illustrated on the following diagram:</p>
+<figure><img src=/media/golang/gorm-diagram.png alt="ORM Diagram">
+</figure>
+<p>The actual representation of the diagram are three structs. Each of them has
+different fields that define a database column mapping via <code>sql</code> and <code>gorm</code>
+<a href=https://golang.org/pkg/reflect/#example_StructTag>tags</a>. In this examples, we
+will explore some of them.</p>
+<pre tabindex=0><code>type Company struct {
+	ID        int        `sql:&quot;AUTO_INCREMENT&quot; gorm:&quot;primary_key&quot;`
+	Name      string     `sql:&quot;size:255;unique;index&quot;`
+	Employees []Employee // one-to-many relationship
+	Address   Address    // one-to-one relationship
+}
+</code></pre><p>The <code>Company</code> struct has an auto incremental primary key defined by
+<code>sql:"AUTO_INCREMENT" gorm:"primary_key"</code>.</p>
+<p>Its string <code>Name</code> field should contain a value that is unique for all rows in
+the <code>Company</code> table. The column is indexed, which improves the performance on
+any queries that uses it in their <code>where</code> clause.</p>
+<p><code>GORM</code> automatically creates for the rest of the fields:</p>
+<ul>
+<li>one-to-many relationship between <code>Company</code> and <code>Employee</code></li>
+<li>one to one relationship between <code>Company</code> and <code>Address</code> tables</li>
+</ul>
+<pre tabindex=0><code>type Employee struct {
+	FirstName        string    `sql:&quot;size:255;index:name_idx&quot;`
+	LastName         string    `sql:&quot;size:255;index:name_idx&quot;`
+	SocialSecurityNo string    `sql:&quot;type:varchar(100);unique&quot; gorm:&quot;column:ssn&quot;`
+	DateOfBirth      time.Time `sql:&quot;DEFAULT:current_timestamp&quot;`
+	Address          *Address  // one-to-one relationship
+	Deleted          bool      `sql:&quot;DEFAULT:false&quot;`
+}
+</code></pre><p>The <code>Employee</code> struct is defined in similar to way.</p>
+<p>The <code>FirstName</code> and <code>LastName</code> field have maximum length 255. In additionl a
+<code>name_idx</code> index is created for both fields.</p>
+<p>The <code>SocialSecurityNo</code> field is
+renamed to <code>ssn</code> column (by declaring <code>gorm:"column:ssn</code> tag) that has values
+that should be unique and do not exceed 100 characters.</p>
+<p>The <code>Employee</code> struct has one-to-one relationship with the <code>Address</code> struct.</p>
+<p>The fields <code>DateOfBirth</code> and <code>Deleted</code> has default values declared by
+<code>sql:"DEFAULT:&lt;default_value>"</code> tag. For the <code>DateOfBirth</code> column we are using
+the postgres function <code>current_timestamp</code> to set the default value.</p>
+<pre tabindex=0><code>type Address struct {
+	Country  string `gorm:&quot;primary_key&quot;`
+	City     string `gorm:&quot;primary_key&quot;`
+	PostCode string `gorm:&quot;primary_key&quot;`
+	Line1    sql.NullString
+	Line2    sql.NullString
+}
+</code></pre><p>The <code>Address</code> struct has a primary key that consists three fields <code>Country</code>, <code>City</code>
+and <code>PostCode</code>. In fact it has two columns <code>Line1</code> and <code>Line2</code> that are using
+<code>sql.NullString</code> type to allow null values.</p>
+<p>In order to access your database you should open a new connection to it. In this
+article I am using <code>PostgreSQL</code>. Therefore, any thoughts will be related to
+<code>PostgreSQL</code> and relational databases.</p>
+<p>You should install its driver for <code>GO</code> with the following command:</p>
+<h3 id=establishing-connection>Establishing connection</h3>
+<pre tabindex=0><code>$ go get &quot;github.com/lib/pq&quot;
+</code></pre><p>The driver should be registered to make it available for <code>GORM</code>:</p>
+<pre tabindex=0><code>import _ &quot;github.com/lib/pq&quot;
+</code></pre><p>Then we should establish the connection:</p>
+<pre tabindex=0><code>db, err := gorm.Open(&quot;postgres&quot;, &quot;postgresql://myapp:dbpass@localhost:15432/myapp&quot;)
+if err != nil {
+	panic(err)
+}
+
+// Ping function checks the database connectivity
+err = db.DB().Ping()
+if err != nil {
+	panic(err)
+}
+</code></pre><h4 id=creating-tables>Creating tables</h4>
+<p>Every struct type is presented as a table in the underlying database. Respectively
+every property is represented as a column in the database table.</p>
+<p>Lets create the declared models by invoking <code>db.CreateTable</code> function:</p>
+<pre tabindex=0><code>db.CreateTable(&amp;company.Address{})
+db.CreateTable(&amp;company.Company{})
+db.CreateTable(&amp;company.Employee{})
+</code></pre><p>The function will create underlying tables if they do not exists. They have a schema
+based on the property definitions. A properties that contain <code>int </code>sql:"-"` tag
+are not emitted as a table columns.</p>
+<p>By default the created table names are in plural. If you want to disable that
+you should use the following code snippet before any table create and table
+migrate task.</p>
+<pre tabindex=0><code>db.SingularTable(true)
+</code></pre><h4 id=migrating-tables>Migrating tables</h4>
+<p>If you want to change an existing table schema for your models, <code>GORM</code> provides
+a set of features. You could automatically use the <code>AutoMigrate</code> function to
+migrate the existing database schema to the new model changes.</p>
+<pre tabindex=0><code>db.AutoMigrate(&amp;company.Address{})
+db.AutoMigrate(&amp;company.Company{})
+db.AutoMigrate(&amp;company.Employee{})
+</code></pre><p>Unfortunately, the migration adds only a new columns and new indexes, but does
+not alter existing columns and existing indexes.</p>
+<p>If you want to do that you should use the functions provided by <code>gorm.Model</code>
+object.</p>
+<ul>
+<li><code>ModifyColumn</code> change columns type</li>
+<li><code>DropColumn</code> drops an existing column</li>
+<li><code>AddIndex</code> creates an index</li>
+<li><code>AddUniqueIndex</code> creates a unique index</li>
+<li><code>RemoveIndex</code> removes an existings index</li>
+</ul>
+<p>Lets change the <code>Name</code> columns type of <code>Company</code> table to a <code>text</code>:</p>
+<pre tabindex=0><code>db.Model(&amp;company.Company{}).ModifyColumn(&quot;name&quot;, &quot;text&quot;)
+</code></pre><h4 id=dropping-tables>Dropping tables</h4>
+<p>Tables could be dropped by using <code>db.DropTable</code> function:</p>
+<pre tabindex=0><code>db.DropTable(&amp;company.Address{})
+db.DropTable(&amp;company.Company{})
+db.DropTable(&amp;company.Employee{})
+</code></pre><p>The operation destroys the tables schema and all records.</p>
+<h4 id=create-update-and-delete-records>Create, Update and Delete records</h4>
+<p>In this section we will explore the <code>CRUD</code> operations for this company:</p>
+<pre tabindex=0><code>sampleCompany := company.Company{
+	Name: &quot;Google&quot;,
+	Address: company.Address{
+		Country:  &quot;USA&quot;,
+		City:     &quot;Moutain View&quot;,
+		PostCode: &quot;1600&quot;,
+	},
+	Employees: []company.Employee{
+		company.Employee{
+			FirstName:        &quot;John&quot;,
+			LastName:         &quot;Doe&quot;,
+			SocialSecurityNo: &quot;00-000-0000&quot;,
+		},
+	},
+}
+</code></pre><h5 id=create>Create</h5>
+<p>Lets create an new company by executing the <code>db.Create</code> function:</p>
+<pre tabindex=0><code>// It creates a single Company record and all associations (Address and Employees)
+db.Create(&amp;sampleCompany)
+</code></pre><h5 id=delete>Delete</h5>
+<p>To delete the created company, you should use <code>db.Delete</code> function:</p>
+<pre tabindex=0><code>db.Delete(&amp;sampleCompany)
+</code></pre><p>You could do a batch delete. In the following example we are deleting all companies
+that contains letter <code>G</code> in their name:</p>
+<pre tabindex=0><code>db.Where(&quot;Name LIKE ?&quot;, &quot;%G%&quot;).Delete(company.Company{})
+</code></pre><h5 id=update>Update</h5>
+<p>To update an existing record you should simple change its property and use
+<code>db.Save</code> command to persist the change:</p>
+<pre tabindex=0><code>model.Country = &quot;USA&quot;
+db.Save(&amp;sampleCompany)
+</code></pre><p>For batch updates we should use simiplar to <code>Delete</code> operation approach, but this
+time we should use <code>Updates</code> function instead. Lets update all <code>USA</code> addresses:</p>
+<pre tabindex=0><code>db.Table(&quot;addresses&quot;).Where(&quot;Country = ?&quot;, &quot;USA&quot;).Updates(map[string]interface{}{&quot;Country&quot;: &quot;North America&quot;})
+</code></pre><h4 id=query-data-records>Query data records</h4>
+<p><code>GORM</code> provides a very intuitive way to query your data. It brings all power of
+underlying database by providing the following functions:</p>
+<pre tabindex=0><code>var firstComp company.Company
+
+// fetch a company by primary key
+db.First(&amp;firstComp, 1)
+
+// fetch a company by name
+db.Find(&amp;firstComp, &quot;name = ?&quot;, &quot;Google&quot;)
+
+// fetch all companies
+var comapnies []company.Company
+db.Find(&amp;companies)
+
+// fetch all companies that starts with G
+db.Where(&quot;name = ?&quot;, &quot;%G%&quot;).Find(&amp;companies)
+</code></pre><p>I cannot manage to cover in a single post. You can read more about them in the
+<a href=https://github.com/jinzhu/gorm>official documentation</a>.</p>
+<h3 id=conclusion>Conclusion</h3>
+<p><code>GORM</code> is great object relation mapping package that unifies the access to
+different data base. The provides all query capabilities that we are familiar
+with in <code>SQL</code> like languages. I would like to see a code generation package
+that generates a models from existing data base.</p>
+</div>
+<div class=form-subscribe>
+<div id=form-subscribe-box>
+<h4>All about Golang, Distributed Systems and Backend development.</h4>
+<p>Sign up to receive the latest articles and updates</p>
+<form id=mc-embedded-subscribe-form method=post class=form>
+<div class=form-item>
+<label><span id=form-subscribe-info></span></label>
+<div class=append>
+<input type=email name=EMAIL id=mc-email placeholder=Email>
+<button class=button>Subscribe</button>
+</div>
+</div>
+<div style=position:absolute;left:-5000px aria-hidden=true>
+<input type=text tabindex=-1>
+</div>
+</form>
+<h4>Follow me on</h4>
+<ul class=social-icons>
+<li><a href=https://twitter.com/ralch class=social-icon> <i class="fa fa-twitter"></i></a></li>
+<li><a href=https://github.com/svett class=social-icon> <i class="fa fa-github"></i></a></li>
+<li><a href=http://uk.linkedin.com/in/ralchev class=social-icon> <i class="fa fa-linkedin"></i></a></li>
+<li><a href=http://blog.ralch.com/index.xml class=social-icon> <i class="fa fa-rss"></i></a></li>
+</ul>
+</div>
+</div>
+<div>
+<p>
+Published
+by <span itemprop=author>Svetlin Ralchev</span>
+<time datetime=2015-11-15T08:54:02+00:00>
+15 Nov, 2015
+</time>
+in <span itemprop=articleSection><a href=/categories/database/>database</a>, <a href=/categories/object-relation-mapping/>object relation mapping</a> and <a href=/categories/programming-languages/>programming languages</a></span>
+using <span itemprop=wordCount>1056</span> words.
+</p>
+</div>
+<article>
+<div id=disqus_thread></div>
+<script type=text/javascript>(function(){var a,b;if(window.location.hostname=="localhost")return;a=document.createElement('script'),a.type='text/javascript',a.async=!0,b='ralch',a.src='//'+b+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the comments powered by <a href=http://disqus.com/?ref_noscript>Disqus.</a></noscript>
+</article>
+</div>
+</div>
+</main>
+<footer> <footer id=footer>
+<nav>
+<ul>
+<li><span>Svetlin Ralchev</span></li>
+<li>
+<a href=https://www.phogolabs.com>Company</a>
+</li>
+<li>
+<a href=/articles/>Articles</a>
+</li>
+<li>
+<a href=https://twitter.com/ralch>Twitter</a>
+</li>
+<li>
+<a href=https://github.com/svett>Github</a>
+</li>
+</ul>
+</nav>
+<p>
+powered by <a href=http://www.gohugo.io>Hugo</a>
+based on <a href=https://github.com/jeblister/kube>Kube</a> theme
+&copy; 2021 Licence MIT modified by Svetlin Ralchev
+</p>
+<script>(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)})(window,document,'script','//www.google-analytics.com/analytics.js','ga'),ga('create','UA-62134307-2','auto'),ga('send','pageview')</script>
+</footer>
+</footer>
+<script src=/js/kube.js type=text/javascript></script>
+<script src=/js/kube.legenda.js type=text/javascript></script>
+<script src=/js/master.js type=text/javascript></script>
+</body>
+</html>

@@ -1,0 +1,447 @@
+<!doctype html><html lang=en-us>
+<head>
+<meta name=generator content="Hugo 0.88.1">
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title> Design Patterns in Golang: Adapter </title>
+<meta name=author content="Svetlin Ralchev">
+<meta property="og:title" content="Design Patterns in Golang: Adapter">
+<meta property="og:description" content="Introduction The Adapter Pattern is responsible for adaptation of two incompatible interfaces. It is a structural pattern that is responsible to join functionalities of independent or incompatible interfaces without modifing their implementation.
+Interfaces may be incompatible but the inner functionality should suit the need. It allows otherwise incompatible objects to work together by converting the interface of each struct into an interface expected by the clients.
+Purpose  Impedance match an old component to a new system Wrap the interface of a object into another interface clients expect.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://blog.ralch.com/articles/design-patterns/golang-adapter/"><meta property="article:section" content="articles">
+<meta property="article:published_time" content="2016-02-22T08:42:38+00:00">
+<meta property="article:modified_time" content="2016-02-22T08:42:38+00:00">
+<link rel=canonical href=http://blog.ralch.com/articles/design-patterns/golang-adapter/>
+<link rel=apple-touch-icon sizes=57x57 href=/img/favicons/apple-icon-57x57.png>
+<link rel=apple-touch-icon sizes=60x60 href=/img/favicons/apple-icon-60x60.png>
+<link rel=apple-touch-icon sizes=72x72 href=/img/favicons/apple-icon-72x72.png>
+<link rel=apple-touch-icon sizes=76x76 href=/img/favicons/apple-icon-76x76.png>
+<link rel=apple-touch-icon sizes=114x114 href=/img/favicons/apple-icon-114x114.png>
+<link rel=apple-touch-icon sizes=120x120 href=/img/favicons/apple-icon-120x120.png>
+<link rel=apple-touch-icon sizes=144x144 href=/img/favicons/apple-icon-144x144.png>
+<link rel=apple-touch-icon sizes=152x152 href=/img/favicons/apple-icon-152x152.png>
+<link rel=apple-touch-icon sizes=180x180 href=/img/favicons/apple-icon-180x180.png>
+<link rel=icon type=image/png sizes=192x192 href=/img/favicons/android-icon-192x192.png>
+<link rel=icon type=image/png sizes=32x32 href=/img/favicons/favicon-32x32.png>
+<link rel=icon type=image/png sizes=96x96 href=/img/favicons/favicon-96x96.png>
+<link rel=icon type=image/png sizes=16x16 href=/img/favicons/favicon-16x16.png>
+<link rel=manifest href=/img/favicons/manifest.json>
+<meta name=msapplication-TileColor content="#ffffff">
+<meta name=msapplication-TileImage content="/img/favicons/ms-icon-144x144.png">
+<meta name=theme-color content="#ffffff">
+<link href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css rel=stylesheet>
+<link href=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css rel=stylesheet>
+<link href=/css/font.css rel=stylesheet type=text/css>
+<link href=/css/kube.min.css rel=stylesheet type=text/css>
+<link href=/css/kube.legenda.css rel=stylesheet type=text/css>
+<link href=/css/master.css rel=stylesheet type=text/css>
+<link href=/css/theme.css rel=stylesheet type=text/css>
+<link href=/css/social.css rel=stylesheet type=text/css>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js type=text/javascript></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js></script>
+<script src=/js/jquery.ajaxchimp.js></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</head>
+<body class=page-kube>
+<header> <div class=show-sm>
+<div id=nav-toggle-box>
+<div id=nav-toggle-brand>
+<a href=/>Svetlin Ralchev</a>
+</div>
+<a data-component=toggleme data-target=#top href=# id=nav-toggle><i class=kube-menu></i></a>
+</div>
+</div>
+<div class=hide-sm id=top>
+<div id=top-brand>
+<a href=/ title=home>Svetlin Ralchev</a>
+</div>
+<nav id=top-nav-main>
+<ul>
+<li><a href=/about/>About</a></li>
+<li><a href=/articles/>Articles</a></li>
+</ul>
+</nav>
+<nav id=top-nav-extra>
+</nav>
+</div>
+</header>
+<main>
+<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
+<meta itemprop=name content="Design Patterns in Golang: Adapter">
+<meta itemprop=description content="Introduction The Adapter Pattern is responsible for adaptation of two incompatible interfaces. It is a structural pattern that is responsible to join functionalities of independent or incompatible interfaces without modifing their implementation.
+Interfaces may be incompatible but the inner functionality should suit the need. It allows otherwise incompatible objects to work together by converting the interface of each struct into an interface expected by the clients.
+Purpose  Impedance match an old component to a new system Wrap the interface of a object into another interface clients expect."><meta itemprop=datePublished content="2016-02-22T08:42:38+00:00">
+<meta itemprop=dateModified content="2016-02-22T08:42:38+00:00">
+<meta itemprop=wordCount content="1054">
+<meta itemprop=keywords content="go,adapter,structural design patterns,">
+<div id=hero>
+<h1 itemprop=headline>Design Patterns in Golang: Adapter</h1>
+<time class=post-time><span class=icon>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+</span>
+<span>5 minute read</span>
+<span class=icon>
+<i class="fa fa-pencil" aria-hidden=true></i>
+</span>
+Published: <time datetime=2016-02-22T08:42:38+00:00>22 Feb, 2016</time>
+</time>
+</div>
+<div id=post-box>
+<div id=post itemprop=articleBody>
+<h4 id=introduction>Introduction</h4>
+<p><code>The Adapter Pattern</code> is responsible for adaptation of two incompatible
+interfaces. It is a structural pattern that is responsible to join
+functionalities of independent or incompatible interfaces without modifing
+their implementation.</p>
+<p>Interfaces may be incompatible but the inner functionality should suit the
+need. It allows otherwise incompatible objects to work together by converting
+the interface of each struct into an interface expected by the clients.</p>
+<h4 id=purpose>Purpose</h4>
+<ul>
+<li>Impedance match an old component to a new system</li>
+<li>Wrap the interface of a object into another interface clients expect.</li>
+<li>Adapter lets objects work together, that could not otherwise because of incompatible interfaces.</li>
+</ul>
+<h4 id=design-pattern-diagram>Design Pattern Diagram</h4>
+<p>The structs/objects that are participating in adapter pattern are illustrated
+in the following diagram:</p>
+<figure><img src=/media/golang/design-patterns/adapter.gif alt="Adapter Class Diagram">
+</figure>
+<ul>
+<li><code>Target</code> is the domain-specific interface that Client wants to use.</li>
+<li><code>Adapter</code> adapts the interface <code>Adaptee</code> to the <code>Target</code> interface. It
+implements the <code>Target</code> interface in terms of the Adaptee.</li>
+<li><code>Adaptee</code> defines an existing interface that needs adapting.</li>
+<li><code>Client</code> collaborates with objects conforming to the <code>Target</code> interface.</li>
+</ul>
+<p>The <code>Target</code> interface enables objects of adaptee types to be interchangeable
+with any other objects that might implement the same interface. However, the
+adaptees might not conform to the <code>Target</code>. The interface alone is not a
+sufficiently powerful mechanism. We need the Adapter pattern. An <code>Adaptee</code>
+offers similar functionality to the client, but under a different name and with
+possibly different parameters. The <code>Adaptee</code> is completely independent of the
+other classes and is oblivious to any naming conventions or signatures that
+they have.</p>
+<h4 id=implementation>Implementation</h4>
+<p>Lets explore how we should use the Adapter Design Pattern to adopt two
+incompatible payment systems and make them available for our customers. Assume
+that we are building system that should support <code>PayPal</code> and <code>Bank</code> payments.
+In addition, we are consuming two external libraries that handles each of this
+payment methods.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Golang data-lang=Golang><span style=color:#f92672>package</span> <span style=color:#a6e22e>paypal</span>
+
+<span style=color:#f92672>import</span> (
+	<span style=color:#e6db74>&#34;errors&#34;</span>
+	<span style=color:#e6db74>&#34;fmt&#34;</span>
+	<span style=color:#e6db74>&#34;regexp&#34;</span>
+)
+
+<span style=color:#66d9ef>var</span> <span style=color:#a6e22e>mailRegexp</span> = <span style=color:#a6e22e>regexp</span>.<span style=color:#a6e22e>MustCompile</span>(<span style=color:#e6db74>`^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`</span>)
+
+<span style=color:#75715e>// Money of PayPal transactions
+</span><span style=color:#75715e></span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Money</span> <span style=color:#66d9ef>struct</span> {
+	<span style=color:#75715e>// Amount
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>Amount</span> <span style=color:#66d9ef>float64</span>
+	<span style=color:#75715e>// Currency for that amount
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>Currency</span> <span style=color:#66d9ef>string</span>
+}
+
+<span style=color:#75715e>// Payment in PayPal
+</span><span style=color:#75715e></span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Payment</span> <span style=color:#66d9ef>struct</span> {
+	<span style=color:#75715e>// APIKey is the PayPal API key
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>APIKey</span> <span style=color:#66d9ef>string</span>
+}
+
+<span style=color:#75715e>// Send money
+</span><span style=color:#75715e></span><span style=color:#66d9ef>func</span> (<span style=color:#f92672>*</span><span style=color:#a6e22e>Payment</span>) <span style=color:#a6e22e>Send</span>(<span style=color:#a6e22e>senderEmail</span>, <span style=color:#a6e22e>recipientEmail</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>money</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>Money</span>) <span style=color:#66d9ef>error</span> {
+	<span style=color:#66d9ef>if</span> !<span style=color:#a6e22e>mailRegexp</span>.<span style=color:#a6e22e>MatchString</span>(<span style=color:#a6e22e>senderEmail</span>) {
+		<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>errors</span>.<span style=color:#a6e22e>New</span>(<span style=color:#e6db74>&#34;Invalid sender email address&#34;</span>)
+	}
+
+	<span style=color:#66d9ef>if</span> !<span style=color:#a6e22e>mailRegexp</span>.<span style=color:#a6e22e>MatchString</span>(<span style=color:#a6e22e>recipientEmail</span>) {
+		<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>errors</span>.<span style=color:#a6e22e>New</span>(<span style=color:#e6db74>&#34;Invalid recipient email address&#34;</span>)
+	}
+
+	<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>money</span> <span style=color:#f92672>==</span> <span style=color:#66d9ef>nil</span> {
+		<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>errors</span>.<span style=color:#a6e22e>New</span>(<span style=color:#e6db74>&#34;The money must be provided&#34;</span>)
+	}
+
+	<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>money</span>.<span style=color:#a6e22e>Amount</span> <span style=color:#f92672>&lt;=</span> <span style=color:#ae81ff>0</span> {
+		<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>errors</span>.<span style=color:#a6e22e>New</span>(<span style=color:#e6db74>&#34;The amount cannot be negative&#34;</span>)
+	}
+
+	<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>money</span>.<span style=color:#a6e22e>Currency</span> <span style=color:#f92672>==</span> <span style=color:#e6db74>&#34;&#34;</span> {
+		<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>errors</span>.<span style=color:#a6e22e>New</span>(<span style=color:#e6db74>&#34;The currency must be provided&#34;</span>)
+	}
+
+	<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;Send %f %s from %s to %s&#34;</span>, <span style=color:#a6e22e>money</span>.<span style=color:#a6e22e>Amount</span>, <span style=color:#a6e22e>money</span>.<span style=color:#a6e22e>Currency</span>, <span style=color:#a6e22e>senderEmail</span>, <span style=color:#a6e22e>recipientEmail</span>)
+	<span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>
+}
+</code></pre></div><div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Golang data-lang=Golang><span style=color:#f92672>package</span> <span style=color:#a6e22e>bank</span>
+
+<span style=color:#f92672>import</span> (
+	<span style=color:#e6db74>&#34;errors&#34;</span>
+	<span style=color:#e6db74>&#34;fmt&#34;</span>
+	<span style=color:#e6db74>&#34;time&#34;</span>
+)
+
+<span style=color:#75715e>// AccountType determines the type of bank account
+</span><span style=color:#75715e></span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>AccountType</span> <span style=color:#66d9ef>uint8</span>
+
+<span style=color:#66d9ef>const</span> (
+	<span style=color:#75715e>// AccountTypeCurrent is a current bank account
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>AccountTypeCurrent</span> <span style=color:#a6e22e>AccountType</span> = <span style=color:#66d9ef>iota</span>
+	<span style=color:#75715e>// AccountTypeSaving is a saving bank account
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>AccountTypeSaving</span>
+)
+
+<span style=color:#75715e>// Account is a bank account
+</span><span style=color:#75715e></span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Account</span> <span style=color:#66d9ef>struct</span> {
+	<span style=color:#75715e>// Owner is the bank account owner
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>Owner</span> <span style=color:#66d9ef>string</span>
+	<span style=color:#75715e>// Email of the owner
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>Email</span> <span style=color:#66d9ef>string</span>
+	<span style=color:#75715e>// Balance is the bank account balance
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>Balance</span> <span style=color:#66d9ef>float64</span>
+	<span style=color:#75715e>// Currency of the account
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>Currency</span> <span style=color:#66d9ef>string</span>
+}
+
+<span style=color:#75715e>// Transaction is the bank transaction
+</span><span style=color:#75715e></span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Transaction</span> <span style=color:#66d9ef>struct</span> {
+	<span style=color:#a6e22e>FromAccount</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>Account</span>
+	<span style=color:#a6e22e>ToAccount</span>   <span style=color:#f92672>*</span><span style=color:#a6e22e>Account</span>
+	<span style=color:#a6e22e>Amount</span>      <span style=color:#66d9ef>float64</span>
+	<span style=color:#a6e22e>Date</span>        <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Time</span>
+	<span style=color:#a6e22e>Reason</span>      <span style=color:#66d9ef>string</span>
+}
+
+<span style=color:#75715e>// Gateway for the Bank
+</span><span style=color:#75715e></span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Gateway</span> <span style=color:#66d9ef>struct</span> {
+	<span style=color:#75715e>// Token Key
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>Token</span> <span style=color:#66d9ef>string</span>
+	<span style=color:#75715e>// Accounts
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>Accounts</span> []<span style=color:#f92672>*</span><span style=color:#a6e22e>Account</span>
+}
+
+<span style=color:#75715e>// FindAccountByEmail finds a bank account
+</span><span style=color:#75715e></span><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>g</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>Gateway</span>) <span style=color:#a6e22e>FindAccountByEmail</span>(<span style=color:#a6e22e>email</span> <span style=color:#66d9ef>string</span>) (<span style=color:#f92672>*</span><span style=color:#a6e22e>Account</span>, <span style=color:#66d9ef>error</span>) {
+	<span style=color:#66d9ef>for</span> <span style=color:#a6e22e>_</span>, <span style=color:#a6e22e>account</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>g</span>.<span style=color:#a6e22e>Accounts</span> {
+		<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>account</span>.<span style=color:#a6e22e>Email</span> <span style=color:#f92672>==</span> <span style=color:#a6e22e>email</span> {
+			<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>account</span>, <span style=color:#66d9ef>nil</span>
+		}
+	}
+	<span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>, <span style=color:#a6e22e>errors</span>.<span style=color:#a6e22e>New</span>(<span style=color:#e6db74>&#34;Account Not Found&#34;</span>)
+}
+
+<span style=color:#75715e>// ProcessTransaction processes a bank transaction
+</span><span style=color:#75715e></span><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>g</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>Gateway</span>) <span style=color:#a6e22e>ProcessTransaction</span>(<span style=color:#a6e22e>t</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>Transaction</span>) <span style=color:#66d9ef>error</span> {
+	<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>t</span>.<span style=color:#a6e22e>FromAccount</span> <span style=color:#f92672>==</span> <span style=color:#66d9ef>nil</span> {
+		<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>errors</span>.<span style=color:#a6e22e>New</span>(<span style=color:#e6db74>&#34;FromAccount is missing&#34;</span>)
+	}
+	<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>t</span>.<span style=color:#a6e22e>ToAccount</span> <span style=color:#f92672>==</span> <span style=color:#66d9ef>nil</span> {
+		<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>errors</span>.<span style=color:#a6e22e>New</span>(<span style=color:#e6db74>&#34;ToAccount is missing&#34;</span>)
+	}
+
+	<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>t</span>.<span style=color:#a6e22e>Reason</span> <span style=color:#f92672>==</span> <span style=color:#e6db74>&#34;&#34;</span> {
+		<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>errors</span>.<span style=color:#a6e22e>New</span>(<span style=color:#e6db74>&#34;Reason is not provided&#34;</span>)
+	}
+
+	<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>t</span>.<span style=color:#a6e22e>Amount</span> <span style=color:#f92672>&lt;=</span> <span style=color:#ae81ff>0</span> {
+		<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>errors</span>.<span style=color:#a6e22e>New</span>(<span style=color:#e6db74>&#34;Invalid amount&#34;</span>)
+	}
+
+	<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>t</span>.<span style=color:#a6e22e>Amount</span> &gt; <span style=color:#a6e22e>t</span>.<span style=color:#a6e22e>FromAccount</span>.<span style=color:#a6e22e>Balance</span> {
+		<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>errors</span>.<span style=color:#a6e22e>New</span>(<span style=color:#e6db74>&#34;Insufficient funds&#34;</span>)
+	}
+
+	<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;Transfered %f %s from %s to %s at %v&#34;</span>, <span style=color:#a6e22e>t</span>.<span style=color:#a6e22e>Amount</span>,
+		<span style=color:#a6e22e>t</span>.<span style=color:#a6e22e>FromAccount</span>.<span style=color:#a6e22e>Currency</span>, <span style=color:#a6e22e>t</span>.<span style=color:#a6e22e>FromAccount</span>.<span style=color:#a6e22e>Owner</span>, <span style=color:#a6e22e>t</span>.<span style=color:#a6e22e>ToAccount</span>.<span style=color:#a6e22e>Owner</span>, <span style=color:#a6e22e>t</span>.<span style=color:#a6e22e>Date</span>)
+
+	<span style=color:#a6e22e>t</span>.<span style=color:#a6e22e>FromAccount</span>.<span style=color:#a6e22e>Balance</span> <span style=color:#f92672>-=</span> <span style=color:#a6e22e>t</span>.<span style=color:#a6e22e>Amount</span>
+	<span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>
+}
+</code></pre></div><p>We are developing a shopping card that should work with different payment methods:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Golang data-lang=Golang><span style=color:#75715e>// Checkouter checkouts order
+</span><span style=color:#75715e></span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Payment</span> <span style=color:#66d9ef>interface</span> {
+	<span style=color:#75715e>// Pay from email to email this amount
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>Pay</span>(<span style=color:#a6e22e>fromEmail</span>, <span style=color:#a6e22e>toEmail</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>amount</span> <span style=color:#66d9ef>float64</span>) <span style=color:#66d9ef>error</span>
+}
+
+<span style=color:#75715e>// Item in the shopping card
+</span><span style=color:#75715e></span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Item</span> <span style=color:#66d9ef>struct</span> {
+	<span style=color:#75715e>// Name of the item
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>Name</span> <span style=color:#66d9ef>string</span>
+	<span style=color:#75715e>// Price of the item
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>Price</span> <span style=color:#66d9ef>float64</span>
+}
+
+<span style=color:#75715e>// ShoppingCard in online store
+</span><span style=color:#75715e></span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>ShoppingCard</span> <span style=color:#66d9ef>struct</span> {
+	<span style=color:#75715e>// Items im the ShoppingCard
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>Items</span> []<span style=color:#f92672>*</span><span style=color:#a6e22e>Item</span>
+	<span style=color:#75715e>// PaymentMethod selected
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>PaymentMethod</span> <span style=color:#a6e22e>Payment</span>
+	<span style=color:#75715e>// ShopEmailAddress address of the shop
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>ShopEmailAddress</span> <span style=color:#66d9ef>string</span>
+}
+
+<span style=color:#75715e>// Checkout checkouts a shopping card
+</span><span style=color:#75715e></span><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>c</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>ShoppingCard</span>) <span style=color:#a6e22e>Checkout</span>(<span style=color:#a6e22e>payeeEmail</span> <span style=color:#66d9ef>string</span>) <span style=color:#66d9ef>error</span> {
+	<span style=color:#66d9ef>var</span> <span style=color:#a6e22e>total</span> <span style=color:#66d9ef>float64</span>
+
+	<span style=color:#66d9ef>for</span> <span style=color:#a6e22e>_</span>, <span style=color:#a6e22e>item</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>c</span>.<span style=color:#a6e22e>Items</span> {
+		<span style=color:#a6e22e>total</span> <span style=color:#f92672>+=</span> <span style=color:#a6e22e>item</span>.<span style=color:#a6e22e>Price</span>
+	}
+
+	<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>c</span>.<span style=color:#a6e22e>PaymentMethod</span>.<span style=color:#a6e22e>Pay</span>(<span style=color:#a6e22e>payeeEmail</span>, <span style=color:#a6e22e>c</span>.<span style=color:#a6e22e>ShopEmailAddress</span>, <span style=color:#a6e22e>total</span>)
+}
+</code></pre></div><p>As you might see, the Bank API and PayPal API cannot be used as different
+payment options in the <code>ShoppingCard</code> object due to their different signatures.</p>
+<p>In order to adopt them we should implement an adapters that obey the <code>Payment</code>
+interface.</p>
+<p>The <code>BankAdapter</code> adapts the bank package API by wrapping <code>bank.Gateway</code>
+struct:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Golang data-lang=Golang><span style=color:#75715e>// BankAdapter adapts bank API
+</span><span style=color:#75715e></span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>BankAdapter</span> <span style=color:#66d9ef>struct</span> {
+	<span style=color:#75715e>// Gateway of the bank
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>Gateway</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>bank</span>.<span style=color:#a6e22e>Gateway</span>
+}
+
+<span style=color:#75715e>// Pay from email to email this amount
+</span><span style=color:#75715e></span><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>b</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>BankAdapter</span>) <span style=color:#a6e22e>Pay</span>(<span style=color:#a6e22e>fromEmail</span>, <span style=color:#a6e22e>toEmail</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>amount</span> <span style=color:#66d9ef>float64</span>) <span style=color:#66d9ef>error</span> {
+	<span style=color:#a6e22e>fromAccount</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>b</span>.<span style=color:#a6e22e>Gateway</span>.<span style=color:#a6e22e>FindAccountByEmail</span>(<span style=color:#a6e22e>fromEmail</span>)
+	<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+		<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>err</span>
+	}
+
+	<span style=color:#a6e22e>toAccount</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>b</span>.<span style=color:#a6e22e>Gateway</span>.<span style=color:#a6e22e>FindAccountByEmail</span>(<span style=color:#a6e22e>toEmail</span>)
+	<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+		<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>err</span>
+	}
+
+	<span style=color:#a6e22e>t</span> <span style=color:#f92672>:=</span> <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>bank</span>.<span style=color:#a6e22e>Transaction</span>{
+		<span style=color:#a6e22e>FromAccount</span>: <span style=color:#a6e22e>fromAccount</span>,
+		<span style=color:#a6e22e>ToAccount</span>:   <span style=color:#a6e22e>toAccount</span>,
+		<span style=color:#a6e22e>Amount</span>:      <span style=color:#a6e22e>amount</span>,
+		<span style=color:#a6e22e>Date</span>:        <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Now</span>(),
+		<span style=color:#a6e22e>Reason</span>:      <span style=color:#e6db74>&#34;Payment to Online Store&#34;</span>,
+	}
+
+	<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>b</span>.<span style=color:#a6e22e>Gateway</span>.<span style=color:#a6e22e>ProcessTransaction</span>(<span style=color:#a6e22e>t</span>)
+}
+</code></pre></div><p><code>PayPal</code> API is adopted by <code>PayPalAdapter</code> struct:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Golang data-lang=Golang><span style=color:#75715e>// PayPalAdapter adapts PayPal API
+</span><span style=color:#75715e></span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>PayPalAdapter</span> <span style=color:#66d9ef>struct</span> {
+	<span style=color:#a6e22e>Payment</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>paypal</span>.<span style=color:#a6e22e>Payment</span>
+}
+
+<span style=color:#75715e>// Pay from email to email this amount
+</span><span style=color:#75715e></span><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>p</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>PayPalAdapter</span>) <span style=color:#a6e22e>Pay</span>(<span style=color:#a6e22e>fromEmail</span>, <span style=color:#a6e22e>toEmail</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>amount</span> <span style=color:#66d9ef>float64</span>) <span style=color:#66d9ef>error</span> {
+	<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>p</span>.<span style=color:#a6e22e>Payment</span>.<span style=color:#a6e22e>Send</span>(<span style=color:#a6e22e>fromEmail</span>, <span style=color:#a6e22e>toEmail</span>, <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>paypal</span>.<span style=color:#a6e22e>Money</span>{<span style=color:#a6e22e>Amount</span>: <span style=color:#a6e22e>amount</span>, <span style=color:#a6e22e>Currency</span>: <span style=color:#e6db74>&#34;USD&#34;</span>})
+}
+</code></pre></div><h4 id=verdict>Verdict</h4>
+<p><code>The Adapter Pattern</code> is used wherever there is code to be wrapped up and
+redirected to a different implementation.</p>
+<blockquote>
+<p>But How Much the <code>Adapter</code> Should Do?</p>
+</blockquote>
+<p>If the <code>Target</code> and <code>Adaptee</code> has similarities then the adapter has just to
+delegate the requests from the Target to the Adaptee. If <code>Target</code> and <code>Adaptee</code>
+are not similar, then the adapter might have to convert the data structures
+between those and to implement the operations required by the Target but not
+implemented by the Adaptee.</p>
+</div>
+<div class=form-subscribe>
+<div id=form-subscribe-box>
+<h4>All about Golang, Distributed Systems and Backend development.</h4>
+<p>Sign up to receive the latest articles and updates</p>
+<form id=mc-embedded-subscribe-form method=post class=form>
+<div class=form-item>
+<label><span id=form-subscribe-info></span></label>
+<div class=append>
+<input type=email name=EMAIL id=mc-email placeholder=Email>
+<button class=button>Subscribe</button>
+</div>
+</div>
+<div style=position:absolute;left:-5000px aria-hidden=true>
+<input type=text tabindex=-1>
+</div>
+</form>
+<h4>Follow me on</h4>
+<ul class=social-icons>
+<li><a href=https://twitter.com/ralch class=social-icon> <i class="fa fa-twitter"></i></a></li>
+<li><a href=https://github.com/svett class=social-icon> <i class="fa fa-github"></i></a></li>
+<li><a href=http://uk.linkedin.com/in/ralchev class=social-icon> <i class="fa fa-linkedin"></i></a></li>
+<li><a href=http://blog.ralch.com/index.xml class=social-icon> <i class="fa fa-rss"></i></a></li>
+</ul>
+</div>
+</div>
+<div>
+<p>
+Published
+by <span itemprop=author>Svetlin Ralchev</span>
+<time datetime=2016-02-22T08:42:38+00:00>
+22 Feb, 2016
+</time>
+in <span itemprop=articleSection><a href=/categories/design-patterns/>design patterns</a> and <a href=/categories/programming-languages/>programming languages</a></span>
+and tagged <a href=/tags/adapter/>#adapter</a>, <a href=/tags/go/>#go</a> and <a href=/tags/structural-design-patterns/>#structural design patterns</a>
+using <span itemprop=wordCount>1054</span> words.
+</p>
+<aside>
+<heade><strong>Related Content</strong></header>
+<hr>
+<ul>
+<li><a href=/articles/advanced-error-handling-in-golang/>Advanced Error Handling in Golang</a> &ndash; 2 minutes
+<li><a href=/articles/network-programming-and-proxies-in-golang/>Network Programming and Proxies in Golang</a> &ndash; 3 minutes
+<li><a href=/articles/golang-reflect-struct-tag/>Golang: Extending reflect.StructTag to support duplicates</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-decorator/>Design Patterns in Golang: Decorator</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-composite/>Design Patterns in Golang: Composite</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-bridge/>Desing Patterns in Golang: Bridge</a> &ndash; 3 minutes
+<li><a href=/articles/golang-handling-errors/>Errors handling in Golang</a> &ndash; 3 minutes
+</ul>
+</aside>
+</div>
+<article>
+<div id=disqus_thread></div>
+<script type=text/javascript>(function(){var a,b;if(window.location.hostname=="localhost")return;a=document.createElement('script'),a.type='text/javascript',a.async=!0,b='ralch',a.src='//'+b+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the comments powered by <a href=http://disqus.com/?ref_noscript>Disqus.</a></noscript>
+</article>
+</div>
+</div>
+</main>
+<footer> <footer id=footer>
+<nav>
+<ul>
+<li><span>Svetlin Ralchev</span></li>
+<li>
+<a href=https://www.phogolabs.com>Company</a>
+</li>
+<li>
+<a href=/articles/>Articles</a>
+</li>
+<li>
+<a href=https://twitter.com/ralch>Twitter</a>
+</li>
+<li>
+<a href=https://github.com/svett>Github</a>
+</li>
+</ul>
+</nav>
+<p>
+powered by <a href=http://www.gohugo.io>Hugo</a>
+based on <a href=https://github.com/jeblister/kube>Kube</a> theme
+&copy; 2021 Licence MIT modified by Svetlin Ralchev
+</p>
+<script>(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)})(window,document,'script','//www.google-analytics.com/analytics.js','ga'),ga('create','UA-62134307-2','auto'),ga('send','pageview')</script>
+</footer>
+</footer>
+<script src=/js/kube.js type=text/javascript></script>
+<script src=/js/kube.legenda.js type=text/javascript></script>
+<script src=/js/master.js type=text/javascript></script>
+</body>
+</html>

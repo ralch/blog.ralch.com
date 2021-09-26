@@ -1,0 +1,341 @@
+<!doctype html><html lang=en-us>
+<head>
+<meta name=generator content="Hugo 0.88.1">
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title> Expose application metrics with expvar </title>
+<meta name=author content="Svetlin Ralchev">
+<meta property="og:title" content="Expose application metrics with expvar">
+<meta property="og:description" content="To determine whether your application meets its performance objectives and to help identify bottlenecks, you need to measure your program&rsquo;s performance and collect metrics. They tend to be response time, throughput, and resource utilization (how much CPU, memory, disk I/O, and network bandwidth your application consumes while performing its tasks).
+Metrics Metrics provide information about how close your program is to your performance goals. In addition, they also help you identify problem areas and bottlenecks within your application.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://blog.ralch.com/articles/golang-metrics-with-expvar/"><meta property="article:section" content="articles">
+<meta property="article:published_time" content="2015-12-06T08:47:15+00:00">
+<meta property="article:modified_time" content="2015-12-06T08:47:15+00:00">
+<link rel=canonical href=http://blog.ralch.com/articles/golang-metrics-with-expvar/>
+<link rel=apple-touch-icon sizes=57x57 href=/img/favicons/apple-icon-57x57.png>
+<link rel=apple-touch-icon sizes=60x60 href=/img/favicons/apple-icon-60x60.png>
+<link rel=apple-touch-icon sizes=72x72 href=/img/favicons/apple-icon-72x72.png>
+<link rel=apple-touch-icon sizes=76x76 href=/img/favicons/apple-icon-76x76.png>
+<link rel=apple-touch-icon sizes=114x114 href=/img/favicons/apple-icon-114x114.png>
+<link rel=apple-touch-icon sizes=120x120 href=/img/favicons/apple-icon-120x120.png>
+<link rel=apple-touch-icon sizes=144x144 href=/img/favicons/apple-icon-144x144.png>
+<link rel=apple-touch-icon sizes=152x152 href=/img/favicons/apple-icon-152x152.png>
+<link rel=apple-touch-icon sizes=180x180 href=/img/favicons/apple-icon-180x180.png>
+<link rel=icon type=image/png sizes=192x192 href=/img/favicons/android-icon-192x192.png>
+<link rel=icon type=image/png sizes=32x32 href=/img/favicons/favicon-32x32.png>
+<link rel=icon type=image/png sizes=96x96 href=/img/favicons/favicon-96x96.png>
+<link rel=icon type=image/png sizes=16x16 href=/img/favicons/favicon-16x16.png>
+<link rel=manifest href=/img/favicons/manifest.json>
+<meta name=msapplication-TileColor content="#ffffff">
+<meta name=msapplication-TileImage content="/img/favicons/ms-icon-144x144.png">
+<meta name=theme-color content="#ffffff">
+<link href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css rel=stylesheet>
+<link href=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css rel=stylesheet>
+<link href=/css/font.css rel=stylesheet type=text/css>
+<link href=/css/kube.min.css rel=stylesheet type=text/css>
+<link href=/css/kube.legenda.css rel=stylesheet type=text/css>
+<link href=/css/master.css rel=stylesheet type=text/css>
+<link href=/css/theme.css rel=stylesheet type=text/css>
+<link href=/css/social.css rel=stylesheet type=text/css>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js type=text/javascript></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js></script>
+<script src=/js/jquery.ajaxchimp.js></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</head>
+<body class=page-kube>
+<header> <div class=show-sm>
+<div id=nav-toggle-box>
+<div id=nav-toggle-brand>
+<a href=/>Svetlin Ralchev</a>
+</div>
+<a data-component=toggleme data-target=#top href=# id=nav-toggle><i class=kube-menu></i></a>
+</div>
+</div>
+<div class=hide-sm id=top>
+<div id=top-brand>
+<a href=/ title=home>Svetlin Ralchev</a>
+</div>
+<nav id=top-nav-main>
+<ul>
+<li><a href=/about/>About</a></li>
+<li><a href=/articles/>Articles</a></li>
+</ul>
+</nav>
+<nav id=top-nav-extra>
+</nav>
+</div>
+</header>
+<main>
+<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
+<meta itemprop=name content="Expose application metrics with expvar">
+<meta itemprop=description content="To determine whether your application meets its performance objectives and to help identify bottlenecks, you need to measure your program&rsquo;s performance and collect metrics. They tend to be response time, throughput, and resource utilization (how much CPU, memory, disk I/O, and network bandwidth your application consumes while performing its tasks).
+Metrics Metrics provide information about how close your program is to your performance goals. In addition, they also help you identify problem areas and bottlenecks within your application."><meta itemprop=datePublished content="2015-12-06T08:47:15+00:00">
+<meta itemprop=dateModified content="2015-12-06T08:47:15+00:00">
+<meta itemprop=wordCount content="759">
+<meta itemprop=keywords content="go,metrics,expvar,">
+<div id=hero>
+<h1 itemprop=headline>Expose application metrics with expvar</h1>
+<time class=post-time><span class=icon>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+</span>
+<span>4 minute read</span>
+<span class=icon>
+<i class="fa fa-pencil" aria-hidden=true></i>
+</span>
+Published: <time datetime=2015-12-06T08:47:15+00:00>6 Dec, 2015</time>
+</time>
+</div>
+<div id=post-box>
+<div id=post itemprop=articleBody>
+<p>To determine whether your application meets its performance objectives and to
+help identify bottlenecks, you need to measure your program&rsquo;s performance
+and collect metrics. They tend to be response time, throughput, and resource
+utilization (how much CPU, memory, disk I/O, and network bandwidth your
+application consumes while performing its tasks).</p>
+<h4 id=metrics>Metrics</h4>
+<p>Metrics provide information about how close your program is to your
+performance goals. In addition, they also help you identify problem areas and
+bottlenecks within your application. Metric types could be grouped under
+the following categories:</p>
+<ul>
+<li><code>Network</code> metric related to network bandwidth usage.</li>
+<li><code>System</code> metrics are related to processor, memory, disk I/O, and network I/O.</li>
+<li><code>Platform</code> metrics are related to execution runtime.</li>
+<li><code>Application</code> metrics include custom performance counters.</li>
+</ul>
+<h4 id=how-measuring-applies-to-life-cycle>How Measuring Applies to Life Cycle</h4>
+<p>You should start to measure as soon as you have a defined set of performance
+objectives for your program. This should be early in the application design
+phase.</p>
+<p>You must continue to measure application performance throughout the
+life cycle to determine whether your application is trending toward or away
+from its performance objectives.</p>
+<h4 id=exposing-and-collecting-metrics-in-golang>Exposing and collecting metrics in Golang</h4>
+<p><code>Golang</code> provides a variety of packages for exposing metrics, application
+monitoring and performance analysis.</p>
+<p>In the article, we will explore <code>expvar</code> package that can provide command line
+arguments, allocation stats, heap stats and garbage collection metrics. In
+addition, it allows you to define variables to export and publish over http.</p>
+<p>The package should be imported to register http handler into the default http mux:</p>
+<pre tabindex=0><code>import _ &quot;expvar&quot;
+</code></pre><p>Also it publishes &lsquo;cmdline&rsquo; and &lsquo;memstats&rsquo; variables for the current process.
+If you don&rsquo;t run an HTTP server, you should the following code snippet to make
+available an HTTP endpoint:</p>
+<pre tabindex=0><code>http.ListenAndServe(&quot;:8080&quot;, http.DefaultServeMux)
+</code></pre><p>You could access the exported variables on <code>http://127.0.0.1:8080/debug/vars</code>:</p>
+<pre tabindex=0><code>{
+  &quot;cmdline&quot;: [
+    &quot;/var/folders/74/8nd9swvj2rs7j3phs34tw7lm0000gq/T/go-build109647759/command-line-arguments/_obj/exe/main&quot;
+  ],
+  &quot;memstats&quot;: {
+    &quot;Alloc&quot;: 204728,
+    &quot;TotalAlloc&quot;: 204728,
+    &quot;Sys&quot;: 4720888,
+    &quot;Lookups&quot;: 6,
+    &quot;Mallocs&quot;: 887,
+    &quot;Frees&quot;: 0,
+    &quot;HeapAlloc&quot;: 204728,
+    &quot;HeapSys&quot;: 1671168,
+    &quot;HeapIdle&quot;: 966656,
+    &quot;HeapInuse&quot;: 704512,
+    &quot;HeapReleased&quot;: 0,
+    &quot;HeapObjects&quot;: 887,
+    &quot;StackInuse&quot;: 425984,
+    &quot;StackSys&quot;: 425984,
+    &quot;MSpanInuse&quot;: 9520,
+    &quot;MSpanSys&quot;: 16384,
+    &quot;MCacheInuse&quot;: 9664,
+    &quot;MCacheSys&quot;: 16384,
+    &quot;BuckHashSys&quot;: 1443053,
+    &quot;GCSys&quot;: 65536,
+    &quot;OtherSys&quot;: 1082379,
+    &quot;NextGC&quot;: 4194304,
+    &quot;LastGC&quot;: 0,
+    &quot;PauseTotalNs&quot;: 0,
+    &quot;PauseNs&quot;: [],
+    &quot;PauseEnd&quot;: [],
+    &quot;NumGC&quot;: 0,
+    &quot;GCCPUFraction&quot;: 0,
+    &quot;EnableGC&quot;: true,
+    &quot;DebugGC&quot;: false,
+    &quot;BySize&quot;: [
+      {
+        &quot;Size&quot;: 17664,
+        &quot;Mallocs&quot;: 0,
+        &quot;Frees&quot;: 0
+      }
+    ]
+  }
+}
+</code></pre><p>In addtion exported variables could be accessed by using <code>expvar.Get</code> function:</p>
+<pre tabindex=0><code>memstatsFunc := expvar.Get(&quot;memstats&quot;).(expvar.Func)
+memstats := memstatsFunc().(runtime.MemStats)
+fmt.Println(memstats.Alloc)
+</code></pre><p>If you want to collect all exported variables you should consider using <code>expvar.Do</code>
+function which invokes the provided callback function for every variable in thread
+safe way. The <code>expvar.KeyValue</code> type has <code>Key</code> and <code>Value</code> field that returns the
+variable name and variable value.</p>
+<p>The sample below prints out all exported variables:</p>
+<pre tabindex=0><code>expvar.Do(func(variable expvar.KeyValue) {
+	fmt.Printf(&quot;expvar.Key: %s expvar.Value: %s&quot;, variable.Key, variable.Value)
+})
+</code></pre><p>The package allows exporting of integers, floats and string variables.</p>
+<pre tabindex=0><code>var (
+	orderCounter      *expvar.Int
+	balanceCounter    *expvar.Float
+	transactionMetric *expvar.String
+)
+
+func init() {
+	orderCounter = expvar.NewInt(&quot;counter&quot;)
+	balanceCounter = expvar.NewFloat(&quot;balance&quot;)
+	transactionMetrics = expvar.NewString(&quot;transaction&quot;)
+}
+</code></pre><blockquote>
+<p>Note that it&rsquo;s recommended to register the new exported variables in the init
+function of your package.</p>
+</blockquote>
+<p>Then you should the variables in the similar way as their counterparts:</p>
+<pre tabindex=0><code>// Adds an integer value to expvar.Int counter
+orderCounter.Add(2)
+// Sets a float value to expvar.Float metrics
+balanceCounter.Set(1000)
+// Sets a string to expvar.String metrics
+transactionMetrics.Set(&quot;this is my transaction&quot;)
+</code></pre><p>If you want to do something more complex you should use the <code>expvar.Publish</code>
+function which register any type that obeys <code>expvar.Var</code> interface:</p>
+<pre tabindex=0><code>type Var interface {
+  String() string
+}
+</code></pre><p>Lets define our own metrics that exports <code>time.Time</code> type:</p>
+<pre tabindex=0><code>type TimeVar struct {
+	value time.Time
+}
+
+// Sets a time.Time as time metrics value
+func (v *TimeVar) Set(date time.Time) {
+	v.value = date
+}
+
+// Adds a time.Duration to current time metrics value
+func (v *TimeVar) Add(duration time.Duration) {
+	v.value = v.value.Add(duration)
+}
+
+// Converts the TimeVar metrics to string
+func (v *TimeVar) String() string {
+	return v.value.Format(time.UnixDate)
+}
+</code></pre><p>Then we should use <code>expvar.Publish</code> function to export this type:</p>
+<pre tabindex=0><code>var (
+	timeMetrics        *TimeVar
+)
+
+func init() {
+	timeMetrics = &amp;TimeVar{value: time.Now()}
+	expvar.Publish(&quot;Time&quot;, timeMetrics)
+}
+</code></pre><p>We can use the exported variable in the following way:</p>
+<pre tabindex=0><code>// Adds an hour to the initial time metrics value
+timeMetrics.Add(1 * time.Hour)
+</code></pre><h4 id=verdict>Verdict</h4>
+<p>Having set metrics objects early in your application&rsquo;s design phase, you
+begin to measure by collecting them. You continue to measure throughout the
+application life cycle to determine whether your application&rsquo;s performance is
+trending toward or away from its performance goals.</p>
+<p>In <code>Golang</code> this goal is considered as important part of every application. The
+ease of use and out of the box support give us confidence to build scalable
+and performan programs.</p>
+</div>
+<div class=form-subscribe>
+<div id=form-subscribe-box>
+<h4>All about Golang, Distributed Systems and Backend development.</h4>
+<p>Sign up to receive the latest articles and updates</p>
+<form id=mc-embedded-subscribe-form method=post class=form>
+<div class=form-item>
+<label><span id=form-subscribe-info></span></label>
+<div class=append>
+<input type=email name=EMAIL id=mc-email placeholder=Email>
+<button class=button>Subscribe</button>
+</div>
+</div>
+<div style=position:absolute;left:-5000px aria-hidden=true>
+<input type=text tabindex=-1>
+</div>
+</form>
+<h4>Follow me on</h4>
+<ul class=social-icons>
+<li><a href=https://twitter.com/ralch class=social-icon> <i class="fa fa-twitter"></i></a></li>
+<li><a href=https://github.com/svett class=social-icon> <i class="fa fa-github"></i></a></li>
+<li><a href=http://uk.linkedin.com/in/ralchev class=social-icon> <i class="fa fa-linkedin"></i></a></li>
+<li><a href=http://blog.ralch.com/index.xml class=social-icon> <i class="fa fa-rss"></i></a></li>
+</ul>
+</div>
+</div>
+<div>
+<p>
+Published
+by <span itemprop=author>Svetlin Ralchev</span>
+<time datetime=2015-12-06T08:47:15+00:00>
+6 Dec, 2015
+</time>
+in <span itemprop=articleSection><a href=/categories/programming-languages/>programming languages</a></span>
+and tagged <a href=/tags/expvar/>#expvar</a>, <a href=/tags/go/>#go</a> and <a href=/tags/metrics/>#metrics</a>
+using <span itemprop=wordCount>759</span> words.
+</p>
+<aside>
+<heade><strong>Related Content</strong></header>
+<hr>
+<ul>
+<li><a href=/articles/advanced-error-handling-in-golang/>Advanced Error Handling in Golang</a> &ndash; 2 minutes
+<li><a href=/articles/network-programming-and-proxies-in-golang/>Network Programming and Proxies in Golang</a> &ndash; 3 minutes
+<li><a href=/articles/golang-reflect-struct-tag/>Golang: Extending reflect.StructTag to support duplicates</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-decorator/>Design Patterns in Golang: Decorator</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-composite/>Design Patterns in Golang: Composite</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-bridge/>Desing Patterns in Golang: Bridge</a> &ndash; 3 minutes
+<li><a href=/articles/golang-handling-errors/>Errors handling in Golang</a> &ndash; 3 minutes
+</ul>
+</aside>
+</div>
+<article>
+<div id=disqus_thread></div>
+<script type=text/javascript>(function(){var a,b;if(window.location.hostname=="localhost")return;a=document.createElement('script'),a.type='text/javascript',a.async=!0,b='ralch',a.src='//'+b+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the comments powered by <a href=http://disqus.com/?ref_noscript>Disqus.</a></noscript>
+</article>
+</div>
+</div>
+</main>
+<footer> <footer id=footer>
+<nav>
+<ul>
+<li><span>Svetlin Ralchev</span></li>
+<li>
+<a href=https://www.phogolabs.com>Company</a>
+</li>
+<li>
+<a href=/articles/>Articles</a>
+</li>
+<li>
+<a href=https://twitter.com/ralch>Twitter</a>
+</li>
+<li>
+<a href=https://github.com/svett>Github</a>
+</li>
+</ul>
+</nav>
+<p>
+powered by <a href=http://www.gohugo.io>Hugo</a>
+based on <a href=https://github.com/jeblister/kube>Kube</a> theme
+&copy; 2021 Licence MIT modified by Svetlin Ralchev
+</p>
+<script>(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)})(window,document,'script','//www.google-analytics.com/analytics.js','ga'),ga('create','UA-62134307-2','auto'),ga('send','pageview')</script>
+</footer>
+</footer>
+<script src=/js/kube.js type=text/javascript></script>
+<script src=/js/kube.legenda.js type=text/javascript></script>
+<script src=/js/master.js type=text/javascript></script>
+</body>
+</html>

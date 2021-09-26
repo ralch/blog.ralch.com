@@ -1,0 +1,356 @@
+<!doctype html><html lang=en-us>
+<head>
+<meta name=generator content="Hugo 0.88.1">
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title> Serialization objects with protocol buffers in Golang </title>
+<meta name=author content="Svetlin Ralchev">
+<meta property="og:title" content="Serialization objects with protocol buffers in Golang">
+<meta property="og:description" content="What is protocol buffers? Protocol Buffers is a method of serializing structured data. It is useful in developing programs to communicate with each other over a wire or for storing data. The method involves an interface description language that describes the structure of some data and a program that generates source code from that description for generating or parsing a stream of bytes that represents the structured data.
+Google developed Protocol Buffers for use internally and has made protocol compilers for C++, Java and Python available to the public under a free software, open source license.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://blog.ralch.com/articles/golang-proto-buffer/"><meta property="article:section" content="articles">
+<meta property="article:published_time" content="2016-01-12T08:02:19+00:00">
+<meta property="article:modified_time" content="2016-01-12T08:02:19+00:00">
+<link rel=canonical href=http://blog.ralch.com/articles/golang-proto-buffer/>
+<link rel=apple-touch-icon sizes=57x57 href=/img/favicons/apple-icon-57x57.png>
+<link rel=apple-touch-icon sizes=60x60 href=/img/favicons/apple-icon-60x60.png>
+<link rel=apple-touch-icon sizes=72x72 href=/img/favicons/apple-icon-72x72.png>
+<link rel=apple-touch-icon sizes=76x76 href=/img/favicons/apple-icon-76x76.png>
+<link rel=apple-touch-icon sizes=114x114 href=/img/favicons/apple-icon-114x114.png>
+<link rel=apple-touch-icon sizes=120x120 href=/img/favicons/apple-icon-120x120.png>
+<link rel=apple-touch-icon sizes=144x144 href=/img/favicons/apple-icon-144x144.png>
+<link rel=apple-touch-icon sizes=152x152 href=/img/favicons/apple-icon-152x152.png>
+<link rel=apple-touch-icon sizes=180x180 href=/img/favicons/apple-icon-180x180.png>
+<link rel=icon type=image/png sizes=192x192 href=/img/favicons/android-icon-192x192.png>
+<link rel=icon type=image/png sizes=32x32 href=/img/favicons/favicon-32x32.png>
+<link rel=icon type=image/png sizes=96x96 href=/img/favicons/favicon-96x96.png>
+<link rel=icon type=image/png sizes=16x16 href=/img/favicons/favicon-16x16.png>
+<link rel=manifest href=/img/favicons/manifest.json>
+<meta name=msapplication-TileColor content="#ffffff">
+<meta name=msapplication-TileImage content="/img/favicons/ms-icon-144x144.png">
+<meta name=theme-color content="#ffffff">
+<link href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css rel=stylesheet>
+<link href=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css rel=stylesheet>
+<link href=/css/font.css rel=stylesheet type=text/css>
+<link href=/css/kube.min.css rel=stylesheet type=text/css>
+<link href=/css/kube.legenda.css rel=stylesheet type=text/css>
+<link href=/css/master.css rel=stylesheet type=text/css>
+<link href=/css/theme.css rel=stylesheet type=text/css>
+<link href=/css/social.css rel=stylesheet type=text/css>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js type=text/javascript></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js></script>
+<script src=/js/jquery.ajaxchimp.js></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</head>
+<body class=page-kube>
+<header> <div class=show-sm>
+<div id=nav-toggle-box>
+<div id=nav-toggle-brand>
+<a href=/>Svetlin Ralchev</a>
+</div>
+<a data-component=toggleme data-target=#top href=# id=nav-toggle><i class=kube-menu></i></a>
+</div>
+</div>
+<div class=hide-sm id=top>
+<div id=top-brand>
+<a href=/ title=home>Svetlin Ralchev</a>
+</div>
+<nav id=top-nav-main>
+<ul>
+<li><a href=/about/>About</a></li>
+<li><a href=/articles/>Articles</a></li>
+</ul>
+</nav>
+<nav id=top-nav-extra>
+</nav>
+</div>
+</header>
+<main>
+<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
+<meta itemprop=name content="Serialization objects with protocol buffers in Golang">
+<meta itemprop=description content="What is protocol buffers? Protocol Buffers is a method of serializing structured data. It is useful in developing programs to communicate with each other over a wire or for storing data. The method involves an interface description language that describes the structure of some data and a program that generates source code from that description for generating or parsing a stream of bytes that represents the structured data.
+Google developed Protocol Buffers for use internally and has made protocol compilers for C++, Java and Python available to the public under a free software, open source license."><meta itemprop=datePublished content="2016-01-12T08:02:19+00:00">
+<meta itemprop=dateModified content="2016-01-12T08:02:19+00:00">
+<meta itemprop=wordCount content="863">
+<meta itemprop=keywords content="go,serialization,protobuffer,">
+<div id=hero>
+<h1 itemprop=headline>Serialization objects with protocol buffers in Golang</h1>
+<time class=post-time><span class=icon>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+</span>
+<span>5 minute read</span>
+<span class=icon>
+<i class="fa fa-pencil" aria-hidden=true></i>
+</span>
+Published: <time datetime=2016-01-12T08:02:19+00:00>12 Jan, 2016</time>
+</time>
+</div>
+<div id=post-box>
+<div id=post itemprop=articleBody>
+<h4 id=what-is-protocol-buffers>What is protocol buffers?</h4>
+<p>Protocol Buffers is a method of serializing structured data. It is useful in
+developing programs to communicate with each other over a wire or for storing
+data. The method involves an interface description language that describes the
+structure of some data and a program that generates source code from that
+description for generating or parsing a stream of bytes that represents the
+structured data.</p>
+<p>Google developed Protocol Buffers for use internally and has made protocol
+compilers for C++, Java and Python available to the public under a free
+software, open source license. Various other language implementations are also
+available, including C#, JavaScript, Go, Perl, PHP, Ruby, Scala and Julia.</p>
+<p>The design goals for Protocol Buffers emphasized simplicity and performance. In
+particular, it was designed to be smaller and faster than XML.</p>
+<p>Protocol Buffers is widely used at Google for storing and interchanging all
+kinds of structured information. The method serves as a basis for a custom
+remote procedure call (RPC) system that is used for nearly all inter-machine
+communication at Google.</p>
+<p>A software developer defines data structures (called messages) and services in
+a proto definition file (.proto) and compiles it with protoc. This compilation
+generates code that can be invoked by a sender or recipient of these data
+structures.</p>
+<p>The messages are serialized into a binary wire format which is
+compact, forward- and backward-compatible, but not self-describing (that is,
+there is no way to tell the names, meaning, or full datatypes of fields without
+an external specification).</p>
+<p>Though the primary purpose of Protocol Buffers is to facilitate network
+communication.</p>
+<h4 id=installation>Installation</h4>
+<ol>
+<li>Install the C++ implementation of protocol buffers from
+<a href=https://github.com/google/protobuf>here</a>:</li>
+</ol>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ git clone https://github.com/google/protobuf
+$ cd protobuf
+$ ./autogen.sh
+$ ./configure
+$ make
+$ make check
+$ make install
+</code></pre></div><ol start=2>
+<li>Install the Golang packages to work with protocol buffers. I recommend using
+the <code>gogo</code> protocol buffers <a href=https://github.com/gogo/protobuf>fork</a> that is
+performance optimized. Like most of the go package, we should install it by
+executing the following commands:</li>
+</ol>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ go get github.com/gogo/protobuf/proto
+$ go get github.com/gogo/protobuf/protoc-gen-gogo
+$ go get github.com/gogo/protobuf/gogoproto
+$ go get github.com/gogo/protobuf/protoc-gen-gofast
+</code></pre></div><h4 id=creating-a-protocol-buffer-data-structure>Creating a protocol buffer data structure</h4>
+<p>Lets create a <code>Company</code> structure that has <code>Name</code>, <code>Address</code> and <code>Employees</code>
+fields. Also, we should create the corresponding objects as well.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Golang data-lang=Golang><span style=color:#a6e22e>syntax</span> = <span style=color:#960050;background-color:#1e0010>&#39;</span><span style=color:#a6e22e>proto2</span><span style=color:#960050;background-color:#1e0010>&#39;</span>;
+
+<span style=color:#f92672>package</span> <span style=color:#a6e22e>example</span>;
+
+<span style=color:#a6e22e>enum</span> <span style=color:#a6e22e>CompanyType</span> {
+  <span style=color:#a6e22e>Private</span> = <span style=color:#ae81ff>17</span>;
+  <span style=color:#a6e22e>Public</span> = <span style=color:#ae81ff>18</span>;
+  <span style=color:#a6e22e>NonProfit</span> = <span style=color:#ae81ff>19</span>;
+};
+
+<span style=color:#a6e22e>message</span> <span style=color:#a6e22e>Company</span> {
+  <span style=color:#a6e22e>required</span> <span style=color:#66d9ef>string</span> <span style=color:#a6e22e>Name</span> = <span style=color:#ae81ff>1</span>;
+  <span style=color:#a6e22e>repeated</span> <span style=color:#a6e22e>Employee</span> <span style=color:#a6e22e>Employees</span> = <span style=color:#ae81ff>2</span>;
+  <span style=color:#a6e22e>required</span> <span style=color:#a6e22e>CompanyType</span> <span style=color:#a6e22e>Type</span> = <span style=color:#ae81ff>3</span>;
+  <span style=color:#a6e22e>optional</span> <span style=color:#a6e22e>group</span> <span style=color:#a6e22e>Address</span> = <span style=color:#ae81ff>4</span> {
+    <span style=color:#a6e22e>required</span> <span style=color:#66d9ef>string</span> <span style=color:#a6e22e>Country</span> = <span style=color:#ae81ff>5</span>;
+    <span style=color:#a6e22e>required</span> <span style=color:#66d9ef>string</span> <span style=color:#a6e22e>City</span> = <span style=color:#ae81ff>6</span>;
+    <span style=color:#a6e22e>optional</span> <span style=color:#66d9ef>string</span> <span style=color:#a6e22e>Street</span> = <span style=color:#ae81ff>7</span>;
+  }
+}
+
+<span style=color:#a6e22e>message</span> <span style=color:#a6e22e>Employee</span> {
+  <span style=color:#a6e22e>required</span> <span style=color:#66d9ef>string</span> <span style=color:#a6e22e>Name</span> = <span style=color:#ae81ff>1</span>;
+  <span style=color:#a6e22e>optional</span> <span style=color:#66d9ef>string</span> <span style=color:#a6e22e>SSN</span> = <span style=color:#ae81ff>2</span>;
+}
+</code></pre></div><p>Lets keep the declaration in
+<a href=https://gist.github.com/svett/acdbc1b1429d97371609>spec.proto</a> file.</p>
+<p>In order to use protocol buffers, you should define a protocol buffer file that
+declare the messages that are going to be serialized. The protocol buffers
+provide a syntax for doing that. You can specify whether a field should be optional
+or required as well. Enumeration types can be defined as well. If you have a message
+that is used only as property of another message, you can inline the define it
+by using <code>group</code> declaration.</p>
+<p>The protocol buffers supports the common scalar types, strings, enums and slices.
+Slice fields can be defined as <code>repeated</code> fields.</p>
+<p>You can read more about the supported types and syntax in <a href=https://developers.google.com/protocol-buffers/docs/proto>the official
+documentation</a>.</p>
+<p>After we define our messages in <code>spec.proto</code> file, we should generate their
+<code>Golang</code> representation by executing the following command:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-bash data-lang=bash>$ protoc --go_out<span style=color:#f92672>=</span>. spec.proto
+</code></pre></div><p>The command will generate a <code>spec.pb.go</code> that implements all messages as <code>Golang</code>
+structs and types:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Golang data-lang=Golang><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>CompanyType</span> <span style=color:#66d9ef>int32</span>
+
+<span style=color:#66d9ef>const</span> (
+	<span style=color:#a6e22e>CompanyType_Private</span>   <span style=color:#a6e22e>CompanyType</span> = <span style=color:#ae81ff>17</span>
+	<span style=color:#a6e22e>CompanyType_Public</span>    <span style=color:#a6e22e>CompanyType</span> = <span style=color:#ae81ff>18</span>
+	<span style=color:#a6e22e>CompanyType_NonProfit</span> <span style=color:#a6e22e>CompanyType</span> = <span style=color:#ae81ff>19</span>
+)
+
+<span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Company</span> <span style=color:#66d9ef>struct</span> {
+	<span style=color:#a6e22e>Name</span>             <span style=color:#f92672>*</span><span style=color:#66d9ef>string</span>          <span style=color:#e6db74>`protobuf:&#34;bytes,1,req,name=Name&#34; json:&#34;Name,omitempty&#34;`</span>
+	<span style=color:#a6e22e>Employees</span>        []<span style=color:#f92672>*</span><span style=color:#a6e22e>Employee</span>      <span style=color:#e6db74>`protobuf:&#34;bytes,2,rep,name=Employees&#34; json:&#34;Employees,omitempty&#34;`</span>
+	<span style=color:#a6e22e>Type</span>             <span style=color:#f92672>*</span><span style=color:#a6e22e>CompanyType</span>     <span style=color:#e6db74>`protobuf:&#34;varint,3,req,name=Type,enum=example.CompanyType&#34; json:&#34;Type,omitempty&#34;`</span>
+	<span style=color:#a6e22e>Address</span>          <span style=color:#f92672>*</span><span style=color:#a6e22e>Company_Address</span> <span style=color:#e6db74>`protobuf:&#34;group,4,opt,name=Address&#34; json:&#34;address,omitempty&#34;`</span>
+	<span style=color:#a6e22e>XXX_unrecognized</span> []<span style=color:#66d9ef>byte</span>           <span style=color:#e6db74>`json:&#34;-&#34;`</span>
+}
+
+<span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>m</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>Company</span>) <span style=color:#a6e22e>Reset</span>()                    { <span style=color:#f92672>*</span><span style=color:#a6e22e>m</span> = <span style=color:#a6e22e>Company</span>{} }
+<span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>m</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>Company</span>) <span style=color:#a6e22e>String</span>() <span style=color:#66d9ef>string</span>            { <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>proto</span>.<span style=color:#a6e22e>CompactTextString</span>(<span style=color:#a6e22e>m</span>) }
+<span style=color:#66d9ef>func</span> (<span style=color:#f92672>*</span><span style=color:#a6e22e>Company</span>) <span style=color:#a6e22e>ProtoMessage</span>()               {}
+<span style=color:#66d9ef>func</span> (<span style=color:#f92672>*</span><span style=color:#a6e22e>Company</span>) <span style=color:#a6e22e>Descriptor</span>() ([]<span style=color:#66d9ef>byte</span>, []<span style=color:#66d9ef>int</span>) { <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>fileDescriptor0</span>, []<span style=color:#66d9ef>int</span>{<span style=color:#ae81ff>0</span>} }
+
+<span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>m</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>Company</span>) <span style=color:#a6e22e>GetName</span>() <span style=color:#66d9ef>string</span> {
+	<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>m</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> <span style=color:#f92672>&amp;&amp;</span> <span style=color:#a6e22e>m</span>.<span style=color:#a6e22e>Name</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+		<span style=color:#66d9ef>return</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>m</span>.<span style=color:#a6e22e>Name</span>
+	}
+	<span style=color:#66d9ef>return</span> <span style=color:#e6db74>&#34;&#34;</span>
+}
+
+<span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>m</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>Company</span>) <span style=color:#a6e22e>GetEmployees</span>() []<span style=color:#f92672>*</span><span style=color:#a6e22e>Employee</span> {
+	<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>m</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+		<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>m</span>.<span style=color:#a6e22e>Employees</span>
+	}
+	<span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>
+}
+
+<span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>m</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>Company</span>) <span style=color:#a6e22e>GetType</span>() <span style=color:#a6e22e>CompanyType</span> {
+	<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>m</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> <span style=color:#f92672>&amp;&amp;</span> <span style=color:#a6e22e>m</span>.<span style=color:#a6e22e>Type</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+		<span style=color:#66d9ef>return</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>m</span>.<span style=color:#a6e22e>Type</span>
+	}
+	<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>CompanyType_Private</span>
+}
+
+<span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>m</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>Company</span>) <span style=color:#a6e22e>GetAddress</span>() <span style=color:#f92672>*</span><span style=color:#a6e22e>Company_Address</span> {
+	<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>m</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+		<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>m</span>.<span style=color:#a6e22e>Address</span>
+	}
+	<span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>
+}
+</code></pre></div><p>You can download the full implementation from
+<a href=https://gist.github.com/svett/7632c3628ded96a1fc60>here</a>.</p>
+<h4 id=serialization-objects>Serialization objects</h4>
+<p>The serialization and deserialization is processed by the <code>proto</code> package,
+which provides <code>Marshal</code> and <code>Unmarshal</code> functions:</p>
+<pre tabindex=0><code class=language-Golanog data-lang=Golanog>comp := &amp;example.Company{
+  Name: proto.String(&quot;Example Corp&quot;),
+  Address: &amp;example.Company_Address{
+    City:    proto.String(&quot;London&quot;),
+    Country: proto.String(&quot;UK&quot;),
+  },
+  Type: example.CompanyType_Public.Enum(),
+  Employees: []*example.Employee{
+    &amp;example.Employee{
+      Name: proto.String(&quot;John&quot;),
+    },
+  },
+}
+
+data, err := proto.Marshal(comp)
+if err != nil {
+  log.Fatal(&quot;marshaling error: &quot;, err)
+}
+serialized := &amp;example.Company{}
+err = proto.Unmarshal(data, serialized)
+if err != nil {
+  log.Fatal(&quot;unmarshaling error: &quot;, err)
+}
+</code></pre><h4 id=conclusion>Conclusion</h4>
+<p>The advantage of using protocol buffers is that you can develop heterogeneous
+system in multiple languages and technologies which are communicating via known
+protocol. It has better performance than standar serialization like JSON.</p>
+</div>
+<div class=form-subscribe>
+<div id=form-subscribe-box>
+<h4>All about Golang, Distributed Systems and Backend development.</h4>
+<p>Sign up to receive the latest articles and updates</p>
+<form id=mc-embedded-subscribe-form method=post class=form>
+<div class=form-item>
+<label><span id=form-subscribe-info></span></label>
+<div class=append>
+<input type=email name=EMAIL id=mc-email placeholder=Email>
+<button class=button>Subscribe</button>
+</div>
+</div>
+<div style=position:absolute;left:-5000px aria-hidden=true>
+<input type=text tabindex=-1>
+</div>
+</form>
+<h4>Follow me on</h4>
+<ul class=social-icons>
+<li><a href=https://twitter.com/ralch class=social-icon> <i class="fa fa-twitter"></i></a></li>
+<li><a href=https://github.com/svett class=social-icon> <i class="fa fa-github"></i></a></li>
+<li><a href=http://uk.linkedin.com/in/ralchev class=social-icon> <i class="fa fa-linkedin"></i></a></li>
+<li><a href=http://blog.ralch.com/index.xml class=social-icon> <i class="fa fa-rss"></i></a></li>
+</ul>
+</div>
+</div>
+<div>
+<p>
+Published
+by <span itemprop=author>Svetlin Ralchev</span>
+<time datetime=2016-01-12T08:02:19+00:00>
+12 Jan, 2016
+</time>
+in <span itemprop=articleSection><a href=/categories/programming-languages/>programming languages</a></span>
+and tagged <a href=/tags/go/>#go</a>, <a href=/tags/protobuffer/>#protobuffer</a> and <a href=/tags/serialization/>#serialization</a>
+using <span itemprop=wordCount>863</span> words.
+</p>
+<aside>
+<heade><strong>Related Content</strong></header>
+<hr>
+<ul>
+<li><a href=/articles/advanced-error-handling-in-golang/>Advanced Error Handling in Golang</a> &ndash; 2 minutes
+<li><a href=/articles/network-programming-and-proxies-in-golang/>Network Programming and Proxies in Golang</a> &ndash; 3 minutes
+<li><a href=/articles/golang-reflect-struct-tag/>Golang: Extending reflect.StructTag to support duplicates</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-decorator/>Design Patterns in Golang: Decorator</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-composite/>Design Patterns in Golang: Composite</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-bridge/>Desing Patterns in Golang: Bridge</a> &ndash; 3 minutes
+<li><a href=/articles/golang-handling-errors/>Errors handling in Golang</a> &ndash; 3 minutes
+</ul>
+</aside>
+</div>
+<article>
+<div id=disqus_thread></div>
+<script type=text/javascript>(function(){var a,b;if(window.location.hostname=="localhost")return;a=document.createElement('script'),a.type='text/javascript',a.async=!0,b='ralch',a.src='//'+b+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the comments powered by <a href=http://disqus.com/?ref_noscript>Disqus.</a></noscript>
+</article>
+</div>
+</div>
+</main>
+<footer> <footer id=footer>
+<nav>
+<ul>
+<li><span>Svetlin Ralchev</span></li>
+<li>
+<a href=https://www.phogolabs.com>Company</a>
+</li>
+<li>
+<a href=/articles/>Articles</a>
+</li>
+<li>
+<a href=https://twitter.com/ralch>Twitter</a>
+</li>
+<li>
+<a href=https://github.com/svett>Github</a>
+</li>
+</ul>
+</nav>
+<p>
+powered by <a href=http://www.gohugo.io>Hugo</a>
+based on <a href=https://github.com/jeblister/kube>Kube</a> theme
+&copy; 2021 Licence MIT modified by Svetlin Ralchev
+</p>
+<script>(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)})(window,document,'script','//www.google-analytics.com/analytics.js','ga'),ga('create','UA-62134307-2','auto'),ga('send','pageview')</script>
+</footer>
+</footer>
+<script src=/js/kube.js type=text/javascript></script>
+<script src=/js/kube.legenda.js type=text/javascript></script>
+<script src=/js/master.js type=text/javascript></script>
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!doctype html><html lang=en-us>
+<head>
+<meta name=generator content="Hugo 0.88.1">
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title> Golang: Using user defined type as flag in terminal applications </title>
+<meta name=author content="Svetlin Ralchev">
+<meta property="og:title" content="Golang: Using user defined type as flag in terminal applications">
+<meta property="og:description" content="As we saw in the previous article the flag package gives us flexibility to develop command-line applications that suite our needs.
+In this post, I will show how you can develop a flag argument for user defined type.
+Lets develop application that should be executed in the following ways:
+healthcheck -url=http://www.example.com,http://mail.example.com/inbox healthcheck -url=http://www.example.com -url=http://mail.example.com/inbox We can use the predefined url.URL struct in net/url package as type of the arguments that are expected.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://blog.ralch.com/articles/golang-custom-flags/"><meta property="article:section" content="articles">
+<meta property="article:published_time" content="2015-07-06T21:11:59+01:00">
+<meta property="article:modified_time" content="2015-07-06T21:11:59+01:00">
+<link rel=canonical href=http://blog.ralch.com/articles/golang-custom-flags/>
+<link rel=apple-touch-icon sizes=57x57 href=/img/favicons/apple-icon-57x57.png>
+<link rel=apple-touch-icon sizes=60x60 href=/img/favicons/apple-icon-60x60.png>
+<link rel=apple-touch-icon sizes=72x72 href=/img/favicons/apple-icon-72x72.png>
+<link rel=apple-touch-icon sizes=76x76 href=/img/favicons/apple-icon-76x76.png>
+<link rel=apple-touch-icon sizes=114x114 href=/img/favicons/apple-icon-114x114.png>
+<link rel=apple-touch-icon sizes=120x120 href=/img/favicons/apple-icon-120x120.png>
+<link rel=apple-touch-icon sizes=144x144 href=/img/favicons/apple-icon-144x144.png>
+<link rel=apple-touch-icon sizes=152x152 href=/img/favicons/apple-icon-152x152.png>
+<link rel=apple-touch-icon sizes=180x180 href=/img/favicons/apple-icon-180x180.png>
+<link rel=icon type=image/png sizes=192x192 href=/img/favicons/android-icon-192x192.png>
+<link rel=icon type=image/png sizes=32x32 href=/img/favicons/favicon-32x32.png>
+<link rel=icon type=image/png sizes=96x96 href=/img/favicons/favicon-96x96.png>
+<link rel=icon type=image/png sizes=16x16 href=/img/favicons/favicon-16x16.png>
+<link rel=manifest href=/img/favicons/manifest.json>
+<meta name=msapplication-TileColor content="#ffffff">
+<meta name=msapplication-TileImage content="/img/favicons/ms-icon-144x144.png">
+<meta name=theme-color content="#ffffff">
+<link href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css rel=stylesheet>
+<link href=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css rel=stylesheet>
+<link href=/css/font.css rel=stylesheet type=text/css>
+<link href=/css/kube.min.css rel=stylesheet type=text/css>
+<link href=/css/kube.legenda.css rel=stylesheet type=text/css>
+<link href=/css/master.css rel=stylesheet type=text/css>
+<link href=/css/theme.css rel=stylesheet type=text/css>
+<link href=/css/social.css rel=stylesheet type=text/css>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js type=text/javascript></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js></script>
+<script src=/js/jquery.ajaxchimp.js></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</head>
+<body class=page-kube>
+<header> <div class=show-sm>
+<div id=nav-toggle-box>
+<div id=nav-toggle-brand>
+<a href=/>Svetlin Ralchev</a>
+</div>
+<a data-component=toggleme data-target=#top href=# id=nav-toggle><i class=kube-menu></i></a>
+</div>
+</div>
+<div class=hide-sm id=top>
+<div id=top-brand>
+<a href=/ title=home>Svetlin Ralchev</a>
+</div>
+<nav id=top-nav-main>
+<ul>
+<li><a href=/about/>About</a></li>
+<li><a href=/articles/>Articles</a></li>
+</ul>
+</nav>
+<nav id=top-nav-extra>
+</nav>
+</div>
+</header>
+<main>
+<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
+<meta itemprop=name content="Golang: Using user defined type as flag in terminal applications">
+<meta itemprop=description content="As we saw in the previous article the flag package gives us flexibility to develop command-line applications that suite our needs.
+In this post, I will show how you can develop a flag argument for user defined type.
+Lets develop application that should be executed in the following ways:
+healthcheck -url=http://www.example.com,http://mail.example.com/inbox healthcheck -url=http://www.example.com -url=http://mail.example.com/inbox We can use the predefined url.URL struct in net/url package as type of the arguments that are expected."><meta itemprop=datePublished content="2015-07-06T21:11:59+01:00">
+<meta itemprop=dateModified content="2015-07-06T21:11:59+01:00">
+<meta itemprop=wordCount content="346">
+<meta itemprop=keywords content="go,">
+<div id=hero>
+<h1 itemprop=headline>Golang: Using user defined type as flag in terminal applications</h1>
+<time class=post-time><span class=icon>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+</span>
+<span>2 minute read</span>
+<span class=icon>
+<i class="fa fa-pencil" aria-hidden=true></i>
+</span>
+Published: <time datetime=2015-07-06T21:11:59+01:00>6 Jul, 2015</time>
+</time>
+</div>
+<div id=post-box>
+<div id=post itemprop=articleBody>
+<p>As we saw in the <a href=http://blog.ralch.com/tutorial/golang-subcommands/>previous article</a>
+<a href=https://golang.org/pkg/flag/>the flag</a> package gives us flexibility to develop
+command-line applications that suite our needs.</p>
+<p>In this post, I will show how you can develop a flag argument for user
+defined type.</p>
+<p>Lets develop application that should be executed in the following ways:</p>
+<pre tabindex=0><code>healthcheck -url=http://www.example.com,http://mail.example.com/inbox
+healthcheck -url=http://www.example.com -url=http://mail.example.com/inbox
+</code></pre><p>We can use the predefined <code>url.URL</code> struct in <code>net/url</code> package as type of the
+arguments that are expected. Nevertheless, there is not predefined function
+in <code>flag</code> package that instaciate that kind of flag for us.</p>
+<p>Forthunately, it provides an easy way to extend that by using <code>flag.Var</code> function.
+It creates a flag for any type that obey <code>flag.Value</code> interface:</p>
+<pre tabindex=0><code>type Value interface {
+    String()
+    Set(string) error
+}
+</code></pre><p>Lets declare the type <code>UrlFlag</code>:</p>
+<pre tabindex=0><code>type UrlFlag struct {
+    urls []*url.URL
+}
+</code></pre><p>Then you should define <code>String()</code> function that converts this struct as a string:</p>
+<pre tabindex=0><code>func (arr *UrlFlag) String() string {
+    return fmt.Sprint(arr.urls)
+}
+</code></pre><p>The <code>Set(string)</code> is called by <code>flag.Parse</code>
+function. It initializes this flag from command line arguments.
+In our case, we will expect comma-separated list of values:</p>
+<pre tabindex=0><code>func (arr *UrlFlag) Set(value string) error {
+    urls := strings.Split(value, &quot;,&quot;)
+    for _, item := range urls {
+    	if parsedUrl, err := url.Parse(item); err != nil {
+    		return err
+    	} else {
+    		arr.urls = append(arr.urls, parsedUrl)
+    	}
+    }
+    return nil
+}
+</code></pre><p>Note that if you do not want to allow multiple occurance of this flag, you should
+return an error if the flag is already set:</p>
+<pre tabindex=0><code>func (arr *UrlFlag) Set(value string) error {
+    if len(arr.urls) &gt; 0 {
+    	return fmt.Errorf(&quot;The url flag is already set&quot;)
+    }
+    
+    urls := strings.Split(value, &quot;,&quot;)
+    for _, item := range urls {
+    	if parsedUrl, err := url.Parse(item); err != nil {
+    		return err
+    	} else {
+    		arr.urls = append(arr.urls, parsedUrl)
+    	}
+    }
+    return nil
+}
+</code></pre><p>Eventually, you should declare the flag in the <code>main</code> function:</p>
+<pre tabindex=0><code>var arg UrlFlag
+flag.Var(&amp;arg, &quot;url&quot;, &quot;URL comma-separated list&quot;)
+</code></pre><p>and parse it:</p>
+<pre tabindex=0><code>flag.Parse()
+
+for _, item := range arg.Urls() {
+	fmt.Printf(&quot;scheme: %s url: %s path: %s\n&quot;, item.Scheme, item.Host, item.Path)
+}
+</code></pre><p>You can get the sample from <a href=https://gist.github.com/svett/53a288bd5250b4d443ef>here</a>.</p>
+</div>
+<div class=form-subscribe>
+<div id=form-subscribe-box>
+<h4>All about Golang, Distributed Systems and Backend development.</h4>
+<p>Sign up to receive the latest articles and updates</p>
+<form id=mc-embedded-subscribe-form method=post class=form>
+<div class=form-item>
+<label><span id=form-subscribe-info></span></label>
+<div class=append>
+<input type=email name=EMAIL id=mc-email placeholder=Email>
+<button class=button>Subscribe</button>
+</div>
+</div>
+<div style=position:absolute;left:-5000px aria-hidden=true>
+<input type=text tabindex=-1>
+</div>
+</form>
+<h4>Follow me on</h4>
+<ul class=social-icons>
+<li><a href=https://twitter.com/ralch class=social-icon> <i class="fa fa-twitter"></i></a></li>
+<li><a href=https://github.com/svett class=social-icon> <i class="fa fa-github"></i></a></li>
+<li><a href=http://uk.linkedin.com/in/ralchev class=social-icon> <i class="fa fa-linkedin"></i></a></li>
+<li><a href=http://blog.ralch.com/index.xml class=social-icon> <i class="fa fa-rss"></i></a></li>
+</ul>
+</div>
+</div>
+<div>
+<p>
+Published
+by <span itemprop=author>Svetlin Ralchev</span>
+<time datetime=2015-07-06T21:11:59+01:00>
+6 Jul, 2015
+</time>
+in <span itemprop=articleSection><a href=/categories/programming-languages/>programming languages</a> and <a href=/categories/tutorial/>tutorial</a></span>
+and tagged <a href=/tags/go/>#go</a>
+using <span itemprop=wordCount>346</span> words.
+</p>
+<aside>
+<heade><strong>Related Content</strong></header>
+<hr>
+<ul>
+<li><a href=/articles/advanced-error-handling-in-golang/>Advanced Error Handling in Golang</a> &ndash; 2 minutes
+<li><a href=/articles/network-programming-and-proxies-in-golang/>Network Programming and Proxies in Golang</a> &ndash; 3 minutes
+<li><a href=/articles/golang-reflect-struct-tag/>Golang: Extending reflect.StructTag to support duplicates</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-decorator/>Design Patterns in Golang: Decorator</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-composite/>Design Patterns in Golang: Composite</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-bridge/>Desing Patterns in Golang: Bridge</a> &ndash; 3 minutes
+<li><a href=/articles/golang-handling-errors/>Errors handling in Golang</a> &ndash; 3 minutes
+</ul>
+</aside>
+</div>
+<article>
+<div id=disqus_thread></div>
+<script type=text/javascript>(function(){var a,b;if(window.location.hostname=="localhost")return;a=document.createElement('script'),a.type='text/javascript',a.async=!0,b='ralch',a.src='//'+b+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the comments powered by <a href=http://disqus.com/?ref_noscript>Disqus.</a></noscript>
+</article>
+</div>
+</div>
+</main>
+<footer> <footer id=footer>
+<nav>
+<ul>
+<li><span>Svetlin Ralchev</span></li>
+<li>
+<a href=https://www.phogolabs.com>Company</a>
+</li>
+<li>
+<a href=/articles/>Articles</a>
+</li>
+<li>
+<a href=https://twitter.com/ralch>Twitter</a>
+</li>
+<li>
+<a href=https://github.com/svett>Github</a>
+</li>
+</ul>
+</nav>
+<p>
+powered by <a href=http://www.gohugo.io>Hugo</a>
+based on <a href=https://github.com/jeblister/kube>Kube</a> theme
+&copy; 2021 Licence MIT modified by Svetlin Ralchev
+</p>
+<script>(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)})(window,document,'script','//www.google-analytics.com/analytics.js','ga'),ga('create','UA-62134307-2','auto'),ga('send','pageview')</script>
+</footer>
+</footer>
+<script src=/js/kube.js type=text/javascript></script>
+<script src=/js/kube.legenda.js type=text/javascript></script>
+<script src=/js/master.js type=text/javascript></script>
+</body>
+</html>

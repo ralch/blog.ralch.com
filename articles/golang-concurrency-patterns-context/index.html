@@ -1,0 +1,292 @@
+<!doctype html><html lang=en-us>
+<head>
+<meta name=generator content="Hugo 0.88.1">
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title> Concurrent patterns in Golang: Context </title>
+<meta name=author content="Svetlin Ralchev">
+<meta property="og:title" content="Concurrent patterns in Golang: Context">
+<meta property="og:description" content="What is concurrency? Concurrent applications have multiple computations executing during overlapping periods of time. Respectively sequential programs in which no computations can be executed in overlapping periods of time.
+Getting started with Context package The Context package is responsible for signal cancelation and operation deadlines for processes and server requests.
+The package has an context.Context interface:
+type Context interface { Deadline() (deadline time.Time, ok bool) Done() <-chan struct{} Err() error Value(key interface{}) interface{} } The interface provides four functions to observe the context state:">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://blog.ralch.com/articles/golang-concurrency-patterns-context/"><meta property="article:section" content="articles">
+<meta property="article:published_time" content="2015-11-29T08:50:48+00:00">
+<meta property="article:modified_time" content="2015-11-29T08:50:48+00:00">
+<link rel=canonical href=http://blog.ralch.com/articles/golang-concurrency-patterns-context/>
+<link rel=apple-touch-icon sizes=57x57 href=/img/favicons/apple-icon-57x57.png>
+<link rel=apple-touch-icon sizes=60x60 href=/img/favicons/apple-icon-60x60.png>
+<link rel=apple-touch-icon sizes=72x72 href=/img/favicons/apple-icon-72x72.png>
+<link rel=apple-touch-icon sizes=76x76 href=/img/favicons/apple-icon-76x76.png>
+<link rel=apple-touch-icon sizes=114x114 href=/img/favicons/apple-icon-114x114.png>
+<link rel=apple-touch-icon sizes=120x120 href=/img/favicons/apple-icon-120x120.png>
+<link rel=apple-touch-icon sizes=144x144 href=/img/favicons/apple-icon-144x144.png>
+<link rel=apple-touch-icon sizes=152x152 href=/img/favicons/apple-icon-152x152.png>
+<link rel=apple-touch-icon sizes=180x180 href=/img/favicons/apple-icon-180x180.png>
+<link rel=icon type=image/png sizes=192x192 href=/img/favicons/android-icon-192x192.png>
+<link rel=icon type=image/png sizes=32x32 href=/img/favicons/favicon-32x32.png>
+<link rel=icon type=image/png sizes=96x96 href=/img/favicons/favicon-96x96.png>
+<link rel=icon type=image/png sizes=16x16 href=/img/favicons/favicon-16x16.png>
+<link rel=manifest href=/img/favicons/manifest.json>
+<meta name=msapplication-TileColor content="#ffffff">
+<meta name=msapplication-TileImage content="/img/favicons/ms-icon-144x144.png">
+<meta name=theme-color content="#ffffff">
+<link href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css rel=stylesheet>
+<link href=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css rel=stylesheet>
+<link href=/css/font.css rel=stylesheet type=text/css>
+<link href=/css/kube.min.css rel=stylesheet type=text/css>
+<link href=/css/kube.legenda.css rel=stylesheet type=text/css>
+<link href=/css/master.css rel=stylesheet type=text/css>
+<link href=/css/theme.css rel=stylesheet type=text/css>
+<link href=/css/social.css rel=stylesheet type=text/css>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js type=text/javascript></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js></script>
+<script src=/js/jquery.ajaxchimp.js></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</head>
+<body class=page-kube>
+<header> <div class=show-sm>
+<div id=nav-toggle-box>
+<div id=nav-toggle-brand>
+<a href=/>Svetlin Ralchev</a>
+</div>
+<a data-component=toggleme data-target=#top href=# id=nav-toggle><i class=kube-menu></i></a>
+</div>
+</div>
+<div class=hide-sm id=top>
+<div id=top-brand>
+<a href=/ title=home>Svetlin Ralchev</a>
+</div>
+<nav id=top-nav-main>
+<ul>
+<li><a href=/about/>About</a></li>
+<li><a href=/articles/>Articles</a></li>
+</ul>
+</nav>
+<nav id=top-nav-extra>
+</nav>
+</div>
+</header>
+<main>
+<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
+<meta itemprop=name content="Concurrent patterns in Golang: Context">
+<meta itemprop=description content="What is concurrency? Concurrent applications have multiple computations executing during overlapping periods of time. Respectively sequential programs in which no computations can be executed in overlapping periods of time.
+Getting started with Context package The Context package is responsible for signal cancelation and operation deadlines for processes and server requests.
+The package has an context.Context interface:
+type Context interface { Deadline() (deadline time.Time, ok bool) Done() <-chan struct{} Err() error Value(key interface{}) interface{} } The interface provides four functions to observe the context state:"><meta itemprop=datePublished content="2015-11-29T08:50:48+00:00">
+<meta itemprop=dateModified content="2015-11-29T08:50:48+00:00">
+<meta itemprop=wordCount content="713">
+<meta itemprop=keywords content="go,concurrency,">
+<div id=hero>
+<h1 itemprop=headline>Concurrent patterns in Golang: Context</h1>
+<time class=post-time><span class=icon>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+</span>
+<span>4 minute read</span>
+<span class=icon>
+<i class="fa fa-pencil" aria-hidden=true></i>
+</span>
+Published: <time datetime=2015-11-29T08:50:48+00:00>29 Nov, 2015</time>
+</time>
+</div>
+<div id=post-box>
+<div id=post itemprop=articleBody>
+<h4 id=what-is-concurrency>What is concurrency?</h4>
+<p>Concurrent applications have multiple computations executing during overlapping
+periods of time. Respectively sequential programs in which no computations can
+be executed in overlapping periods of time.</p>
+<h4 id=getting-started-with-context-package>Getting started with <code>Context</code> package</h4>
+<p>The <a href=https://godoc.org/golang.org/x/net/context>Context</a> package is responsible
+for signal cancelation and operation deadlines for processes and server requests.</p>
+<p>The package has an <code>context.Context</code> interface:</p>
+<pre tabindex=0><code>type Context interface {
+	Deadline() (deadline time.Time, ok bool)
+	Done() &lt;-chan struct{}
+	Err() error
+	Value(key interface{}) interface{}
+}
+</code></pre><p>The interface provides four functions to observe the context state:</p>
+<ul>
+<li><code>Deadline</code> returns the time when work done on behalf of this context should be canceled. It returns <code>false</code> when no deadline is set.</li>
+<li><code>Done</code> returns a channel that&rsquo;s closed when work done on behalf of this context should be canceled.</li>
+<li><code>Err</code> returns a non-nil error value after Done is closed. It returns <code>Canceled</code> if the context was canceled or <code>DeadlineExceeded</code> if the context&rsquo;s deadline passed.</li>
+<li><code>Value</code> returns the value associated with this context for key, or nil</li>
+</ul>
+<p>There are two types of contexts:</p>
+<ul>
+<li><code>context.TODO</code> should be used <code>context.TODO</code> when it&rsquo;s unclear which Context to use.</li>
+<li><code>context.Background</code> is typically used by the main function, initialization, and tests, and as the top-level Context for incoming requests.</li>
+</ul>
+<p>Both are never canceled, have no values, and has no deadline.</p>
+<p>In order to setup a deadline you should use one of the following constructors:</p>
+<ul>
+<li><code>context.WithDeadline</code> returns a copy of the parent context with the deadline adjusted
+to be no later than a specified <code>time.Time</code>. The returned context&rsquo;s Done
+channel is closed when the deadline expires, when the returned cancel function
+is called, or when the parent context&rsquo;s Done channel is closed, whichever
+happens first.</li>
+<li><code>context.WithTimeout</code> just calls <code>context.WithDeadline</code> for particular <code>time.Duration</code></li>
+</ul>
+<p>If you want to have a context that could be canceled only, you should use
+<code>context.WithCancel</code> function. Canceling this context releases resources
+associated with it, so code should call cancel as soon as the operations
+running in this Context complete.</p>
+<h4 id=context-package-in-practice><code>Context</code> package in practice</h4>
+<p>Lets have an application that process a payment transactions like that:</p>
+<pre tabindex=0><code>type Payment struct {
+	Payee  string
+	Amount float64
+}
+</code></pre><p>The program is asking the user to <code>[C]onfirm</code> or <code>[A]bort</code> his payment transaction
+within a 1 minute. If he does not anything, it will be terminated automacitally.</p>
+<p>The <code>ProcessPayment</code> function is started as go routine that is waiting for user
+input.</p>
+<pre tabindex=0><code>go ProcessPayment(ctx, &amp;Payment{
+	Payee:  &quot;John Doe&quot;,
+	Amount: 128.54})
+</code></pre><p>The function is observing the context state to terminate, cancel or proceed the
+payment:</p>
+<pre tabindex=0><code>func ProcessPayment(ctx context.Context, payment *Payment) {
+	confirmed := ctx.Value(&quot;confirmed&quot;).(chan struct{})
+
+	for {
+		select {
+		case &lt;-confirmed:
+			fmt.Printf(&quot;Your payment of %f GBP has been completed succefully.\n&quot;, payment.Amount)
+			return
+		case &lt;-ctx.Done():
+			if ctx.Err() == context.Canceled {
+				fmt.Printf(&quot;Your payment transaction is canceled. The amount of %f GBP has been refunded.\n&quot;, payment.Amount)
+				return
+			} else if ctx.Err() == context.DeadlineExceeded {
+				fmt.Println(&quot;Your payment transaction expired. You can complete it later.&quot;)
+				os.Exit(0)
+			}
+		default:
+			time.Sleep(1 * time.Second)
+		}
+	}
+}
+</code></pre><p>The confirmation channel is used to notify the function that the payment should
+be processed. If the <code>Done</code> channel returns a value before that the operation
+is aborted due to canceleation or exceeded deadline.</p>
+<p>The <code>ctx</code> variable is a background context that has a deadline of 1 minute:</p>
+<pre tabindex=0><code>var (
+	ctx    context.Context
+	cancel context.CancelFunc
+)
+
+confirmed := make(chan struct{})
+ctx = context.WithValue(context.Background(), &quot;confirmed&quot;, confirmed)
+ctx, cancel = context.WithTimeout(ctx, 1*time.Minute)
+</code></pre><p>The full implementation of the example could be downloaded from <a href=http://bit.ly/1Mrqkeo>here</a>.</p>
+<h4 id=recommended-usage>Recommended usage</h4>
+<p>Usually the incomming request should create a <code>context.Context</code> object that underlying
+algorithm comply with.</p>
+<ul>
+<li>Do not store Contexts inside a struct type; instead, pass a <code>Context</code> explicitly to each function that needs it.</li>
+<li>Do not pass a nil Context, even if a function permits it. Pass context.TODO if you are unsure about which Context to use.</li>
+<li>Do not use <code>context.WithValue</code> for passing optional parameters to functions. Use it for request data only.</li>
+</ul>
+<h4 id=working-with-http-request>Working with HTTP Request</h4>
+<p>On top of <code>Context</code> API there is a <a href=https://godoc.org/golang.org/x/net/context/ctxhttp>ctxhttp</a> package that
+provides helper functions for performing context-aware HTTP requests. All of them are calling internally
+the <code>Do</code> function that is performing an http request that could be canceled or expired via the provided context.</p>
+<pre tabindex=0><code>func Do(ctx context.Context, client *http.Client, req *http.Request)
+func Get(ctx context.Context, client *http.Client, url string)
+func Head(ctx context.Context, client *http.Client, url string)
+func PostForm(ctx context.Context, client *http.Client, url string, data url.Values)
+</code></pre>
+</div>
+<div class=form-subscribe>
+<div id=form-subscribe-box>
+<h4>All about Golang, Distributed Systems and Backend development.</h4>
+<p>Sign up to receive the latest articles and updates</p>
+<form id=mc-embedded-subscribe-form method=post class=form>
+<div class=form-item>
+<label><span id=form-subscribe-info></span></label>
+<div class=append>
+<input type=email name=EMAIL id=mc-email placeholder=Email>
+<button class=button>Subscribe</button>
+</div>
+</div>
+<div style=position:absolute;left:-5000px aria-hidden=true>
+<input type=text tabindex=-1>
+</div>
+</form>
+<h4>Follow me on</h4>
+<ul class=social-icons>
+<li><a href=https://twitter.com/ralch class=social-icon> <i class="fa fa-twitter"></i></a></li>
+<li><a href=https://github.com/svett class=social-icon> <i class="fa fa-github"></i></a></li>
+<li><a href=http://uk.linkedin.com/in/ralchev class=social-icon> <i class="fa fa-linkedin"></i></a></li>
+<li><a href=http://blog.ralch.com/index.xml class=social-icon> <i class="fa fa-rss"></i></a></li>
+</ul>
+</div>
+</div>
+<div>
+<p>
+Published
+by <span itemprop=author>Svetlin Ralchev</span>
+<time datetime=2015-11-29T08:50:48+00:00>
+29 Nov, 2015
+</time>
+in <span itemprop=articleSection><a href=/categories/design-patterns/>design patterns</a> and <a href=/categories/programming-languages/>programming languages</a></span>
+and tagged <a href=/tags/concurrency/>#concurrency</a> and <a href=/tags/go/>#go</a>
+using <span itemprop=wordCount>713</span> words.
+</p>
+<aside>
+<heade><strong>Related Content</strong></header>
+<hr>
+<ul>
+<li><a href=/articles/advanced-error-handling-in-golang/>Advanced Error Handling in Golang</a> &ndash; 2 minutes
+<li><a href=/articles/network-programming-and-proxies-in-golang/>Network Programming and Proxies in Golang</a> &ndash; 3 minutes
+<li><a href=/articles/golang-reflect-struct-tag/>Golang: Extending reflect.StructTag to support duplicates</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-decorator/>Design Patterns in Golang: Decorator</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-composite/>Design Patterns in Golang: Composite</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-bridge/>Desing Patterns in Golang: Bridge</a> &ndash; 3 minutes
+<li><a href=/articles/golang-handling-errors/>Errors handling in Golang</a> &ndash; 3 minutes
+</ul>
+</aside>
+</div>
+<article>
+<div id=disqus_thread></div>
+<script type=text/javascript>(function(){var a,b;if(window.location.hostname=="localhost")return;a=document.createElement('script'),a.type='text/javascript',a.async=!0,b='ralch',a.src='//'+b+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the comments powered by <a href=http://disqus.com/?ref_noscript>Disqus.</a></noscript>
+</article>
+</div>
+</div>
+</main>
+<footer> <footer id=footer>
+<nav>
+<ul>
+<li><span>Svetlin Ralchev</span></li>
+<li>
+<a href=https://www.phogolabs.com>Company</a>
+</li>
+<li>
+<a href=/articles/>Articles</a>
+</li>
+<li>
+<a href=https://twitter.com/ralch>Twitter</a>
+</li>
+<li>
+<a href=https://github.com/svett>Github</a>
+</li>
+</ul>
+</nav>
+<p>
+powered by <a href=http://www.gohugo.io>Hugo</a>
+based on <a href=https://github.com/jeblister/kube>Kube</a> theme
+&copy; 2021 Licence MIT modified by Svetlin Ralchev
+</p>
+<script>(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)})(window,document,'script','//www.google-analytics.com/analytics.js','ga'),ga('create','UA-62134307-2','auto'),ga('send','pageview')</script>
+</footer>
+</footer>
+<script src=/js/kube.js type=text/javascript></script>
+<script src=/js/kube.legenda.js type=text/javascript></script>
+<script src=/js/master.js type=text/javascript></script>
+</body>
+</html>

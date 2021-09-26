@@ -1,0 +1,369 @@
+<!doctype html><html lang=en-us>
+<head>
+<meta name=generator content="Hugo 0.88.1">
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title> Golang: Working with Gzip and Tar </title>
+<meta name=author content="Svetlin Ralchev">
+<meta property="og:title" content="Golang: Working with Gzip and Tar">
+<meta property="og:description" content="Gzip Gzip is another file compression format that was created to replace the compress program used in early unix system. It is normally used to compress just single files. Compressed archives are created by packaging collections of files into a single tar archive, and then compressing that archive with gzip. The final .tar.gz or .tgz file is a tarball.
+Compressing a file Compressing operation is very simple to implement. The package exposes gzip.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://blog.ralch.com/articles/golang-working-with-tar-and-gzip/"><meta property="article:section" content="articles">
+<meta property="article:published_time" content="2015-09-27T14:58:56+01:00">
+<meta property="article:modified_time" content="2015-09-27T14:58:56+01:00">
+<link rel=canonical href=http://blog.ralch.com/articles/golang-working-with-tar-and-gzip/>
+<link rel=apple-touch-icon sizes=57x57 href=/img/favicons/apple-icon-57x57.png>
+<link rel=apple-touch-icon sizes=60x60 href=/img/favicons/apple-icon-60x60.png>
+<link rel=apple-touch-icon sizes=72x72 href=/img/favicons/apple-icon-72x72.png>
+<link rel=apple-touch-icon sizes=76x76 href=/img/favicons/apple-icon-76x76.png>
+<link rel=apple-touch-icon sizes=114x114 href=/img/favicons/apple-icon-114x114.png>
+<link rel=apple-touch-icon sizes=120x120 href=/img/favicons/apple-icon-120x120.png>
+<link rel=apple-touch-icon sizes=144x144 href=/img/favicons/apple-icon-144x144.png>
+<link rel=apple-touch-icon sizes=152x152 href=/img/favicons/apple-icon-152x152.png>
+<link rel=apple-touch-icon sizes=180x180 href=/img/favicons/apple-icon-180x180.png>
+<link rel=icon type=image/png sizes=192x192 href=/img/favicons/android-icon-192x192.png>
+<link rel=icon type=image/png sizes=32x32 href=/img/favicons/favicon-32x32.png>
+<link rel=icon type=image/png sizes=96x96 href=/img/favicons/favicon-96x96.png>
+<link rel=icon type=image/png sizes=16x16 href=/img/favicons/favicon-16x16.png>
+<link rel=manifest href=/img/favicons/manifest.json>
+<meta name=msapplication-TileColor content="#ffffff">
+<meta name=msapplication-TileImage content="/img/favicons/ms-icon-144x144.png">
+<meta name=theme-color content="#ffffff">
+<link href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css rel=stylesheet>
+<link href=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css rel=stylesheet>
+<link href=/css/font.css rel=stylesheet type=text/css>
+<link href=/css/kube.min.css rel=stylesheet type=text/css>
+<link href=/css/kube.legenda.css rel=stylesheet type=text/css>
+<link href=/css/master.css rel=stylesheet type=text/css>
+<link href=/css/theme.css rel=stylesheet type=text/css>
+<link href=/css/social.css rel=stylesheet type=text/css>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js type=text/javascript></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js></script>
+<script src=/js/jquery.ajaxchimp.js></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</head>
+<body class=page-kube>
+<header> <div class=show-sm>
+<div id=nav-toggle-box>
+<div id=nav-toggle-brand>
+<a href=/>Svetlin Ralchev</a>
+</div>
+<a data-component=toggleme data-target=#top href=# id=nav-toggle><i class=kube-menu></i></a>
+</div>
+</div>
+<div class=hide-sm id=top>
+<div id=top-brand>
+<a href=/ title=home>Svetlin Ralchev</a>
+</div>
+<nav id=top-nav-main>
+<ul>
+<li><a href=/about/>About</a></li>
+<li><a href=/articles/>Articles</a></li>
+</ul>
+</nav>
+<nav id=top-nav-extra>
+</nav>
+</div>
+</header>
+<main>
+<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
+<meta itemprop=name content="Golang: Working with Gzip and Tar">
+<meta itemprop=description content="Gzip Gzip is another file compression format that was created to replace the compress program used in early unix system. It is normally used to compress just single files. Compressed archives are created by packaging collections of files into a single tar archive, and then compressing that archive with gzip. The final .tar.gz or .tgz file is a tarball.
+Compressing a file Compressing operation is very simple to implement. The package exposes gzip."><meta itemprop=datePublished content="2015-09-27T14:58:56+01:00">
+<meta itemprop=dateModified content="2015-09-27T14:58:56+01:00">
+<meta itemprop=wordCount content="792">
+<meta itemprop=keywords content="go,">
+<div id=hero>
+<h1 itemprop=headline>Golang: Working with Gzip and Tar</h1>
+<time class=post-time><span class=icon>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+</span>
+<span>4 minute read</span>
+<span class=icon>
+<i class="fa fa-pencil" aria-hidden=true></i>
+</span>
+Published: <time datetime=2015-09-27T14:58:56+01:00>27 Sep, 2015</time>
+</time>
+</div>
+<div id=post-box>
+<div id=post itemprop=articleBody>
+<h3 id=gzip>Gzip</h3>
+<p><a href=https://en.wikipedia.org/wiki/Gzip>Gzip</a> is another file compression format
+that was created to replace the <code>compress</code> program used in early <code>unix</code> system.
+It is normally used to compress just single files. Compressed archives are
+created by packaging collections of files into a single tar archive,
+and then compressing that archive with gzip. The final <code>.tar.gz</code> or <code>.tgz</code> file is a tarball.</p>
+<h4 id=compressing-a-file>Compressing a file</h4>
+<p>Compressing operation is very simple to implement. The package exposes <code>gzip.Writer</code> struct
+that compress any content provided via its <code>Write</code> function. You can specify some metadata
+information about the compressed file by setting some properties of <code>gzip.Header</code>
+struct which is embedded into <code>gzip.Writer</code>:</p>
+<pre tabindex=0><code>// The gzip file stores a header giving metadata about the compressed file.
+// That header is exposed as the fields of the Writer and Reader structs.
+type Header struct {
+	Comment string    // comment
+	Extra   []byte    // &quot;extra data&quot;
+	ModTime time.Time // modification time
+	Name    string    // file name
+	OS      byte      // operating system type
+}
+</code></pre><p>You can compress a file by using the following function:</p>
+<pre tabindex=0><code>func gzipit(source, target string) error {
+	reader, err := os.Open(source)
+	if err != nil {
+		return err
+	}
+
+	filename := filepath.Base(source)
+	target = filepath.Join(target, fmt.Sprintf(&quot;%s.gz&quot;, filename))
+	writer, err := os.Create(target)
+	if err != nil {
+		return err
+	}
+	defer writer.Close()
+
+	archiver := gzip.NewWriter(writer)
+	archiver.Name = filename
+	defer archiver.Close()
+
+	_, err = io.Copy(archiver, reader)
+	return err
+}
+</code></pre><p><em>Note that <code>target</code> argument should be a directory.</em></p>
+<h4 id=decompressing-a-file>Decompressing a file</h4>
+<p>This operation is simple as its contrapart. But in this case we should use
+<code>gzip.Reader</code> to read the compressed array of bytes. We can read the metadata information
+such as compressed file name via <code>gzip.Header</code> struct (embedded in <code>gzip.Reader</code>)</p>
+<p>If you need to uncompress a gzip package, you should use this sample:</p>
+<pre tabindex=0><code>func ungzip(source, target string) error {
+	reader, err := os.Open(source)
+	if err != nil {
+		return err
+	}
+	defer reader.Close()
+
+	archive, err := gzip.NewReader(reader)
+	if err != nil {
+		return err
+	}
+	defer archive.Close()
+
+	target = filepath.Join(target, archive.Name)
+	writer, err := os.Create(target)
+	if err != nil {
+		return err
+	}
+	defer writer.Close()
+
+	_, err = io.Copy(writer, archive)
+	return err
+}
+</code></pre><p><em>Note that <code>target</code> argument should be a directory.</em></p>
+<p>You can download the <code>gzip</code> example from <a href>here</a>.</p>
+<h4 id=usage>Usage</h4>
+<p>You can use both functions in the following way:</p>
+<pre tabindex=0><code>gzipit(&quot;/tmp/document.txt&quot;, &quot;/tmp&quot;)
+ungzip(&quot;/tmp/document.txt.gz&quot;, &quot;/tmp&quot;)
+</code></pre><h3 id=tar>Tar</h3>
+<p><a href=http://bit.ly/1DqSuzH>Tar</a> is an archive file for
+distribution of hudge fileset. Known as <code>tap archive</code> it was developed to
+write data to sequential <code>io</code> devices.</p>
+<p>The tar contains multiple paramaeters, such as timestamp, ownership, file
+permissions and directories.</p>
+<p>If you want to create a tar package, you should use the following
+code snippet walk through the directory hierarchy and write its content. Every
+written header encodes metadata file information <code>os.FileInfo</code>.
+Because os.FileInfo&rsquo;s Name method returns only the base name of
+the file it describes, it may be necessary to modify the Name field
+of the returned header to provide the full path name of the file.</p>
+<pre tabindex=0><code>func tarit(source, target string) error {
+	filename := filepath.Base(source)
+	target = filepath.Join(target, fmt.Sprintf(&quot;%s.tar&quot;, filename))
+	tarfile, err := os.Create(target)
+	if err != nil {
+		return err
+	}
+	defer tarfile.Close()
+
+	tarball := tar.NewWriter(tarfile)
+	defer tarball.Close()
+
+	info, err := os.Stat(source)
+	if err != nil {
+		return nil
+	}
+
+	var baseDir string
+	if info.IsDir() {
+		baseDir = filepath.Base(source)
+	}
+
+	return filepath.Walk(source, 
+	func(path string, info os.FileInfo, err error) error {
+		if err != nil {
+			return err
+		}
+		header, err := tar.FileInfoHeader(info, info.Name())
+		if err != nil {
+			return err
+		}
+
+		if baseDir != &quot;&quot; {
+			header.Name = filepath.Join(baseDir, strings.TrimPrefix(path, source))
+		}
+
+		if err := tarball.WriteHeader(header); err != nil {
+			return err
+		}
+
+		if info.IsDir() {
+			return nil
+		}
+
+		file, err := os.Open(path)
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+		_, err = io.Copy(tarball, file)
+		return err
+	})
+}
+</code></pre><p>To unpack a tar you should use <code>tar.Reader</code> struct to read all headers. Every
+header declares the begining of every directory and file in the tarball. By accessing
+its <code>FileInfo</code> property you can recreate the files and the directories:</p>
+<pre tabindex=0><code>func untar(tarball, target string) error {
+	reader, err := os.Open(tarball)
+	if err != nil {
+		return err
+	}
+	defer reader.Close()
+	tarReader := tar.NewReader(reader)
+
+	for {
+		header, err := tarReader.Next()
+		if err == io.EOF {
+			break
+		} else if err != nil {
+			return err
+		}
+
+		path := filepath.Join(target, header.Name)
+		info := header.FileInfo()
+		if info.IsDir() {
+			if err = os.MkdirAll(path, info.Mode()); err != nil {
+				return err
+			}
+			continue
+		}
+
+		file, err:= os.OpenFile(path, os.O_CREATE|os.O_TRUNC|os.O_WRONLY, info.Mode())
+		if err != nil {
+			return err
+		}
+		defer file.Close()
+		_, err =io.Copy(file, tarReader)
+		if err != nil {
+			return err
+		}
+	}
+</code></pre><p><em>Note that <code>target</code> argument should be a directoy.</em></p>
+<p>You can download the <code>tar</code> code snippets from <a href=https://gist.github.com/svett/76799ba2edca89961be6>here</a>.</p>
+<h4 id=usage-1>Usage</h4>
+<p>You can use call the functions in the following way:</p>
+<pre tabindex=0><code>tarit(&quot;/tmp/utils&quot;, &quot;/tmp&quot;)
+untar(&quot;/tmp/utils.tar&quot;, &quot;/tmp&quot;)
+</code></pre>
+</div>
+<div class=form-subscribe>
+<div id=form-subscribe-box>
+<h4>All about Golang, Distributed Systems and Backend development.</h4>
+<p>Sign up to receive the latest articles and updates</p>
+<form id=mc-embedded-subscribe-form method=post class=form>
+<div class=form-item>
+<label><span id=form-subscribe-info></span></label>
+<div class=append>
+<input type=email name=EMAIL id=mc-email placeholder=Email>
+<button class=button>Subscribe</button>
+</div>
+</div>
+<div style=position:absolute;left:-5000px aria-hidden=true>
+<input type=text tabindex=-1>
+</div>
+</form>
+<h4>Follow me on</h4>
+<ul class=social-icons>
+<li><a href=https://twitter.com/ralch class=social-icon> <i class="fa fa-twitter"></i></a></li>
+<li><a href=https://github.com/svett class=social-icon> <i class="fa fa-github"></i></a></li>
+<li><a href=http://uk.linkedin.com/in/ralchev class=social-icon> <i class="fa fa-linkedin"></i></a></li>
+<li><a href=http://blog.ralch.com/index.xml class=social-icon> <i class="fa fa-rss"></i></a></li>
+</ul>
+</div>
+</div>
+<div>
+<p>
+Published
+by <span itemprop=author>Svetlin Ralchev</span>
+<time datetime=2015-09-27T14:58:56+01:00>
+27 Sep, 2015
+</time>
+in <span itemprop=articleSection><a href=/categories/programming-languages/>programming languages</a> and <a href=/categories/tutorial/>tutorial</a></span>
+and tagged <a href=/tags/go/>#go</a>
+using <span itemprop=wordCount>792</span> words.
+</p>
+<aside>
+<heade><strong>Related Content</strong></header>
+<hr>
+<ul>
+<li><a href=/articles/advanced-error-handling-in-golang/>Advanced Error Handling in Golang</a> &ndash; 2 minutes
+<li><a href=/articles/network-programming-and-proxies-in-golang/>Network Programming and Proxies in Golang</a> &ndash; 3 minutes
+<li><a href=/articles/golang-reflect-struct-tag/>Golang: Extending reflect.StructTag to support duplicates</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-decorator/>Design Patterns in Golang: Decorator</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-composite/>Design Patterns in Golang: Composite</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-bridge/>Desing Patterns in Golang: Bridge</a> &ndash; 3 minutes
+<li><a href=/articles/golang-handling-errors/>Errors handling in Golang</a> &ndash; 3 minutes
+</ul>
+</aside>
+</div>
+<article>
+<div id=disqus_thread></div>
+<script type=text/javascript>(function(){var a,b;if(window.location.hostname=="localhost")return;a=document.createElement('script'),a.type='text/javascript',a.async=!0,b='ralch',a.src='//'+b+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the comments powered by <a href=http://disqus.com/?ref_noscript>Disqus.</a></noscript>
+</article>
+</div>
+</div>
+</main>
+<footer> <footer id=footer>
+<nav>
+<ul>
+<li><span>Svetlin Ralchev</span></li>
+<li>
+<a href=https://www.phogolabs.com>Company</a>
+</li>
+<li>
+<a href=/articles/>Articles</a>
+</li>
+<li>
+<a href=https://twitter.com/ralch>Twitter</a>
+</li>
+<li>
+<a href=https://github.com/svett>Github</a>
+</li>
+</ul>
+</nav>
+<p>
+powered by <a href=http://www.gohugo.io>Hugo</a>
+based on <a href=https://github.com/jeblister/kube>Kube</a> theme
+&copy; 2021 Licence MIT modified by Svetlin Ralchev
+</p>
+<script>(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)})(window,document,'script','//www.google-analytics.com/analytics.js','ga'),ga('create','UA-62134307-2','auto'),ga('send','pageview')</script>
+</footer>
+</footer>
+<script src=/js/kube.js type=text/javascript></script>
+<script src=/js/kube.legenda.js type=text/javascript></script>
+<script src=/js/master.js type=text/javascript></script>
+</body>
+</html>

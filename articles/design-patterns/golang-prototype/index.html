@@ -1,0 +1,369 @@
+<!doctype html><html lang=en-us>
+<head>
+<meta name=generator content="Hugo 0.88.1">
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title> Design Patterns in Golang: Prototype </title>
+<meta name=author content="Svetlin Ralchev">
+<meta property="og:title" content="Design Patterns in Golang: Prototype">
+<meta property="og:description" content="Preface The Prototype Pattern creates duplicate objects while keeping performance in mind. It&rsquo;s a part of the creational patterns and provides one of the best ways to create an object.
+In the mainstream languages (like C# and JAVA), it requires implementing a prototype interface which tells to create a clone of the current object. It is used when creation of object directly is costly.
+For instance, an object is to be created after a costly database operation.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://blog.ralch.com/articles/design-patterns/golang-prototype/"><meta property="article:section" content="articles">
+<meta property="article:published_time" content="2016-02-06T16:01:29+00:00">
+<meta property="article:modified_time" content="2016-02-06T16:01:29+00:00">
+<link rel=canonical href=http://blog.ralch.com/articles/design-patterns/golang-prototype/>
+<link rel=apple-touch-icon sizes=57x57 href=/img/favicons/apple-icon-57x57.png>
+<link rel=apple-touch-icon sizes=60x60 href=/img/favicons/apple-icon-60x60.png>
+<link rel=apple-touch-icon sizes=72x72 href=/img/favicons/apple-icon-72x72.png>
+<link rel=apple-touch-icon sizes=76x76 href=/img/favicons/apple-icon-76x76.png>
+<link rel=apple-touch-icon sizes=114x114 href=/img/favicons/apple-icon-114x114.png>
+<link rel=apple-touch-icon sizes=120x120 href=/img/favicons/apple-icon-120x120.png>
+<link rel=apple-touch-icon sizes=144x144 href=/img/favicons/apple-icon-144x144.png>
+<link rel=apple-touch-icon sizes=152x152 href=/img/favicons/apple-icon-152x152.png>
+<link rel=apple-touch-icon sizes=180x180 href=/img/favicons/apple-icon-180x180.png>
+<link rel=icon type=image/png sizes=192x192 href=/img/favicons/android-icon-192x192.png>
+<link rel=icon type=image/png sizes=32x32 href=/img/favicons/favicon-32x32.png>
+<link rel=icon type=image/png sizes=96x96 href=/img/favicons/favicon-96x96.png>
+<link rel=icon type=image/png sizes=16x16 href=/img/favicons/favicon-16x16.png>
+<link rel=manifest href=/img/favicons/manifest.json>
+<meta name=msapplication-TileColor content="#ffffff">
+<meta name=msapplication-TileImage content="/img/favicons/ms-icon-144x144.png">
+<meta name=theme-color content="#ffffff">
+<link href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css rel=stylesheet>
+<link href=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css rel=stylesheet>
+<link href=/css/font.css rel=stylesheet type=text/css>
+<link href=/css/kube.min.css rel=stylesheet type=text/css>
+<link href=/css/kube.legenda.css rel=stylesheet type=text/css>
+<link href=/css/master.css rel=stylesheet type=text/css>
+<link href=/css/theme.css rel=stylesheet type=text/css>
+<link href=/css/social.css rel=stylesheet type=text/css>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js type=text/javascript></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js></script>
+<script src=/js/jquery.ajaxchimp.js></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</head>
+<body class=page-kube>
+<header> <div class=show-sm>
+<div id=nav-toggle-box>
+<div id=nav-toggle-brand>
+<a href=/>Svetlin Ralchev</a>
+</div>
+<a data-component=toggleme data-target=#top href=# id=nav-toggle><i class=kube-menu></i></a>
+</div>
+</div>
+<div class=hide-sm id=top>
+<div id=top-brand>
+<a href=/ title=home>Svetlin Ralchev</a>
+</div>
+<nav id=top-nav-main>
+<ul>
+<li><a href=/about/>About</a></li>
+<li><a href=/articles/>Articles</a></li>
+</ul>
+</nav>
+<nav id=top-nav-extra>
+</nav>
+</div>
+</header>
+<main>
+<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
+<meta itemprop=name content="Design Patterns in Golang: Prototype">
+<meta itemprop=description content="Preface The Prototype Pattern creates duplicate objects while keeping performance in mind. It&rsquo;s a part of the creational patterns and provides one of the best ways to create an object.
+In the mainstream languages (like C# and JAVA), it requires implementing a prototype interface which tells to create a clone of the current object. It is used when creation of object directly is costly.
+For instance, an object is to be created after a costly database operation."><meta itemprop=datePublished content="2016-02-06T16:01:29+00:00">
+<meta itemprop=dateModified content="2016-02-06T16:01:29+00:00">
+<meta itemprop=wordCount content="854">
+<meta itemprop=keywords content="go,prototype,creational design patterns,">
+<div id=hero>
+<h1 itemprop=headline>Design Patterns in Golang: Prototype</h1>
+<time class=post-time><span class=icon>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+</span>
+<span>5 minute read</span>
+<span class=icon>
+<i class="fa fa-pencil" aria-hidden=true></i>
+</span>
+Published: <time datetime=2016-02-06T16:01:29+00:00>6 Feb, 2016</time>
+</time>
+</div>
+<div id=post-box>
+<div id=post itemprop=articleBody>
+<h4 id=preface>Preface</h4>
+<p><code>The Prototype Pattern</code> creates duplicate objects while keeping performance
+in mind. It&rsquo;s a part of the creational patterns and provides one of the best
+ways to create an object.</p>
+<p>In the mainstream languages (like C# and JAVA), it requires implementing a
+prototype interface which tells to create a clone of the current object. It is
+used when creation of object directly is costly.</p>
+<p>For instance, an object is to be created after a costly database operation. We
+can cache the object, returns its clone on next request and update the database
+as and when needed thus reducing database calls.</p>
+<h4 id=purpose>Purpose</h4>
+<ul>
+<li>Specify the kind of objects to create using a prototypical instance, and
+create new objects by copying this prototype.</li>
+</ul>
+<h4 id=design-pattern-diagram>Design Pattern Diagram</h4>
+<figure><img src=/media/golang/design-patterns/prototype.gif alt="Prototype Class Diagram">
+</figure>
+<ul>
+<li><code>Prototype</code> declares an interface for cloning itself</li>
+<li><code>ConcretePrototype</code> implements an operation for cloning itself</li>
+<li><code>Client</code> creates a new object by asking a prototype to clone itself</li>
+</ul>
+<h4 id=implementation>Implementation</h4>
+<p>In Golang, the pattern is applicable only in situation that we want to
+customize how the object is cloned. We will explore two examples regarding
+both situations.</p>
+<p>Lets build a system that generates a different configuration files depending on
+our needs. In first place, we have a struct <code>Config</code> that looks like:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Golang data-lang=Golang><span style=color:#f92672>package</span> <span style=color:#a6e22e>configurer</span>
+
+<span style=color:#75715e>// Config provides a configuration of microservice
+</span><span style=color:#75715e></span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Config</span> <span style=color:#66d9ef>struct</span> {
+	<span style=color:#a6e22e>workDir</span> <span style=color:#66d9ef>string</span>
+	<span style=color:#a6e22e>user</span>    <span style=color:#66d9ef>string</span>
+}
+
+<span style=color:#75715e>// NewConfig create a new config
+</span><span style=color:#75715e></span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>NewConfig</span>(<span style=color:#a6e22e>user</span> <span style=color:#66d9ef>string</span>, <span style=color:#a6e22e>workDir</span> <span style=color:#66d9ef>string</span>) <span style=color:#a6e22e>Config</span> {
+	<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>Config</span>{
+		<span style=color:#a6e22e>user</span>:    <span style=color:#a6e22e>user</span>,
+		<span style=color:#a6e22e>workDir</span>: <span style=color:#a6e22e>workDir</span>,
+	}
+}
+
+<span style=color:#75715e>// WithWorkDir creates a copy of Config with the provided working directory
+</span><span style=color:#75715e></span><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>c</span> <span style=color:#a6e22e>Config</span>) <span style=color:#a6e22e>WithWorkDir</span>(<span style=color:#a6e22e>dir</span> <span style=color:#66d9ef>string</span>) <span style=color:#a6e22e>Config</span> {
+	<span style=color:#a6e22e>c</span>.<span style=color:#a6e22e>workDir</span> = <span style=color:#a6e22e>dir</span>
+	<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>c</span>
+}
+
+<span style=color:#75715e>// WithUser creates a copy of Config with the provided user
+</span><span style=color:#75715e></span><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>c</span> <span style=color:#a6e22e>Config</span>) <span style=color:#a6e22e>WithUser</span>(<span style=color:#a6e22e>user</span> <span style=color:#66d9ef>string</span>) <span style=color:#a6e22e>Config</span> {
+	<span style=color:#a6e22e>c</span>.<span style=color:#a6e22e>user</span> = <span style=color:#a6e22e>user</span>
+	<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>c</span>
+}
+</code></pre></div><p>We want to be able to mutate the object without affecting its initial instance.
+The goal is to be able to generate different configuration files without loosing
+the flexibility of customizing them without mutation of the initial default
+configuration.</p>
+<p>As you can see the functions <code>WithWorkDir</code>, <code>WithUser</code> are declared for the
+struct <code>Config</code> (not for <code>*Config</code>). At the time, when they are called the
+object is copied by the <code>Golang</code> runtime. This allows us to modify it
+without affecting the original object.</p>
+<p>Lets see it&rsquo;s usage in action:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Golang data-lang=Golang><span style=color:#a6e22e>config</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>configurer</span>.<span style=color:#a6e22e>NewConfig</span>(<span style=color:#e6db74>&#34;guest&#34;</span>, <span style=color:#e6db74>&#34;/home/guest&#34;</span>)
+<span style=color:#a6e22e>rootConfig</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>config</span>.<span style=color:#a6e22e>WithUser</span>(<span style=color:#e6db74>&#34;root&#34;</span>).<span style=color:#a6e22e>WithWorkDir</span>(<span style=color:#e6db74>&#34;/root&#34;</span>)
+
+<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;Guest Config&#34;</span>, <span style=color:#a6e22e>config</span>)
+<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;Root Config&#34;</span>, <span style=color:#a6e22e>rootConfig</span>)
+</code></pre></div><p>Now lets explore the classic implementation of <code>The Prototype Design Pattern</code>.
+We will assume that we are developing again document object model for a custom
+document format. The core object is an <code>Element</code> structure which has parent and
+children.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Golang data-lang=Golang><span style=color:#75715e>// Element represents an element in document object model
+</span><span style=color:#75715e></span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Element</span> <span style=color:#66d9ef>struct</span> {
+	<span style=color:#a6e22e>text</span>     <span style=color:#66d9ef>string</span>
+	<span style=color:#a6e22e>parent</span>   <span style=color:#a6e22e>Node</span>
+	<span style=color:#a6e22e>children</span> []<span style=color:#a6e22e>Node</span>
+}
+
+<span style=color:#75715e>// NewElement makes a new element
+</span><span style=color:#75715e></span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>NewElement</span>(<span style=color:#a6e22e>text</span> <span style=color:#66d9ef>string</span>) <span style=color:#f92672>*</span><span style=color:#a6e22e>Element</span> {
+	<span style=color:#66d9ef>return</span> <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>Element</span>{
+		<span style=color:#a6e22e>text</span>:     <span style=color:#a6e22e>text</span>,
+		<span style=color:#a6e22e>parent</span>:   <span style=color:#66d9ef>nil</span>,
+		<span style=color:#a6e22e>children</span>: make([]<span style=color:#a6e22e>Node</span>, <span style=color:#ae81ff>0</span>),
+	}
+}
+
+<span style=color:#75715e>// Parent returns the element parent
+</span><span style=color:#75715e></span><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>e</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>Element</span>) <span style=color:#a6e22e>Parent</span>() <span style=color:#a6e22e>Node</span> {
+	<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>e</span>.<span style=color:#a6e22e>parent</span>
+}
+
+<span style=color:#75715e>// SetParent sets the element parent
+</span><span style=color:#75715e></span><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>e</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>Element</span>) <span style=color:#a6e22e>SetParent</span>(<span style=color:#a6e22e>node</span> <span style=color:#a6e22e>Node</span>) {
+	<span style=color:#a6e22e>e</span>.<span style=color:#a6e22e>parent</span> = <span style=color:#a6e22e>node</span>
+}
+
+<span style=color:#75715e>// Children returns the element children elements
+</span><span style=color:#75715e></span><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>e</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>Element</span>) <span style=color:#a6e22e>Children</span>() []<span style=color:#a6e22e>Node</span> {
+	<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>e</span>.<span style=color:#a6e22e>children</span>
+}
+
+<span style=color:#75715e>// AddChild adds a child element
+</span><span style=color:#75715e></span><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>e</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>Element</span>) <span style=color:#a6e22e>AddChild</span>(<span style=color:#a6e22e>child</span> <span style=color:#a6e22e>Node</span>) {
+	<span style=color:#a6e22e>copy</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>child</span>.<span style=color:#a6e22e>Clone</span>()
+	<span style=color:#a6e22e>copy</span>.<span style=color:#a6e22e>SetParent</span>(<span style=color:#a6e22e>e</span>)
+	<span style=color:#a6e22e>e</span>.<span style=color:#a6e22e>children</span> = append(<span style=color:#a6e22e>e</span>.<span style=color:#a6e22e>children</span>, <span style=color:#a6e22e>copy</span>)
+}
+
+<span style=color:#75715e>// Clone makes a copy of particular element. Note that the element becomes a
+</span><span style=color:#75715e>// root of new orphan tree
+</span><span style=color:#75715e></span><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>e</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>Element</span>) <span style=color:#a6e22e>Clone</span>() <span style=color:#a6e22e>Node</span> {
+	<span style=color:#a6e22e>copy</span> <span style=color:#f92672>:=</span> <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>Element</span>{
+		<span style=color:#a6e22e>text</span>:     <span style=color:#a6e22e>e</span>.<span style=color:#a6e22e>text</span>,
+		<span style=color:#a6e22e>parent</span>:   <span style=color:#66d9ef>nil</span>,
+		<span style=color:#a6e22e>children</span>: make([]<span style=color:#a6e22e>Node</span>, <span style=color:#ae81ff>0</span>),
+	}
+	<span style=color:#66d9ef>for</span> <span style=color:#a6e22e>_</span>, <span style=color:#a6e22e>child</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>e</span>.<span style=color:#a6e22e>children</span> {
+		<span style=color:#a6e22e>copy</span>.<span style=color:#a6e22e>AddChild</span>(<span style=color:#a6e22e>child</span>)
+	}
+	<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>copy</span>
+}
+
+<span style=color:#75715e>// String returns string representation of element
+</span><span style=color:#75715e></span><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>e</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>Element</span>) <span style=color:#a6e22e>String</span>() <span style=color:#66d9ef>string</span> {
+	<span style=color:#a6e22e>buffer</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>bytes</span>.<span style=color:#a6e22e>NewBufferString</span>(<span style=color:#a6e22e>e</span>.<span style=color:#a6e22e>text</span>)
+
+	<span style=color:#66d9ef>for</span> <span style=color:#a6e22e>_</span>, <span style=color:#a6e22e>c</span> <span style=color:#f92672>:=</span> <span style=color:#66d9ef>range</span> <span style=color:#a6e22e>e</span>.<span style=color:#a6e22e>Children</span>() {
+		<span style=color:#a6e22e>text</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>c</span>.<span style=color:#a6e22e>String</span>()
+		<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Fprintf</span>(<span style=color:#a6e22e>buffer</span>, <span style=color:#e6db74>&#34;\n %s&#34;</span>, <span style=color:#a6e22e>text</span>)
+	}
+
+	<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>buffer</span>.<span style=color:#a6e22e>String</span>()
+}
+</code></pre></div><p>The contract that exposes the <code>Clone</code> funcion is the <code>Node</code> interface:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Golang data-lang=Golang><span style=color:#75715e>// Node a document object model node
+</span><span style=color:#75715e></span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Node</span> <span style=color:#66d9ef>interface</span> {
+	<span style=color:#75715e>// Strings returns nodes text representation
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>String</span>() <span style=color:#66d9ef>string</span>
+	<span style=color:#75715e>// Parent returns the node parent
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>Parent</span>() <span style=color:#a6e22e>Node</span>
+	<span style=color:#75715e>// SetParent sets the node parent
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>SetParent</span>(<span style=color:#a6e22e>node</span> <span style=color:#a6e22e>Node</span>)
+	<span style=color:#75715e>// Children returns the node children nodes
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>Children</span>() []<span style=color:#a6e22e>Node</span>
+	<span style=color:#75715e>// AddChild adds a child node
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>AddChild</span>(<span style=color:#a6e22e>child</span> <span style=color:#a6e22e>Node</span>)
+	<span style=color:#75715e>// Clone clones a node
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>Clone</span>() <span style=color:#a6e22e>Node</span>
+}
+</code></pre></div><p>We want to extract a particular subtree of concrete element hierary. We want to
+use it as independent document object model. In order to do that, we should use
+the clone function:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Golang data-lang=Golang><span style=color:#a6e22e>directorNode</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>dom</span>.<span style=color:#a6e22e>NewElement</span>(<span style=color:#e6db74>&#34;Director of Engineering&#34;</span>)
+
+<span style=color:#a6e22e>engManagerNode</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>dom</span>.<span style=color:#a6e22e>NewElement</span>(<span style=color:#e6db74>&#34;Engineering Manager&#34;</span>)
+<span style=color:#a6e22e>engManagerNode</span>.<span style=color:#a6e22e>AddChild</span>(<span style=color:#a6e22e>dom</span>.<span style=color:#a6e22e>NewElement</span>(<span style=color:#e6db74>&#34;Lead Software Engineer&#34;</span>))
+
+<span style=color:#a6e22e>directorNode</span>.<span style=color:#a6e22e>AddChild</span>(<span style=color:#a6e22e>engManagerNode</span>)
+<span style=color:#a6e22e>directorNode</span>.<span style=color:#a6e22e>AddChild</span>(<span style=color:#a6e22e>engManagerNode</span>)
+
+<span style=color:#a6e22e>officeManagerNode</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>dom</span>.<span style=color:#a6e22e>NewElement</span>(<span style=color:#e6db74>&#34;Office Manager&#34;</span>)
+<span style=color:#a6e22e>directorNode</span>.<span style=color:#a6e22e>AddChild</span>(<span style=color:#a6e22e>officeManagerNode</span>)
+
+<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;&#34;</span>)
+<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;# Company Hierarchy&#34;</span>)
+<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Print</span>(<span style=color:#a6e22e>directorNode</span>)
+<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;&#34;</span>)
+<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;# Team Hiearachy&#34;</span>)
+<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Print</span>(<span style=color:#a6e22e>engManagerNode</span>.<span style=color:#a6e22e>Clone</span>())
+</code></pre></div><p>The sample above creates a tree from the subtree pointed by <code>engManagerNode</code>
+variable.</p>
+<p>You can get the full source code from
+<a href=https://github.com/svett/golang-design-patterns/tree/master/creational-patterns/prototype>github</a>.</p>
+<h4 id=verdict>Verdict</h4>
+<p>One of the disadvantages of this pattern is that the process of copying an object
+can be complicated. In addition, structs that have circular references to other
+classes are difficult to clone. Its overuse could affect performance, as the
+prototype object itself would need to be instantiated if you use a registry of
+prototypes.</p>
+<p>In the context of <code>Golang</code>, I don&rsquo;t see any particular reason to adopt it.
+<code>Golang</code> already provides builtin mechanism for cloning objects.</p>
+</div>
+<div class=form-subscribe>
+<div id=form-subscribe-box>
+<h4>All about Golang, Distributed Systems and Backend development.</h4>
+<p>Sign up to receive the latest articles and updates</p>
+<form id=mc-embedded-subscribe-form method=post class=form>
+<div class=form-item>
+<label><span id=form-subscribe-info></span></label>
+<div class=append>
+<input type=email name=EMAIL id=mc-email placeholder=Email>
+<button class=button>Subscribe</button>
+</div>
+</div>
+<div style=position:absolute;left:-5000px aria-hidden=true>
+<input type=text tabindex=-1>
+</div>
+</form>
+<h4>Follow me on</h4>
+<ul class=social-icons>
+<li><a href=https://twitter.com/ralch class=social-icon> <i class="fa fa-twitter"></i></a></li>
+<li><a href=https://github.com/svett class=social-icon> <i class="fa fa-github"></i></a></li>
+<li><a href=http://uk.linkedin.com/in/ralchev class=social-icon> <i class="fa fa-linkedin"></i></a></li>
+<li><a href=http://blog.ralch.com/index.xml class=social-icon> <i class="fa fa-rss"></i></a></li>
+</ul>
+</div>
+</div>
+<div>
+<p>
+Published
+by <span itemprop=author>Svetlin Ralchev</span>
+<time datetime=2016-02-06T16:01:29+00:00>
+6 Feb, 2016
+</time>
+in <span itemprop=articleSection><a href=/categories/design-patterns/>design patterns</a> and <a href=/categories/programming-languages/>programming languages</a></span>
+and tagged <a href=/tags/creational-design-patterns/>#creational design patterns</a>, <a href=/tags/go/>#go</a> and <a href=/tags/prototype/>#prototype</a>
+using <span itemprop=wordCount>854</span> words.
+</p>
+<aside>
+<heade><strong>Related Content</strong></header>
+<hr>
+<ul>
+<li><a href=/articles/advanced-error-handling-in-golang/>Advanced Error Handling in Golang</a> &ndash; 2 minutes
+<li><a href=/articles/network-programming-and-proxies-in-golang/>Network Programming and Proxies in Golang</a> &ndash; 3 minutes
+<li><a href=/articles/golang-reflect-struct-tag/>Golang: Extending reflect.StructTag to support duplicates</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-decorator/>Design Patterns in Golang: Decorator</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-composite/>Design Patterns in Golang: Composite</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-bridge/>Desing Patterns in Golang: Bridge</a> &ndash; 3 minutes
+<li><a href=/articles/golang-handling-errors/>Errors handling in Golang</a> &ndash; 3 minutes
+</ul>
+</aside>
+</div>
+<article>
+<div id=disqus_thread></div>
+<script type=text/javascript>(function(){var a,b;if(window.location.hostname=="localhost")return;a=document.createElement('script'),a.type='text/javascript',a.async=!0,b='ralch',a.src='//'+b+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the comments powered by <a href=http://disqus.com/?ref_noscript>Disqus.</a></noscript>
+</article>
+</div>
+</div>
+</main>
+<footer> <footer id=footer>
+<nav>
+<ul>
+<li><span>Svetlin Ralchev</span></li>
+<li>
+<a href=https://www.phogolabs.com>Company</a>
+</li>
+<li>
+<a href=/articles/>Articles</a>
+</li>
+<li>
+<a href=https://twitter.com/ralch>Twitter</a>
+</li>
+<li>
+<a href=https://github.com/svett>Github</a>
+</li>
+</ul>
+</nav>
+<p>
+powered by <a href=http://www.gohugo.io>Hugo</a>
+based on <a href=https://github.com/jeblister/kube>Kube</a> theme
+&copy; 2021 Licence MIT modified by Svetlin Ralchev
+</p>
+<script>(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)})(window,document,'script','//www.google-analytics.com/analytics.js','ga'),ga('create','UA-62134307-2','auto'),ga('send','pageview')</script>
+</footer>
+</footer>
+<script src=/js/kube.js type=text/javascript></script>
+<script src=/js/kube.legenda.js type=text/javascript></script>
+<script src=/js/master.js type=text/javascript></script>
+</body>
+</html>

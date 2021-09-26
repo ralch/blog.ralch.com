@@ -1,0 +1,261 @@
+<!doctype html><html lang=en-us>
+<head>
+<meta name=generator content="Hugo 0.88.1">
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title> go </title>
+<meta name=author content="Svetlin Ralchev">
+<meta property="og:title" content="go">
+<meta property="og:description" content>
+<meta property="og:type" content="website">
+<meta property="og:url" content="http://blog.ralch.com/tags/go/">
+<link href=http://blog.ralch.com/tags/go/index.xml rel=alternate type=application/rss+xml title="Software adventures and thoughts">
+<link rel=canonical href=http://blog.ralch.com/tags/go/>
+<link rel=apple-touch-icon sizes=57x57 href=/img/favicons/apple-icon-57x57.png>
+<link rel=apple-touch-icon sizes=60x60 href=/img/favicons/apple-icon-60x60.png>
+<link rel=apple-touch-icon sizes=72x72 href=/img/favicons/apple-icon-72x72.png>
+<link rel=apple-touch-icon sizes=76x76 href=/img/favicons/apple-icon-76x76.png>
+<link rel=apple-touch-icon sizes=114x114 href=/img/favicons/apple-icon-114x114.png>
+<link rel=apple-touch-icon sizes=120x120 href=/img/favicons/apple-icon-120x120.png>
+<link rel=apple-touch-icon sizes=144x144 href=/img/favicons/apple-icon-144x144.png>
+<link rel=apple-touch-icon sizes=152x152 href=/img/favicons/apple-icon-152x152.png>
+<link rel=apple-touch-icon sizes=180x180 href=/img/favicons/apple-icon-180x180.png>
+<link rel=icon type=image/png sizes=192x192 href=/img/favicons/android-icon-192x192.png>
+<link rel=icon type=image/png sizes=32x32 href=/img/favicons/favicon-32x32.png>
+<link rel=icon type=image/png sizes=96x96 href=/img/favicons/favicon-96x96.png>
+<link rel=icon type=image/png sizes=16x16 href=/img/favicons/favicon-16x16.png>
+<link rel=manifest href=/img/favicons/manifest.json>
+<meta name=msapplication-TileColor content="#ffffff">
+<meta name=msapplication-TileImage content="/img/favicons/ms-icon-144x144.png">
+<meta name=theme-color content="#ffffff">
+<link href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css rel=stylesheet>
+<link href=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css rel=stylesheet>
+<link href=/css/font.css rel=stylesheet type=text/css>
+<link href=/css/kube.min.css rel=stylesheet type=text/css>
+<link href=/css/kube.legenda.css rel=stylesheet type=text/css>
+<link href=/css/master.css rel=stylesheet type=text/css>
+<link href=/css/theme.css rel=stylesheet type=text/css>
+<link href=/css/social.css rel=stylesheet type=text/css>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js type=text/javascript></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js></script>
+<script src=/js/jquery.ajaxchimp.js></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</head>
+<body class=page-kube>
+<header> <div class=show-sm>
+<div id=nav-toggle-box>
+<div id=nav-toggle-brand>
+<a href=/>Svetlin Ralchev</a>
+</div>
+<a data-component=toggleme data-target=#top href=# id=nav-toggle><i class=kube-menu></i></a>
+</div>
+</div>
+<div class=hide-sm id=top>
+<div id=top-brand>
+<a href=/ title=home>Svetlin Ralchev</a>
+</div>
+<nav id=top-nav-main>
+<ul>
+<li><a href=/about/>About</a></li>
+<li><a href=/articles/>Articles</a></li>
+</ul>
+</nav>
+<nav id=top-nav-extra>
+</nav>
+</div>
+</header>
+<main>
+<div id=hero class=wrap>
+<h1>go by Svetlin Ralchev</h1>
+<p>
+Question everything. Learn something. Answer everything.
+</p>
+<h4>Follow me on</h4>
+<ul class=social-icons>
+<li><a href=https://twitter.com/ralch class=social-icon> <i class="fa fa-twitter"></i></a></li>
+<li><a href=https://github.com/svett class=social-icon> <i class="fa fa-github"></i></a></li>
+<li><a href=http://uk.linkedin.com/in/ralchev class=social-icon> <i class="fa fa-linkedin"></i></a></li>
+<li><a href=http://blog.ralch.com/index.xml class=social-icon> <i class="fa fa-rss"></i></a></li>
+</ul>
+</div>
+<ul id=posts>
+<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
+<h2 class=title>
+<a href=http://blog.ralch.com/articles/advanced-error-handling-in-golang/ itemprop=headline>Advanced Error Handling in Golang</a>
+</h2>
+<hr>
+<time class=post-time>
+<span class=icon>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+</span>
+<span>2 minute read</span>
+<span class=icon>
+<i class="fa fa-pencil" aria-hidden=true></i>
+</span>
+Published: <time datetime=2017-09-25T16:28:10+01:00>25 Sep, 2017</time>
+<span class=icon>
+<i class="fa fa-hashtag" aria-hidden=true></i>
+</span>
+<span class=dark-red>Tagged:</span>
+<span><a class="post-tag post-tag-go" href=http://blog.ralch.com/tags/go>go</a></span>
+</time>
+<p itemprop=about>If you have ever written any Golang code you have probably noticed the built-in error type interface. Golang uses error values to indicate an abnormal state. The error type represents any value that can describe itself as a string. Here is the interface&rsquo;s declaration:
+type error interface { Error() string } The most commonly-used error implementation is the errors package&rsquo;s implementation that allows you to instantiate errors by using the following code snippet:</p>
+</div>
+</div>
+<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
+<h2 class=title>
+<a href=http://blog.ralch.com/articles/network-programming-and-proxies-in-golang/ itemprop=headline>Network Programming and Proxies in Golang</a>
+</h2>
+<hr>
+<time class=post-time>
+<span class=icon>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+</span>
+<span>3 minute read</span>
+<span class=icon>
+<i class="fa fa-pencil" aria-hidden=true></i>
+</span>
+Published: <time datetime=2017-08-22T14:17:48+01:00>22 Aug, 2017</time>
+<span class=icon>
+<i class="fa fa-hashtag" aria-hidden=true></i>
+</span>
+<span class=dark-red>Tagged:</span>
+<span><a class="post-tag post-tag-go" href=http://blog.ralch.com/tags/go>go</a></span>
+</time>
+<blockquote itemprop=about>Learn how to use Proxy to establish TCP connections in Golang</blockquote>
+<p itemprop=about>Have you used any proxy servers in your infrastructure? There are a lot of different scenarios in which you may use a proxy in order to control access to your machines and resources. I am not saying that it&rsquo;s the best approach but some companies use that.
+Recently, I have been working on a TCP service that has to connect via SOCK5 proxy server. But before we dig into that, I would like to show what Golang offers for the regular HTTP user.</p>
+</div>
+</div>
+<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
+<h2 class=title>
+<a href=http://blog.ralch.com/articles/golang-reflect-struct-tag/ itemprop=headline>Golang: Extending reflect.StructTag to support duplicates</a>
+</h2>
+<hr>
+<time class=post-time>
+<span class=icon>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+</span>
+<span>3 minute read</span>
+<span class=icon>
+<i class="fa fa-pencil" aria-hidden=true></i>
+</span>
+Published: <time datetime=2017-03-21T12:33:56+01:00>21 Mar, 2017</time>
+<span class=icon>
+<i class="fa fa-hashtag" aria-hidden=true></i>
+</span>
+<span class=dark-red>Tagged:</span>
+<span><a class="post-tag post-tag-go" href=http://blog.ralch.com/tags/go>go</a></span>
+<span><a class="post-tag post-tag-reflect" href=http://blog.ralch.com/tags/reflect>reflect</a></span>
+<span><a class="post-tag post-tag-json" href=http://blog.ralch.com/tags/json>json</a></span>
+</time>
+<p itemprop=about>Presently, Golang has limited support of reflection comparing to the mainstream languages like C# and JAVA. It&rsquo;s not intended to match or beat that languages.
+In practice, we are using StructTag to add some metadata for the defined struct fields. Such an example is json package, where you can customize the field marshaling.
+In example below, we customize the json representation of User struct fields:
+type User struct { ID string `json:"id"` Name string `json:"name"` CreatedAt time.</p>
+</div>
+</div>
+<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
+<h2 class=title>
+<a href=http://blog.ralch.com/articles/design-patterns/golang-decorator/ itemprop=headline>Design Patterns in Golang: Decorator</a>
+</h2>
+<hr>
+<time class=post-time>
+<span class=icon>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+</span>
+<span>3 minute read</span>
+<span class=icon>
+<i class="fa fa-pencil" aria-hidden=true></i>
+</span>
+Published: <time datetime=2016-04-17T18:33:52+01:00>17 Apr, 2016</time>
+<span class=icon>
+<i class="fa fa-hashtag" aria-hidden=true></i>
+</span>
+<span class=dark-red>Tagged:</span>
+<span><a class="post-tag post-tag-go" href=http://blog.ralch.com/tags/go>go</a></span>
+<span><a class="post-tag post-tag-decorator" href=http://blog.ralch.com/tags/decorator>decorator</a></span>
+<span><a class="post-tag post-tag-structural-design-patterns" href=http://blog.ralch.com/tags/structural-design-patterns>structural design patterns</a></span>
+</time>
+<p itemprop=about>Introduction The Decorator pattern adds new functionality to an existing object without altering its structure. It is a structural pattern as this pattern acts as a wrapper to existing class.
+The instanciate a decorator struct which decorates (wraps) the original object and provides additional functionality keeping its methods signature intact.
+Purpose Attach additional responsibilities to an object dynamically. Decorators provide a flexible alternative to inheritance for extending functionality. Wrapping a present, putting it in a box, and wrapping the box.</p>
+</div>
+</div>
+<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
+<h2 class=title>
+<a href=http://blog.ralch.com/articles/design-patterns/golang-composite/ itemprop=headline>Design Patterns in Golang: Composite</a>
+</h2>
+<hr>
+<time class=post-time>
+<span class=icon>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+</span>
+<span>3 minute read</span>
+<span class=icon>
+<i class="fa fa-pencil" aria-hidden=true></i>
+</span>
+Published: <time datetime=2016-03-31T09:00:27+01:00>31 Mar, 2016</time>
+<span class=icon>
+<i class="fa fa-hashtag" aria-hidden=true></i>
+</span>
+<span class=dark-red>Tagged:</span>
+<span><a class="post-tag post-tag-go" href=http://blog.ralch.com/tags/go>go</a></span>
+<span><a class="post-tag post-tag-composite" href=http://blog.ralch.com/tags/composite>composite</a></span>
+<span><a class="post-tag post-tag-structural-design-patterns" href=http://blog.ralch.com/tags/structural-design-patterns>structural design patterns</a></span>
+</time>
+<p itemprop=about>Introduction A Composite Design Pattern is a structural pattern that uses to employ composition when implementing an interface rather than using multiple inheritance. It composes objects into tree structures and lets clients treat individual objects and compositions uniformly.
+There are situations when clients ignore the difference between compositions of objects and individual objects. If dealing with multiple objects in the same way as handle each of deam is identical, the Composite Design pattern is a good choice to decrease the complexity and treat them as homogeneous.</p>
+</div>
+</div>
+<section><nav class="pagination align-center upper pager flat">
+<ul>
+<li class=prev>
+<span>&lt; Prev</span>
+</li>
+<li class="w100 align-center">
+<a href=/tags/go/>Back to Catalog</a>
+</li>
+<li class=next>
+<a href=/tags/go/page/2/>Next ></a>
+</li>
+</ul>
+</nav>
+</section>
+</ul>
+</main>
+<footer>
+<footer id=footer>
+<nav>
+<ul>
+<li><span>Svetlin Ralchev</span></li>
+<li>
+<a href=https://www.phogolabs.com>Company</a>
+</li>
+<li>
+<a href=/articles/>Articles</a>
+</li>
+<li>
+<a href=https://twitter.com/ralch>Twitter</a>
+</li>
+<li>
+<a href=https://github.com/svett>Github</a>
+</li>
+</ul>
+</nav>
+<p>
+powered by <a href=http://www.gohugo.io>Hugo</a>
+based on <a href=https://github.com/jeblister/kube>Kube</a> theme
+&copy; 2021 Licence MIT modified by Svetlin Ralchev
+</p>
+<script>(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)})(window,document,'script','//www.google-analytics.com/analytics.js','ga'),ga('create','UA-62134307-2','auto'),ga('send','pageview')</script>
+</footer>
+</footer>
+<script src=/js/kube.js type=text/javascript></script>
+<script src=/js/kube.legenda.js type=text/javascript></script>
+<script src=/js/master.js type=text/javascript></script>
+</body>
+</html>

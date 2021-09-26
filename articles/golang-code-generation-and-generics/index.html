@@ -1,0 +1,477 @@
+<!doctype html><html lang=en-us>
+<head>
+<meta name=generator content="Hugo 0.88.1">
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title> Generics in Golang </title>
+<meta name=author content="Svetlin Ralchev">
+<meta property="og:title" content="Generics in Golang">
+<meta property="og:description" content="In the article we will take the advantage of [generics] even that they are not first citizen in Go. We will explore gen and genny command line tools.
+Gen Gen is a code generation tool that brings some generic query functions. It uses annotations to add this functionality to any structure. The generated code is part of your package and does not have any external dependencies. This approach avoids any reflection and produces an efficient concrete implementation for any annotated type.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://blog.ralch.com/articles/golang-code-generation-and-generics/"><meta property="article:section" content="articles">
+<meta property="article:published_time" content="2015-10-18T05:00:00+01:00">
+<meta property="article:modified_time" content="2015-10-18T05:00:00+01:00">
+<link rel=canonical href=http://blog.ralch.com/articles/golang-code-generation-and-generics/>
+<link rel=apple-touch-icon sizes=57x57 href=/img/favicons/apple-icon-57x57.png>
+<link rel=apple-touch-icon sizes=60x60 href=/img/favicons/apple-icon-60x60.png>
+<link rel=apple-touch-icon sizes=72x72 href=/img/favicons/apple-icon-72x72.png>
+<link rel=apple-touch-icon sizes=76x76 href=/img/favicons/apple-icon-76x76.png>
+<link rel=apple-touch-icon sizes=114x114 href=/img/favicons/apple-icon-114x114.png>
+<link rel=apple-touch-icon sizes=120x120 href=/img/favicons/apple-icon-120x120.png>
+<link rel=apple-touch-icon sizes=144x144 href=/img/favicons/apple-icon-144x144.png>
+<link rel=apple-touch-icon sizes=152x152 href=/img/favicons/apple-icon-152x152.png>
+<link rel=apple-touch-icon sizes=180x180 href=/img/favicons/apple-icon-180x180.png>
+<link rel=icon type=image/png sizes=192x192 href=/img/favicons/android-icon-192x192.png>
+<link rel=icon type=image/png sizes=32x32 href=/img/favicons/favicon-32x32.png>
+<link rel=icon type=image/png sizes=96x96 href=/img/favicons/favicon-96x96.png>
+<link rel=icon type=image/png sizes=16x16 href=/img/favicons/favicon-16x16.png>
+<link rel=manifest href=/img/favicons/manifest.json>
+<meta name=msapplication-TileColor content="#ffffff">
+<meta name=msapplication-TileImage content="/img/favicons/ms-icon-144x144.png">
+<meta name=theme-color content="#ffffff">
+<link href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css rel=stylesheet>
+<link href=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css rel=stylesheet>
+<link href=/css/font.css rel=stylesheet type=text/css>
+<link href=/css/kube.min.css rel=stylesheet type=text/css>
+<link href=/css/kube.legenda.css rel=stylesheet type=text/css>
+<link href=/css/master.css rel=stylesheet type=text/css>
+<link href=/css/theme.css rel=stylesheet type=text/css>
+<link href=/css/social.css rel=stylesheet type=text/css>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js type=text/javascript></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js></script>
+<script src=/js/jquery.ajaxchimp.js></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</head>
+<body class=page-kube>
+<header> <div class=show-sm>
+<div id=nav-toggle-box>
+<div id=nav-toggle-brand>
+<a href=/>Svetlin Ralchev</a>
+</div>
+<a data-component=toggleme data-target=#top href=# id=nav-toggle><i class=kube-menu></i></a>
+</div>
+</div>
+<div class=hide-sm id=top>
+<div id=top-brand>
+<a href=/ title=home>Svetlin Ralchev</a>
+</div>
+<nav id=top-nav-main>
+<ul>
+<li><a href=/about/>About</a></li>
+<li><a href=/articles/>Articles</a></li>
+</ul>
+</nav>
+<nav id=top-nav-extra>
+</nav>
+</div>
+</header>
+<main>
+<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
+<meta itemprop=name content="Generics in Golang">
+<meta itemprop=description content="In the article we will take the advantage of [generics] even that they are not first citizen in Go. We will explore gen and genny command line tools.
+Gen Gen is a code generation tool that brings some generic query functions. It uses annotations to add this functionality to any structure. The generated code is part of your package and does not have any external dependencies. This approach avoids any reflection and produces an efficient concrete implementation for any annotated type."><meta itemprop=datePublished content="2015-10-18T05:00:00+01:00">
+<meta itemprop=dateModified content="2015-10-18T05:00:00+01:00">
+<meta itemprop=wordCount content="1507">
+<meta itemprop=keywords content="go,generics,code generation,">
+<div id=hero>
+<h1 itemprop=headline>Generics in Golang</h1>
+<time class=post-time><span class=icon>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+</span>
+<span>8 minute read</span>
+<span class=icon>
+<i class="fa fa-pencil" aria-hidden=true></i>
+</span>
+Published: <time datetime=2015-10-18T05:00:00+01:00>18 Oct, 2015</time>
+</time>
+</div>
+<div id=post-box>
+<div id=post itemprop=articleBody>
+<p>In the article we will take the advantage of [generics] even that they are not
+first citizen in <code>Go</code>. We will explore <a href=http://clipperhouse.github.io/gen>gen</a> and
+<a href=https://github.com/cheekybits/genny>genny</a> command line tools.</p>
+<h3 id=gen>Gen</h3>
+<p><code>Gen</code> is a code generation tool that brings some generic query functions. It uses
+annotations to add this functionality to any structure. The generated code is
+part of your package and does not have any external dependencies. This approach
+avoids any reflection and produces an efficient concrete implementation for any
+annotated type.</p>
+<p>By default the package generates various query functions. They can be used to
+project, filter, sort and group slices of the annotated types.</p>
+<h4 id=installation>Installation</h4>
+<p>We should use <code>go get</code> command to install <code>gen</code>:</p>
+<pre tabindex=0><code>$ go get clipperhouse.github.io/gen 
+</code></pre><h4 id=usage>Usage</h4>
+<p>As any other <code>Go</code> generation tool, <code>Gen</code> requires a specific annoation comment
+declared before the desired type declaration.</p>
+<pre tabindex=0><code>// +gen [*] tag:&quot;Value, Value[T,T]&quot; anothertag
+type AnnotatedType
+</code></pre><p>It begins with the <code>+gen</code> directive. Optionally it is followed by a <code>[*]</code>,
+indicating that the generated type should be a pointer. Tags and values are
+interpreted by the available type writers. They are responsible for the actual
+code generation. We will learn more about them in the next section. For now we
+will use the default slice type writer.</p>
+<p>Lets use it to generate functions for filtering, distincting, sorting and projecting
+a <code>Company</code> struct:</p>
+<pre tabindex=0><code>// filename: company.go
+package company
+
+// +gen slice:&quot;Where,GroupBy[string],DistinctBy,SortBy,Select[string]&quot;
+type Company struct {
+	Name    string
+	Country string
+	City    string
+}
+</code></pre><p>After declaring the type annoation, we should execute <code>gen</code>:</p>
+<pre tabindex=0><code>$ gen
+</code></pre><p>It produces <code>comapany_slice.go</code> file that contains the concrete implementation
+for any listed function in the comment.</p>
+<p>Lets use the generated functions with the following slice:</p>
+<pre tabindex=0><code>companies := company.CompanySlice{
+	company.Company{Name: &quot;Microsoft&quot;, Country: &quot;USA&quot;, City: &quot;Redmond&quot;},
+	company.Company{Name: &quot;Google&quot;, Country: &quot;USA&quot;, City: &quot;Palo Alto&quot;},
+	company.Company{Name: &quot;Facebook&quot;, Country: &quot;USA&quot;, City: &quot;Palo Alto&quot;},
+	company.Company{Name: &quot;Uber&quot;, Country: &quot;USA&quot;, City: &quot;San Francisco&quot;},
+	company.Company{Name: &quot;Tweeter&quot;, Country: &quot;USA&quot;, City: &quot;San Francisco&quot;},
+	company.Company{Name: &quot;SoundCloud&quot;, Country: &quot;Germany&quot;, City: &quot;Berlin&quot;},
+}
+</code></pre><p>Lets get all companies that are based on USA. For that you should use the <code>Where</code>
+function, which receives predicate function as an argument.</p>
+<p>The clojure function receives a company object as argument and returns
+boolean value. It is executed for every item in the slice. It should retun
+<code>true</code> for all objects that meets our criteria:</p>
+<pre tabindex=0><code>allUSCompanies := companies.Where(func(comp company.Company) bool {
+	return comp.Country == &quot;USA&quot;
+})
+</code></pre><p>If we distinct all companies by their country of origin, we should use the
+<code>DistinctBy</code> function that uses a function that checks two company objects
+for equaty:</p>
+<pre tabindex=0><code>uniqueCompanies := companies.DistinctBy(func(compA company.Company, compB company.Company) bool {
+	return compA.Country == compB.Country
+})
+</code></pre><p>If we want to sort the companies by their name, we should use <code>SortBy</code> function
+that receives as an argument a function that determines whether its first argument
+is less that second one:</p>
+<pre tabindex=0><code>// In our case we can use strings.Compare to compare to strings. It returns -1
+// the first string is less than the second.
+sortedCompanies := companies.SortBy(func(compA company.Company, compB company.Company) bool {
+	return strings.Compare(compA.Name, compB.Name) == -1
+})
+</code></pre><p>If we want to group the companies by their country of residence, we can use
+<code>GroupByString</code> function that returns a <code>map[string]company.CompanySlice</code> object.
+The key of every entry is determined by its clojure function.</p>
+<pre tabindex=0><code>groupedCompanies := companies.GroupByString(func(comp company.Company) string {
+	return comp.Country
+})
+
+fmt.Println(&quot;US Companies: &quot;, groupedCompanies[&quot;USA&quot;])
+fmt.Println(&quot;German Companies: &quot;, groupedCompanies[&quot;Germany&quot;])
+</code></pre><p>The company slice can be projected as a string by using generated <code>Select</code>
+function. The following code snippet projects the list of companies as a list
+of company names:</p>
+<pre tabindex=0><code>companyNames := companies.SelectString(func(comp company.Company) string {
+	return comp.Name
+})
+
+fmt.Println(companyNames)
+</code></pre><pre tabindex=0><code>// This slice of strings is produced by the code snippet
+[Microsoft Google Facebook Uber Tweeter SoundCloud]
+</code></pre><p>A great <code>Gen</code> feature is that most of the functions can be chained. Lets select
+all companies based in USA then order them by their name and format their name
+in the following format:</p>
+<pre tabindex=0><code>%COMPANY_NAME% is based in %CITY%
+</code></pre><p>We can simply chain <code>Where</code>, <code>SortBy</code> and <code>SelectString</code> functions:</p>
+<pre tabindex=0><code>result := companies.Where(func(comp company.Company) bool {
+	return comp.Country == &quot;USA&quot;
+}).SortBy(func(compA company.Company, compB company.Company) bool {
+	return strings.Compare(compA.Name, compB.Name) == -1
+}).SelectString(func(comp company.Company) string {
+	return fmt.Sprintf(&quot;%s's is based in %s&quot;, comp.Name, comp.City)
+})
+
+for _, text := range result {
+	fmt.Println(text)
+}
+</code></pre><p>You can read more about another auxiliary function in the <a href=http://clipperhouse.github.io/gen/slice/>official documentation</a>.</p>
+<h4 id=implementing-a-type-writer>Implementing a type writer</h4>
+<p>The type writers are responsible for interpreting the annotated tags and
+generating go code. They are implementing the following interface:</p>
+<pre tabindex=0><code>type Interface interface {
+	Name() string
+	Imports(t Type) []ImportSpec
+	Write(w io.Writer, t Type) error
+}
+</code></pre><ul>
+<li><code>Name</code> returns the writer&rsquo;s name</li>
+<li><code>Imports</code> function returns a slice of packages that are required and written
+as imports in the generated file</li>
+<li><code>Write</code> function writes the actual generated code</li>
+</ul>
+<p>Lets implement a writer that generates the <code>Stack</code> data structure. <code>Gen</code> uses
+<a href=https://golang.org/pkg/text/template/>text/template</a> as a templating format.</p>
+<pre tabindex=0><code>// A structure that represents a stack data structure
+// for {{.Name}} type
+//
+// Example:
+// stack := &amp;stack.Stack{}
+// stack.Push(new(TValue))
+// value, err := stack.Pop()
+type {{.Name}}Stack struct {
+	data []{{.Pointer}}{{.Name}}
+}
+
+// Adds an element on top of the stack
+func (s *{{.Name}}Stack) Push(value {{.Pointer}}{{.Name}}) {
+	s.data = append(s.data, value)
+}
+
+// Removes an element from top of the stack.
+// If the stack is empty, it returns an error.
+func (s *{{.Name}}Stack) Pop() ({{.Pointer}}{{.Name}}, error) {
+	length := len(s.data)
+	if length == 0 {
+		return nil, errors.New(&quot;Stack is empty&quot;)
+	}
+
+	value := s.data[length-1]
+	s.data = s.data[:length-1]
+	return value, nil
+}
+</code></pre><p>The template declared by <code>typewriter.Template</code> instance. The <code>templateContent</code>
+variable contains the actual <code>text/template</code> string:</p>
+<pre tabindex=0><code>// filename: templates.go
+package stack
+
+import &quot;github.com/clipperhouse/typewriter&quot;
+
+var templates = typewriter.TemplateSlice{
+	stackTmpl,
+}
+
+var stackTmpl = &amp;typewriter.Template{
+	Name: &quot;Stack&quot;,
+	Text: templateContent,
+}
+</code></pre><p>The following structure implements a type writer responsible for code generation
+of declared template:</p>
+<pre tabindex=0><code>// filename: stack.go
+package stack
+
+import (
+	&quot;io&quot;
+
+	&quot;github.com/clipperhouse/typewriter&quot;
+)
+
+func init() {
+	if err := typewriter.Register(NewWriter()); err != nil {
+		panic(err)
+	}
+}
+
+type writer struct{}
+
+// Creates a new stack type writer
+func NewWriter() typewriter.Interface {
+	return &amp;writer{}
+}
+
+func (tw *writer) Name() string {
+	return &quot;stack&quot;
+}
+
+func (tw *writer) Imports(t typewriter.Type) (result []typewriter.ImportSpec) {
+	return
+}
+
+func (tw *writer) Write(w io.Writer, t typewriter.Type) error {
+  // retrieve that for this type writer a tag is declared in the annoation
+	// if it's not found the writer won't be generate anything
+	tag, found := t.FindTag(tw)
+
+	if !found {
+		return nil
+	}
+
+  // Write a header commend in the generated file
+	header := &quot;// DO NOT MODIFY. Auto-generated code.&quot;
+	if _, err := w.Write([]byte(header)); err != nil {
+		return err
+	}
+	
+	// A template for the exact tag is retrieved
+	tmpl, err := templates.ByTag(t, tag)
+	if err != nil {
+		return err
+	}
+
+  // Write out the template substitution to the writer
+	if err := tmpl.Execute(w, t); err != nil {
+		return err
+	}
+	return nil
+}
+</code></pre><p>In ored to use the template we should declare annotation. Lets annotate
+<code>company.Company</code> struct:</p>
+<pre tabindex=0><code>// +gen * stack
+type Company struct {
+	Name    string
+	Country string
+	City    string
+}
+</code></pre><p>After executing <code>$ gen</code> command a <code>company_stack.go</code> file is placed in the package
+directory. It contains an actual implementation of <code>CompanyStack</code> structure,
+which can be used in the following way:</p>
+<pre tabindex=0><code>stack := &amp;StudentStack{}
+stack.Push(&amp;Student{FirstName: &quot;John&quot;, LastName: &quot;Smith&quot;})
+student, err := stack.Pop()
+</code></pre><p>A complete implementation of the custom type writer can be pulled from
+<a href=https://github.com/svett/gen>this repository</a>.</p>
+<h3 id=genny>Genny</h3>
+<p><code>Genny</code> is a code-generation tool that replaces usage of generics. It allows
+to transform a Go source code into specific implementation by replacing its
+generic types.</p>
+<h4 id=installation-1>Installation</h4>
+<p>Install by executing <code>go get</code>:</p>
+<pre tabindex=0><code>$ go get github.com/cheekybits/genny
+</code></pre><h4 id=usage-1>Usage</h4>
+<p>The tool uses a similar approach as <code>gotemplate</code>. A special comment should be
+provided in order to be recognised by <code>go generate</code>:</p>
+<pre tabindex=0><code>//go:generate genny -in=$GOFILE -out=gen-$GOFILE gen &quot;KeyType=string,int ValueType=string,int&quot;
+</code></pre><p>Parameters:</p>
+<ul>
+<li><code>-in</code> specifies the input file (template)</li>
+<li><code>-out</code> specifies the output file</li>
+<li><code>$GOFILE</code> refers to the current file</li>
+<li><code>KeyType</code> and <code>ValueType</code> are the parameter names in the specified template</li>
+</ul>
+<p>As the other tools, we should just call <code>go generate</code> to produce a file that is
+result of substition between the template and provided parameters.</p>
+<h3 id=declaring-generics>Declaring generics</h3>
+<p>The template can contains as many as we require parameters. They should be defined
+using the special genny type <code>generic.Type</code>:</p>
+<pre tabindex=0><code>type KeyType generic.Type
+type ValueType generic.Type
+</code></pre><p>Lets port the <code>Stack</code> data struct in <code>genny</code>:</p>
+<pre tabindex=0><code>//go:generate genny -in=$GOFILE -out=gen-$GOFILE gen &quot;ValueType=*Student&quot;
+type ValueType generic.Type
+
+type Stack struct {
+	data []ValueType
+}
+
+func (s *Stack) Push(value TValueType) {
+	s.data = append(s.data, value)
+}
+
+func (s *Stack) Pop() (TValueType, error) {
+	length := len(s.data)
+	if length == 0 {
+		return nil, errors.New(&quot;Stack is empty&quot;)
+	}
+
+	value := s.data[length-1]
+	s.data = s.data[:length-1]
+	return value, nil
+}
+</code></pre><p>Significant difference from <code>gotemplate</code> is that in <code>genny</code> the special <code>go:generate</code>
+comment should be placed in the actual template. This can be avoid by executing
+<code>genny</code> from the command line shell:</p>
+<pre tabindex=0><code>$ cat ./stack.go | genny gen &quot;ValueType=*Student&quot; &gt; student_stack.go
+</code></pre><h3 id=conclusion>Conclusion</h3>
+<p>Do you still complain that <code>Go</code> does not support generics?</p>
+<p><code>Gen</code> and <code>genny</code> are great tools for automating a common development tasks. Because of their
+template nature, we can focus on what should be generated instead of how to generate it.</p>
+</div>
+<div class=form-subscribe>
+<div id=form-subscribe-box>
+<h4>All about Golang, Distributed Systems and Backend development.</h4>
+<p>Sign up to receive the latest articles and updates</p>
+<form id=mc-embedded-subscribe-form method=post class=form>
+<div class=form-item>
+<label><span id=form-subscribe-info></span></label>
+<div class=append>
+<input type=email name=EMAIL id=mc-email placeholder=Email>
+<button class=button>Subscribe</button>
+</div>
+</div>
+<div style=position:absolute;left:-5000px aria-hidden=true>
+<input type=text tabindex=-1>
+</div>
+</form>
+<h4>Follow me on</h4>
+<ul class=social-icons>
+<li><a href=https://twitter.com/ralch class=social-icon> <i class="fa fa-twitter"></i></a></li>
+<li><a href=https://github.com/svett class=social-icon> <i class="fa fa-github"></i></a></li>
+<li><a href=http://uk.linkedin.com/in/ralchev class=social-icon> <i class="fa fa-linkedin"></i></a></li>
+<li><a href=http://blog.ralch.com/index.xml class=social-icon> <i class="fa fa-rss"></i></a></li>
+</ul>
+</div>
+</div>
+<div>
+<p>
+Published
+by <span itemprop=author>Svetlin Ralchev</span>
+<time datetime=2015-10-18T05:00:00+01:00>
+18 Oct, 2015
+</time>
+in <span itemprop=articleSection><a href=/categories/programming-languages/>programming languages</a> and <a href=/categories/tutorial/>tutorial</a></span>
+and tagged <a href=/tags/code-generation/>#code generation</a>, <a href=/tags/generics/>#generics</a> and <a href=/tags/go/>#go</a>
+using <span itemprop=wordCount>1507</span> words.
+</p>
+<aside>
+<heade><strong>Related Content</strong></header>
+<hr>
+<ul>
+<li><a href=/articles/advanced-error-handling-in-golang/>Advanced Error Handling in Golang</a> &ndash; 2 minutes
+<li><a href=/articles/network-programming-and-proxies-in-golang/>Network Programming and Proxies in Golang</a> &ndash; 3 minutes
+<li><a href=/articles/golang-reflect-struct-tag/>Golang: Extending reflect.StructTag to support duplicates</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-decorator/>Design Patterns in Golang: Decorator</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-composite/>Design Patterns in Golang: Composite</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-bridge/>Desing Patterns in Golang: Bridge</a> &ndash; 3 minutes
+<li><a href=/articles/golang-handling-errors/>Errors handling in Golang</a> &ndash; 3 minutes
+</ul>
+</aside>
+</div>
+<article>
+<div id=disqus_thread></div>
+<script type=text/javascript>(function(){var a,b;if(window.location.hostname=="localhost")return;a=document.createElement('script'),a.type='text/javascript',a.async=!0,b='ralch',a.src='//'+b+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the comments powered by <a href=http://disqus.com/?ref_noscript>Disqus.</a></noscript>
+</article>
+</div>
+</div>
+</main>
+<footer> <footer id=footer>
+<nav>
+<ul>
+<li><span>Svetlin Ralchev</span></li>
+<li>
+<a href=https://www.phogolabs.com>Company</a>
+</li>
+<li>
+<a href=/articles/>Articles</a>
+</li>
+<li>
+<a href=https://twitter.com/ralch>Twitter</a>
+</li>
+<li>
+<a href=https://github.com/svett>Github</a>
+</li>
+</ul>
+</nav>
+<p>
+powered by <a href=http://www.gohugo.io>Hugo</a>
+based on <a href=https://github.com/jeblister/kube>Kube</a> theme
+&copy; 2021 Licence MIT modified by Svetlin Ralchev
+</p>
+<script>(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)})(window,document,'script','//www.google-analytics.com/analytics.js','ga'),ga('create','UA-62134307-2','auto'),ga('send','pageview')</script>
+</footer>
+</footer>
+<script src=/js/kube.js type=text/javascript></script>
+<script src=/js/kube.legenda.js type=text/javascript></script>
+<script src=/js/master.js type=text/javascript></script>
+</body>
+</html>

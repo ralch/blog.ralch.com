@@ -1,0 +1,286 @@
+<!doctype html><html lang=en-us>
+<head>
+<meta name=generator content="Hugo 0.88.1">
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title> Delve: Next generation debugger for Golang </title>
+<meta name=author content="Svetlin Ralchev">
+<meta property="og:title" content="Delve: Next generation debugger for Golang">
+<meta property="og:description" content="In my previous post I demonstrated how you can debug golang applications with LLDB. In this article I will illustrate the most recent debugger for Go: Delve
+The debugger is a community effort to bring a debugger in the toolchain of every Go developer.
+It&rsquo;s written in Go to debug Go code. It&rsquo;s still in active development, but we can still benefit from its basic features.
+Installation You should install Delve with the following command:">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://blog.ralch.com/articles/golang-debug-with-delve/"><meta property="article:section" content="articles">
+<meta property="article:published_time" content="2015-08-08T20:42:49+01:00">
+<meta property="article:modified_time" content="2015-08-08T20:42:49+01:00">
+<link rel=canonical href=http://blog.ralch.com/articles/golang-debug-with-delve/>
+<link rel=apple-touch-icon sizes=57x57 href=/img/favicons/apple-icon-57x57.png>
+<link rel=apple-touch-icon sizes=60x60 href=/img/favicons/apple-icon-60x60.png>
+<link rel=apple-touch-icon sizes=72x72 href=/img/favicons/apple-icon-72x72.png>
+<link rel=apple-touch-icon sizes=76x76 href=/img/favicons/apple-icon-76x76.png>
+<link rel=apple-touch-icon sizes=114x114 href=/img/favicons/apple-icon-114x114.png>
+<link rel=apple-touch-icon sizes=120x120 href=/img/favicons/apple-icon-120x120.png>
+<link rel=apple-touch-icon sizes=144x144 href=/img/favicons/apple-icon-144x144.png>
+<link rel=apple-touch-icon sizes=152x152 href=/img/favicons/apple-icon-152x152.png>
+<link rel=apple-touch-icon sizes=180x180 href=/img/favicons/apple-icon-180x180.png>
+<link rel=icon type=image/png sizes=192x192 href=/img/favicons/android-icon-192x192.png>
+<link rel=icon type=image/png sizes=32x32 href=/img/favicons/favicon-32x32.png>
+<link rel=icon type=image/png sizes=96x96 href=/img/favicons/favicon-96x96.png>
+<link rel=icon type=image/png sizes=16x16 href=/img/favicons/favicon-16x16.png>
+<link rel=manifest href=/img/favicons/manifest.json>
+<meta name=msapplication-TileColor content="#ffffff">
+<meta name=msapplication-TileImage content="/img/favicons/ms-icon-144x144.png">
+<meta name=theme-color content="#ffffff">
+<link href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css rel=stylesheet>
+<link href=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css rel=stylesheet>
+<link href=/css/font.css rel=stylesheet type=text/css>
+<link href=/css/kube.min.css rel=stylesheet type=text/css>
+<link href=/css/kube.legenda.css rel=stylesheet type=text/css>
+<link href=/css/master.css rel=stylesheet type=text/css>
+<link href=/css/theme.css rel=stylesheet type=text/css>
+<link href=/css/social.css rel=stylesheet type=text/css>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js type=text/javascript></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js></script>
+<script src=/js/jquery.ajaxchimp.js></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</head>
+<body class=page-kube>
+<header> <div class=show-sm>
+<div id=nav-toggle-box>
+<div id=nav-toggle-brand>
+<a href=/>Svetlin Ralchev</a>
+</div>
+<a data-component=toggleme data-target=#top href=# id=nav-toggle><i class=kube-menu></i></a>
+</div>
+</div>
+<div class=hide-sm id=top>
+<div id=top-brand>
+<a href=/ title=home>Svetlin Ralchev</a>
+</div>
+<nav id=top-nav-main>
+<ul>
+<li><a href=/about/>About</a></li>
+<li><a href=/articles/>Articles</a></li>
+</ul>
+</nav>
+<nav id=top-nav-extra>
+</nav>
+</div>
+</header>
+<main>
+<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
+<meta itemprop=name content="Delve: Next generation debugger for Golang">
+<meta itemprop=description content="In my previous post I demonstrated how you can debug golang applications with LLDB. In this article I will illustrate the most recent debugger for Go: Delve
+The debugger is a community effort to bring a debugger in the toolchain of every Go developer.
+It&rsquo;s written in Go to debug Go code. It&rsquo;s still in active development, but we can still benefit from its basic features.
+Installation You should install Delve with the following command:"><meta itemprop=datePublished content="2015-08-08T20:42:49+01:00">
+<meta itemprop=dateModified content="2015-08-08T20:42:49+01:00">
+<meta itemprop=wordCount content="655">
+<meta itemprop=keywords content="go,debug,">
+<div id=hero>
+<h1 itemprop=headline>Delve: Next generation debugger for Golang</h1>
+<time class=post-time><span class=icon>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+</span>
+<span>4 minute read</span>
+<span class=icon>
+<i class="fa fa-pencil" aria-hidden=true></i>
+</span>
+Published: <time datetime=2015-08-08T20:42:49+01:00>8 Aug, 2015</time>
+</time>
+</div>
+<div id=post-box>
+<div id=post itemprop=articleBody>
+<p>In my previous <a href=http://bit.ly/1DjLPNp>post</a> I demonstrated how you can debug
+golang applications with <code>LLDB</code>. In this article I will illustrate
+the most recent debugger for Go: <a href=https://github.com/derekparker/delve>Delve</a></p>
+<p>The debugger is a community effort to bring a debugger in the toolchain of every <code>Go</code> developer.</p>
+<p>It&rsquo;s written in <code>Go</code> to debug <code>Go</code> code. It&rsquo;s still in active development, but
+we can still benefit from its basic features.</p>
+<h3 id=installation>Installation</h3>
+<p>You should install <code>Delve</code> with the following command:</p>
+<pre tabindex=0><code>$ go get -u github.com/derekparker/delve/cmd/dlv 
+</code></pre><p>Note that you need at least <code>Go 1.4</code>.</p>
+<h4 id=installation-linux>Installation: Linux</h4>
+<p>In Linux you should NOT do anything else further. You are ready.</p>
+<h4 id=installation-macosx>Installation: MacOSX</h4>
+<p>If you are using <code>MacOSX</code> as me, you need a self-signed certificate to sign the delve binary.</p>
+<p>You should create a new certificate by using application &ldquo;Keychain Access&rdquo;.</p>
+<ol>
+<li>
+<p>Choose a certificate name, set &ldquo;Identity Type&rdquo; to &ldquo;Self Signed Root&rdquo;, set &ldquo;Certificate Type&rdquo;
+to <code>Code Signing</code> and select the <code>Let me override defaults</code>:
+<figure><img src=/media/debugger/certificate-name.png alt="Certificate Name">
+</figure>
+</p>
+</li>
+<li>
+<p>Continue to a certificate information wizard step. If you email address is missing, please
+fill the required field:
+<figure><img src=/media/debugger/certificate-info.png alt="Certificate Info">
+</figure>
+</p>
+</li>
+<li>
+<p>Click several times on “Continue” until you get to
+the &ldquo;Specify a Location For The Certificate&rdquo; screen, then set &ldquo;Keychain to System&rdquo;.
+<figure><img src=/media/debugger/certificate-keychain.png alt="Certificate Keychain">
+</figure>
+</p>
+</li>
+</ol>
+<p>Then we need sign the binary by using the created certificate. In order to do that we should
+execute the following command:</p>
+<pre tabindex=0><code># CERT=&lt;your_ceriticate_name&gt; make install 
+</code></pre><p>If you need more detailed guidelines, you should follow <a href=https://github.com/derekparker/delve/wiki/Building>the official documentation</a>.</p>
+<p>You can watch the following video that demonstrates the installation process:</p>
+<div style=position:relative;padding-bottom:56.25%;height:0;overflow:hidden>
+<iframe src=https://www.youtube.com/embed/4ndjybtBg74 style=position:absolute;top:0;left:0;width:100%;height:100%;border:0 allowfullscreen title="YouTube Video"></iframe>
+</div>
+<h3 id=integration>Integration</h3>
+<p>Right now the debugger does not have integration with any IDE. Nevertheless, the contributors
+are working hard to release an API interface that will allow that. For now <code>Delve</code> can
+be started from a command line.</p>
+<h3 id=getting-started>Getting started</h3>
+<p>Compile, run, and attach in one step:</p>
+<pre tabindex=0><code>$ dlv run
+</code></pre><p>Run program with tracepoints set at functions matching [regexp]:</p>
+<pre tabindex=0><code>$ dlv trace [regexp]
+</code></pre><p>Compile test binary, start and attach:</p>
+<pre tabindex=0><code>$ dlv test
+</code></pre><p>Provide the application path you want to debug:</p>
+<pre tabindex=0><code>$ dlv path/to/program
+</code></pre><p>Provide the running application process id:</p>
+<pre tabindex=0><code>$ sudo dlv attach 47478 
+</code></pre><p>Delve will pass any arguments after <code>dlv run|test|trace</code> to the newly created process:</p>
+<pre tabindex=0><code>$ dlv run -- -http=:6060
+$ dlv run arg1 -- -flag1 -flag2
+</code></pre><h3 id=commands>Commands</h3>
+<p>In debug session, you can use the following commands:</p>
+<ul>
+<li><code>help</code> - Prints the help message.</li>
+<li><code>restart</code> - Restarts the process, killing the current one if it is running.</li>
+<li><code>break (break &lt;address> [-stack &lt;n>|-goroutine|&lt;variable name>]*)</code> - Set a breakpoint. Example: <code>break foo.go:13</code> or <code>break main.main</code>.</li>
+<li><code>trace</code> - Set a tracepoint. Syntax identical to breakpoints.</li>
+<li><code>continue</code> - Run until breakpoint or program termination.</li>
+<li><code>step</code> - Single step through program.</li>
+<li><code>next</code> - Step over to next source line.</li>
+<li><code>threads</code> - Print status of all traced threads.</li>
+<li><code>thread $tid</code> - Switch to another thread.</li>
+<li><code>goroutines</code> - Print status of all goroutines.</li>
+<li><code>breakpoints</code> - Print information on all active breakpoints.</li>
+<li><code>print $var</code> - Evaluate a variable.</li>
+<li><code>info $type [regex]</code> - Outputs information about the symbol table. An optional regex filters the list. Example <code>info funcs unicode</code>. Valid types are:
+<ul>
+<li><code>args</code> - Prints the name and value of all arguments to the current function</li>
+<li><code>funcs</code> - Prints the name of all defined functions</li>
+<li><code>locals</code> - Prints the name and value of all local variables in the current context</li>
+<li><code>sources</code> - Prints the path of all source files</li>
+<li><code>vars</code> - Prints the name and value of all package variables in the app. Any variable that is not local or arg is considered a package variables</li>
+<li><code>regs</code> - Prints the contents of CPU registers.</li>
+</ul>
+</li>
+<li><code>stack [ &lt;depth> [ &lt;goroutine id> ] ]</code> - Prints the stacktrace of the current goroutine, up to <code>&lt;depth></code>. <code>&lt;depth></code> defaults to 10, pass a second argument to print the stacktrace of a different goroutine.</li>
+<li><code>exit</code> - Exit the debugger.</li>
+</ul>
+<h3 id=demo>Demo</h3>
+<p>In the demo video, I am using the <a href=https://gist.github.com/svett/4b95e8d1631fd0a93dfe>same application</a> that I debugged in <a href=http://bit.ly/1DjLPNp>the LLDB article</a>.</p>
+<div style=position:relative;padding-bottom:56.25%;height:0;overflow:hidden>
+<iframe src=https://www.youtube.com/embed/zgLjVD5ZSOc style=position:absolute;top:0;left:0;width:100%;height:100%;border:0 allowfullscreen title="YouTube Video"></iframe>
+</div>
+<p><em>Note that parts of this article are taken from the official <code>Delve</code>
+<a href=https://github.com/derekparker/delve/wiki/Commands>commands</a> documentation and
+<a href=https://github.com/derekparker/delve/wiki/Usage>usage</a> documentation.</em></p>
+</div>
+<div class=form-subscribe>
+<div id=form-subscribe-box>
+<h4>All about Golang, Distributed Systems and Backend development.</h4>
+<p>Sign up to receive the latest articles and updates</p>
+<form id=mc-embedded-subscribe-form method=post class=form>
+<div class=form-item>
+<label><span id=form-subscribe-info></span></label>
+<div class=append>
+<input type=email name=EMAIL id=mc-email placeholder=Email>
+<button class=button>Subscribe</button>
+</div>
+</div>
+<div style=position:absolute;left:-5000px aria-hidden=true>
+<input type=text tabindex=-1>
+</div>
+</form>
+<h4>Follow me on</h4>
+<ul class=social-icons>
+<li><a href=https://twitter.com/ralch class=social-icon> <i class="fa fa-twitter"></i></a></li>
+<li><a href=https://github.com/svett class=social-icon> <i class="fa fa-github"></i></a></li>
+<li><a href=http://uk.linkedin.com/in/ralchev class=social-icon> <i class="fa fa-linkedin"></i></a></li>
+<li><a href=http://blog.ralch.com/index.xml class=social-icon> <i class="fa fa-rss"></i></a></li>
+</ul>
+</div>
+</div>
+<div>
+<p>
+Published
+by <span itemprop=author>Svetlin Ralchev</span>
+<time datetime=2015-08-08T20:42:49+01:00>
+8 Aug, 2015
+</time>
+in <span itemprop=articleSection><a href=/categories/programming-languages/>programming languages</a> and <a href=/categories/tutorial/>tutorial</a></span>
+and tagged <a href=/tags/debug/>#debug</a> and <a href=/tags/go/>#go</a>
+using <span itemprop=wordCount>655</span> words.
+</p>
+<aside>
+<heade><strong>Related Content</strong></header>
+<hr>
+<ul>
+<li><a href=/articles/advanced-error-handling-in-golang/>Advanced Error Handling in Golang</a> &ndash; 2 minutes
+<li><a href=/articles/network-programming-and-proxies-in-golang/>Network Programming and Proxies in Golang</a> &ndash; 3 minutes
+<li><a href=/articles/golang-reflect-struct-tag/>Golang: Extending reflect.StructTag to support duplicates</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-decorator/>Design Patterns in Golang: Decorator</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-composite/>Design Patterns in Golang: Composite</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-bridge/>Desing Patterns in Golang: Bridge</a> &ndash; 3 minutes
+<li><a href=/articles/golang-handling-errors/>Errors handling in Golang</a> &ndash; 3 minutes
+</ul>
+</aside>
+</div>
+<article>
+<div id=disqus_thread></div>
+<script type=text/javascript>(function(){var a,b;if(window.location.hostname=="localhost")return;a=document.createElement('script'),a.type='text/javascript',a.async=!0,b='ralch',a.src='//'+b+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the comments powered by <a href=http://disqus.com/?ref_noscript>Disqus.</a></noscript>
+</article>
+</div>
+</div>
+</main>
+<footer> <footer id=footer>
+<nav>
+<ul>
+<li><span>Svetlin Ralchev</span></li>
+<li>
+<a href=https://www.phogolabs.com>Company</a>
+</li>
+<li>
+<a href=/articles/>Articles</a>
+</li>
+<li>
+<a href=https://twitter.com/ralch>Twitter</a>
+</li>
+<li>
+<a href=https://github.com/svett>Github</a>
+</li>
+</ul>
+</nav>
+<p>
+powered by <a href=http://www.gohugo.io>Hugo</a>
+based on <a href=https://github.com/jeblister/kube>Kube</a> theme
+&copy; 2021 Licence MIT modified by Svetlin Ralchev
+</p>
+<script>(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)})(window,document,'script','//www.google-analytics.com/analytics.js','ga'),ga('create','UA-62134307-2','auto'),ga('send','pageview')</script>
+</footer>
+</footer>
+<script src=/js/kube.js type=text/javascript></script>
+<script src=/js/kube.legenda.js type=text/javascript></script>
+<script src=/js/master.js type=text/javascript></script>
+</body>
+</html>

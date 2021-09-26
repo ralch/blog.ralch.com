@@ -1,0 +1,260 @@
+<!doctype html><html lang=en-us>
+<head>
+<meta name=generator content="Hugo 0.88.1">
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title> go </title>
+<meta name=author content="Svetlin Ralchev">
+<meta property="og:title" content="go">
+<meta property="og:description" content>
+<meta property="og:type" content="website">
+<meta property="og:url" content="http://blog.ralch.com/tags/go/">
+<link href=http://blog.ralch.com/tags/go/index.xml rel=alternate type=application/rss+xml title="Software adventures and thoughts">
+<link rel=canonical href=http://blog.ralch.com/tags/go/>
+<link rel=apple-touch-icon sizes=57x57 href=/img/favicons/apple-icon-57x57.png>
+<link rel=apple-touch-icon sizes=60x60 href=/img/favicons/apple-icon-60x60.png>
+<link rel=apple-touch-icon sizes=72x72 href=/img/favicons/apple-icon-72x72.png>
+<link rel=apple-touch-icon sizes=76x76 href=/img/favicons/apple-icon-76x76.png>
+<link rel=apple-touch-icon sizes=114x114 href=/img/favicons/apple-icon-114x114.png>
+<link rel=apple-touch-icon sizes=120x120 href=/img/favicons/apple-icon-120x120.png>
+<link rel=apple-touch-icon sizes=144x144 href=/img/favicons/apple-icon-144x144.png>
+<link rel=apple-touch-icon sizes=152x152 href=/img/favicons/apple-icon-152x152.png>
+<link rel=apple-touch-icon sizes=180x180 href=/img/favicons/apple-icon-180x180.png>
+<link rel=icon type=image/png sizes=192x192 href=/img/favicons/android-icon-192x192.png>
+<link rel=icon type=image/png sizes=32x32 href=/img/favicons/favicon-32x32.png>
+<link rel=icon type=image/png sizes=96x96 href=/img/favicons/favicon-96x96.png>
+<link rel=icon type=image/png sizes=16x16 href=/img/favicons/favicon-16x16.png>
+<link rel=manifest href=/img/favicons/manifest.json>
+<meta name=msapplication-TileColor content="#ffffff">
+<meta name=msapplication-TileImage content="/img/favicons/ms-icon-144x144.png">
+<meta name=theme-color content="#ffffff">
+<link href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css rel=stylesheet>
+<link href=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css rel=stylesheet>
+<link href=/css/font.css rel=stylesheet type=text/css>
+<link href=/css/kube.min.css rel=stylesheet type=text/css>
+<link href=/css/kube.legenda.css rel=stylesheet type=text/css>
+<link href=/css/master.css rel=stylesheet type=text/css>
+<link href=/css/theme.css rel=stylesheet type=text/css>
+<link href=/css/social.css rel=stylesheet type=text/css>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js type=text/javascript></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js></script>
+<script src=/js/jquery.ajaxchimp.js></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</head>
+<body class=page-kube>
+<header> <div class=show-sm>
+<div id=nav-toggle-box>
+<div id=nav-toggle-brand>
+<a href=/>Svetlin Ralchev</a>
+</div>
+<a data-component=toggleme data-target=#top href=# id=nav-toggle><i class=kube-menu></i></a>
+</div>
+</div>
+<div class=hide-sm id=top>
+<div id=top-brand>
+<a href=/ title=home>Svetlin Ralchev</a>
+</div>
+<nav id=top-nav-main>
+<ul>
+<li><a href=/about/>About</a></li>
+<li><a href=/articles/>Articles</a></li>
+</ul>
+</nav>
+<nav id=top-nav-extra>
+</nav>
+</div>
+</header>
+<main>
+<div id=hero class=wrap>
+<h1>go by Svetlin Ralchev</h1>
+<p>
+Question everything. Learn something. Answer everything.
+</p>
+<h4>Follow me on</h4>
+<ul class=social-icons>
+<li><a href=https://twitter.com/ralch class=social-icon> <i class="fa fa-twitter"></i></a></li>
+<li><a href=https://github.com/svett class=social-icon> <i class="fa fa-github"></i></a></li>
+<li><a href=http://uk.linkedin.com/in/ralchev class=social-icon> <i class="fa fa-linkedin"></i></a></li>
+<li><a href=http://blog.ralch.com/index.xml class=social-icon> <i class="fa fa-rss"></i></a></li>
+</ul>
+</div>
+<ul id=posts>
+<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
+<h2 class=title>
+<a href=http://blog.ralch.com/articles/golang-code-generation-tool-implementation/ itemprop=headline>Develop code generation tool for Golang</a>
+</h2>
+<hr>
+<time class=post-time>
+<span class=icon>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+</span>
+<span>4 minute read</span>
+<span class=icon>
+<i class="fa fa-pencil" aria-hidden=true></i>
+</span>
+Published: <time datetime=2015-10-31T08:41:39+01:00>31 Oct, 2015</time>
+<span class=icon>
+<i class="fa fa-hashtag" aria-hidden=true></i>
+</span>
+<span class=dark-red>Tagged:</span>
+<span><a class="post-tag post-tag-go" href=http://blog.ralch.com/tags/go>go</a></span>
+<span><a class="post-tag post-tag-code-generation" href=http://blog.ralch.com/tags/code-generation>code generation</a></span>
+</time>
+<p itemprop=about>In my previous blog post, we discussed one of my favourite code generation tools for Go. We found that they can be used to automate our trivial development tasks or even introduce features like generics and queries. Lets explore how to create our own tool.
+Introduction The Go generate subcommand is a program that scans for special comments in your Go source code. The comment declares a command that should be executed.</p>
+</div>
+</div>
+<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
+<h2 class=title>
+<a href=http://blog.ralch.com/articles/golang-query-data-with-linq/ itemprop=headline>Query data with Golang and LINQ</a>
+</h2>
+<hr>
+<time class=post-time>
+<span class=icon>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+</span>
+<span>5 minute read</span>
+<span class=icon>
+<i class="fa fa-pencil" aria-hidden=true></i>
+</span>
+Published: <time datetime=2015-10-25T07:35:49+01:00>25 Oct, 2015</time>
+<span class=icon>
+<i class="fa fa-hashtag" aria-hidden=true></i>
+</span>
+<span class=dark-red>Tagged:</span>
+<span><a class="post-tag post-tag-go" href=http://blog.ralch.com/tags/go>go</a></span>
+<span><a class="post-tag post-tag-linq" href=http://blog.ralch.com/tags/linq>LINQ</a></span>
+<span><a class="post-tag post-tag-query" href=http://blog.ralch.com/tags/query>query</a></span>
+</time>
+<p itemprop=about>Query langauges provide a set of features to querying, projecting and retrieving data (usually relational data). But how to introduces these standard, easily-learned patterns for querying data?
+In this article we will explore Go LINQ packages that bridges the gap between the world of objects and the world of data.
+LINQ For first time is introduced by Microsoft in their programming language C#. Its purpose is to bridge the gap between query languages such as SQL and programming languages.</p>
+</div>
+</div>
+<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
+<h2 class=title>
+<a href=http://blog.ralch.com/articles/golang-code-generation-and-generics/ itemprop=headline>Generics in Golang</a>
+</h2>
+<hr>
+<time class=post-time>
+<span class=icon>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+</span>
+<span>8 minute read</span>
+<span class=icon>
+<i class="fa fa-pencil" aria-hidden=true></i>
+</span>
+Published: <time datetime=2015-10-18T05:00:00+01:00>18 Oct, 2015</time>
+<span class=icon>
+<i class="fa fa-hashtag" aria-hidden=true></i>
+</span>
+<span class=dark-red>Tagged:</span>
+<span><a class="post-tag post-tag-go" href=http://blog.ralch.com/tags/go>go</a></span>
+<span><a class="post-tag post-tag-generics" href=http://blog.ralch.com/tags/generics>generics</a></span>
+<span><a class="post-tag post-tag-code-generation" href=http://blog.ralch.com/tags/code-generation>code generation</a></span>
+</time>
+<p itemprop=about>In the article we will take the advantage of [generics] even that they are not first citizen in Go. We will explore gen and genny command line tools.
+Gen Gen is a code generation tool that brings some generic query functions. It uses annotations to add this functionality to any structure. The generated code is part of your package and does not have any external dependencies. This approach avoids any reflection and produces an efficient concrete implementation for any annotated type.</p>
+</div>
+</div>
+<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
+<h2 class=title>
+<a href=http://blog.ralch.com/articles/golang-code-generation-with-gotemplates/ itemprop=headline>Reusing source code with Go templates</a>
+</h2>
+<hr>
+<time class=post-time>
+<span class=icon>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+</span>
+<span>3 minute read</span>
+<span class=icon>
+<i class="fa fa-pencil" aria-hidden=true></i>
+</span>
+Published: <time datetime=2015-10-11T20:42:57+01:00>11 Oct, 2015</time>
+<span class=icon>
+<i class="fa fa-hashtag" aria-hidden=true></i>
+</span>
+<span class=dark-red>Tagged:</span>
+<span><a class="post-tag post-tag-go" href=http://blog.ralch.com/tags/go>go</a></span>
+<span><a class="post-tag post-tag-code-generation" href=http://blog.ralch.com/tags/code-generation>code generation</a></span>
+</time>
+<p itemprop=about>In one of my previous blog posts, we discovered go generate command line tool. Lets take the next step and evaluate its advanced benefits to generate a source code by using our own templates. We will explore gotemplate command line tool.
+Overview This command line tool manages package based Go templates using go generate. By default it provides a set of templates that can be used out of the box:</p>
+</div>
+</div>
+<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
+<h2 class=title>
+<a href=http://blog.ralch.com/articles/golang-code-generation/ itemprop=headline>Golang code generation</a>
+</h2>
+<hr>
+<time class=post-time>
+<span class=icon>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+</span>
+<span>3 minute read</span>
+<span class=icon>
+<i class="fa fa-pencil" aria-hidden=true></i>
+</span>
+Published: <time datetime=2015-10-04T08:49:59+01:00>4 Oct, 2015</time>
+<span class=icon>
+<i class="fa fa-hashtag" aria-hidden=true></i>
+</span>
+<span class=dark-red>Tagged:</span>
+<span><a class="post-tag post-tag-go" href=http://blog.ralch.com/tags/go>go</a></span>
+<span><a class="post-tag post-tag-code-generation" href=http://blog.ralch.com/tags/code-generation>code generation</a></span>
+</time>
+<p itemprop=about>Programs that produce source code are important elements in software engineering. Since Go 1.4, the language ecosystem includes a command line tool that makes it easier to run such tools.
+It&rsquo;s called go generate. It scans for special comments in Go source code that identify general commands to run:
+//go:generate &lt;subcommand> &lt;arguments> Go generate is not part of go build. It does not do dependency analysis and must be run explicitly before running go build.</p>
+</div>
+</div>
+<section><nav class="pagination align-center upper pager flat">
+<ul>
+<li class=prev>
+<a href=/tags/go/page/4/>&lt; Prev</a>
+</li>
+<li class="w100 align-center">
+<a href=/tags/go/>Back to Catalog</a>
+</li>
+<li class=next>
+<a href=/tags/go/page/6/>Next ></a>
+</li>
+</ul>
+</nav>
+</section>
+</ul>
+</main>
+<footer>
+<footer id=footer>
+<nav>
+<ul>
+<li><span>Svetlin Ralchev</span></li>
+<li>
+<a href=https://www.phogolabs.com>Company</a>
+</li>
+<li>
+<a href=/articles/>Articles</a>
+</li>
+<li>
+<a href=https://twitter.com/ralch>Twitter</a>
+</li>
+<li>
+<a href=https://github.com/svett>Github</a>
+</li>
+</ul>
+</nav>
+<p>
+powered by <a href=http://www.gohugo.io>Hugo</a>
+based on <a href=https://github.com/jeblister/kube>Kube</a> theme
+&copy; 2021 Licence MIT modified by Svetlin Ralchev
+</p>
+<script>(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)})(window,document,'script','//www.google-analytics.com/analytics.js','ga'),ga('create','UA-62134307-2','auto'),ga('send','pageview')</script>
+</footer>
+</footer>
+<script src=/js/kube.js type=text/javascript></script>
+<script src=/js/kube.legenda.js type=text/javascript></script>
+<script src=/js/master.js type=text/javascript></script>
+</body>
+</html>

@@ -1,0 +1,321 @@
+<!doctype html><html lang=en-us>
+<head>
+<meta name=generator content="Hugo 0.88.1">
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title> SSH Client connection in Golang </title>
+<meta name=author content="Svetlin Ralchev">
+<meta property="og:title" content="SSH Client connection in Golang">
+<meta property="og:description" content="SSH is a network protocol for establishing a secure shell session on distant servers. In Golang the package godoc.org/golang.org/x/crypto/ssh implements SSH client and SSH server.
+In this article, we are using SSH client to run a shell command on a remote machine. Every SSH connection requires an ssh.CleintConfig object that defines configuration options such as authentication.
+Authentication Options Depending on how the remote server is configure, there are two ways to authenticate:">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://blog.ralch.com/articles/golang-ssh-connection/"><meta property="article:section" content="articles">
+<meta property="article:published_time" content="2015-07-18T11:26:07+01:00">
+<meta property="article:modified_time" content="2015-07-18T11:26:07+01:00">
+<link rel=canonical href=http://blog.ralch.com/articles/golang-ssh-connection/>
+<link rel=apple-touch-icon sizes=57x57 href=/img/favicons/apple-icon-57x57.png>
+<link rel=apple-touch-icon sizes=60x60 href=/img/favicons/apple-icon-60x60.png>
+<link rel=apple-touch-icon sizes=72x72 href=/img/favicons/apple-icon-72x72.png>
+<link rel=apple-touch-icon sizes=76x76 href=/img/favicons/apple-icon-76x76.png>
+<link rel=apple-touch-icon sizes=114x114 href=/img/favicons/apple-icon-114x114.png>
+<link rel=apple-touch-icon sizes=120x120 href=/img/favicons/apple-icon-120x120.png>
+<link rel=apple-touch-icon sizes=144x144 href=/img/favicons/apple-icon-144x144.png>
+<link rel=apple-touch-icon sizes=152x152 href=/img/favicons/apple-icon-152x152.png>
+<link rel=apple-touch-icon sizes=180x180 href=/img/favicons/apple-icon-180x180.png>
+<link rel=icon type=image/png sizes=192x192 href=/img/favicons/android-icon-192x192.png>
+<link rel=icon type=image/png sizes=32x32 href=/img/favicons/favicon-32x32.png>
+<link rel=icon type=image/png sizes=96x96 href=/img/favicons/favicon-96x96.png>
+<link rel=icon type=image/png sizes=16x16 href=/img/favicons/favicon-16x16.png>
+<link rel=manifest href=/img/favicons/manifest.json>
+<meta name=msapplication-TileColor content="#ffffff">
+<meta name=msapplication-TileImage content="/img/favicons/ms-icon-144x144.png">
+<meta name=theme-color content="#ffffff">
+<link href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css rel=stylesheet>
+<link href=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css rel=stylesheet>
+<link href=/css/font.css rel=stylesheet type=text/css>
+<link href=/css/kube.min.css rel=stylesheet type=text/css>
+<link href=/css/kube.legenda.css rel=stylesheet type=text/css>
+<link href=/css/master.css rel=stylesheet type=text/css>
+<link href=/css/theme.css rel=stylesheet type=text/css>
+<link href=/css/social.css rel=stylesheet type=text/css>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js type=text/javascript></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js></script>
+<script src=/js/jquery.ajaxchimp.js></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</head>
+<body class=page-kube>
+<header> <div class=show-sm>
+<div id=nav-toggle-box>
+<div id=nav-toggle-brand>
+<a href=/>Svetlin Ralchev</a>
+</div>
+<a data-component=toggleme data-target=#top href=# id=nav-toggle><i class=kube-menu></i></a>
+</div>
+</div>
+<div class=hide-sm id=top>
+<div id=top-brand>
+<a href=/ title=home>Svetlin Ralchev</a>
+</div>
+<nav id=top-nav-main>
+<ul>
+<li><a href=/about/>About</a></li>
+<li><a href=/articles/>Articles</a></li>
+</ul>
+</nav>
+<nav id=top-nav-extra>
+</nav>
+</div>
+</header>
+<main>
+<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
+<meta itemprop=name content="SSH Client connection in Golang">
+<meta itemprop=description content="SSH is a network protocol for establishing a secure shell session on distant servers. In Golang the package godoc.org/golang.org/x/crypto/ssh implements SSH client and SSH server.
+In this article, we are using SSH client to run a shell command on a remote machine. Every SSH connection requires an ssh.CleintConfig object that defines configuration options such as authentication.
+Authentication Options Depending on how the remote server is configure, there are two ways to authenticate:"><meta itemprop=datePublished content="2015-07-18T11:26:07+01:00">
+<meta itemprop=dateModified content="2015-07-18T11:26:07+01:00">
+<meta itemprop=wordCount content="758">
+<meta itemprop=keywords content="go,">
+<div id=hero>
+<h1 itemprop=headline>SSH Client connection in Golang</h1>
+<time class=post-time><span class=icon>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+</span>
+<span>4 minute read</span>
+<span class=icon>
+<i class="fa fa-pencil" aria-hidden=true></i>
+</span>
+Published: <time datetime=2015-07-18T11:26:07+01:00>18 Jul, 2015</time>
+</time>
+</div>
+<div id=post-box>
+<div id=post itemprop=articleBody>
+<p><a href=https://en.wikipedia.org/wiki/Secure_Shell>SSH</a> is a network protocol
+for establishing a secure shell session on distant servers. In Golang the package
+<a href=https://godoc.org/golang.org/x/crypto/ssh>godoc.org/golang.org/x/crypto/ssh</a>
+implements SSH client and SSH server.</p>
+<p>In this article, we are using SSH client to run a shell command on a remote
+machine. Every SSH connection requires an <code>ssh.CleintConfig</code> object that
+defines configuration options such as authentication.</p>
+<h3 id=authentication-options>Authentication Options</h3>
+<p>Depending on how the remote server is configure, there are two ways to authenticate:</p>
+<ul>
+<li>using a username and SSH certificate</li>
+<li>using a username and password credentials</li>
+</ul>
+<p>If you want to authenticate with <code>username</code> and <code>password</code> you should create
+<code>ssh.ClientConfig</code> in the following way:</p>
+<pre tabindex=0><code>sshConfig := &amp;ssh.ClientConfig{
+	User: &quot;your_user_name&quot;,
+	Auth: []ssh.AuthMethod{
+		ssh.Password(&quot;your_password&quot;)
+	},
+}
+</code></pre><p>If you want to authenticate by using SSH certificate, there are two methods
+to obtain your ssh key:</p>
+<h4 id=ssh-certificate-file>SSH certificate file</h4>
+<p>You can parse your private key file by using <code>ssh.ParsePrivateKey</code> function.
+This is required by <code>ssh.PublicKeys</code> auth method function that creates a <code>ssh.AuthMethod</code>
+instance from private key.</p>
+<pre tabindex=0><code>func PublicKeyFile(file string) ssh.AuthMethod {
+	buffer, err := ioutil.ReadFile(file)
+	if err != nil {
+		return nil
+	}
+
+	key, err := ssh.ParsePrivateKey(buffer)
+	if err != nil {
+		return nil
+	}
+	return ssh.PublicKeys(key)
+}
+</code></pre><p>Then you should instanciate <code>ssh.ClientConfig</code>:</p>
+<pre tabindex=0><code>sshConfig := &amp;ssh.ClientConfig{
+	User: &quot;your_user_name&quot;,
+	Auth: []ssh.AuthMethod{
+		PublicKeyFile(&quot;/path/to/your/pub/certificate/key&quot;)	
+	},
+}
+</code></pre><h4 id=ssh-agent>SSH agent</h4>
+<p><a href=https://en.wikipedia.org/wiki/Ssh-agent>SSH Agent</a> is a program that runs during
+user session in <code>*nix</code> system. It stores the private keys in an encrypted form.
+Because typing the passphrase can be tedious, many users would prefer to using it
+to store their private keys.</p>
+<p>You can obtain all stored keys via <code>SSH_AUTH_SOCK</code> environment variable which
+stores the SSH agent unix socket. We should access the keys by calling <code>net.Dial</code>
+and then instanciate an agent client used by <code>ssh.PublicKeysCallback</code> factory
+auth method.</p>
+<pre tabindex=0><code>func SSHAgent() ssh.AuthMethod {
+	if sshAgent, err := net.Dial(&quot;unix&quot;, os.Getenv(&quot;SSH_AUTH_SOCK&quot;)); err == nil {
+		return ssh.PublicKeysCallback(agent.NewClient(sshAgent).Signers)
+	}
+	return nil
+}
+</code></pre><p>Then you can use the function to instanciate the client config in the following
+way:</p>
+<pre tabindex=0><code>sshConfig := &amp;ssh.ClientConfig{
+	User: &quot;your_user_name&quot;,
+	Auth: []ssh.AuthMethod{
+		SSHAgent()
+	},
+}
+</code></pre><p>Note that you can add your certificate to the SSH agent by using the following
+command:</p>
+<pre tabindex=0><code>$ ssh-add /path/to/your/private/certificate/file
+</code></pre><h3 id=establishing-new-ssh-connection>Establishing new SSH connection</h3>
+<p>After we instaciated the <code>ssh.ClientConfig</code> object. We should be able to establish
+a new connection to the remote server by calling <code>ssh.Dial</code>:</p>
+<pre tabindex=0><code>connection, err := ssh.Dial(&quot;tcp&quot;, &quot;host:port&quot;, sshConfig)
+if err != nil {
+	return nil, fmt.Errorf(&quot;Failed to dial: %s&quot;, err)
+}
+</code></pre><h3 id=creating-a-new-session>Creating a new session</h3>
+<p>After we established the connection, we should be able to open a new session
+that acts as an entry point to the remote terminal. We should use the connection
+in the following manner:</p>
+<pre tabindex=0><code>session, err := connection.NewSession()
+if err != nil {
+	return nil, fmt.Errorf(&quot;Failed to create session: %s&quot;, err)
+}
+</code></pre><p>Before we will be able to run the command on the remote machine, we should create
+a <a href=http://linux.die.net/man/7/pty>pseudo terminal</a> on the remote machine.
+<em>A pseudoterminal (or &ldquo;pty&rdquo;) is a pair of virtual
+character devices that provide a bidirectional communication channel.</em></p>
+<p>We should create an <code>xterm</code> terminal that has <code>80</code> columns and <code>40</code> rows.</p>
+<pre tabindex=0><code>modes := ssh.TerminalModes{
+	ssh.ECHO:          0,     // disable echoing
+	ssh.TTY_OP_ISPEED: 14400, // input speed = 14.4kbaud
+	ssh.TTY_OP_OSPEED: 14400, // output speed = 14.4kbaud
+}
+
+if err := session.RequestPty(&quot;xterm&quot;, 80, 40, modes); err != nil {
+	session.Close()
+	return nil, fmt.Errorf(&quot;request for pseudo terminal failed: %s&quot;, err)
+}
+</code></pre><p>If we want to attach our <code>os.Stdin</code>, <code>os.Stdout</code> and <code>os.Stderr</code> to remote command
+we should open pipes between the local process and remote process.
+Forthunatelly, <code>ssh.Session</code> object provides that out of the box by invoking
+<code>session.Stdinpipe()</code>, <code>session.Stdoutpipe()</code> and <code>session.Stdouterr()</code> functions.
+Then we should asyncronously copy the end of the pipes to the right file
+descriptors by using go routines and <code>os.Copy</code> function.</p>
+<pre tabindex=0><code>stdin, err := session.StdinPipe()
+if err != nil {
+	return fmt.Errorf(&quot;Unable to setup stdin for session: %v&quot;, err)
+}
+go io.Copy(stdin, os.Stdin)
+
+stdout, err := session.StdoutPipe()
+if err != nil {
+	return fmt.Errorf(&quot;Unable to setup stdout for session: %v&quot;, err)
+}
+go io.Copy(os.Stdout, stdout)
+
+stderr, err := session.StderrPipe()
+if err != nil {
+	return fmt.Errorf(&quot;Unable to setup stderr for session: %v&quot;, err)
+}
+go io.Copy(os.Stderr, stderr)
+</code></pre><h3 id=command-execution>Command execution</h3>
+<p>Then we can execute the command on the remote machine by using <code>session.Run</code>
+function:</p>
+<pre tabindex=0><code>err = session.Run(&quot;ls -l $LC_USR_DIR&quot;)
+</code></pre><p>If we want to transfer some environment variable to the remote machine, we should
+use <code>session.Setenv</code> function to do that.</p>
+<pre tabindex=0><code>if err := session.Setenv(&quot;LC_USR_DIR&quot;, &quot;/usr&quot;); err != nil {
+	return err
+}
+</code></pre><p>Note that in some cases the SSH server is configured to accepts only <code>env</code> variables
+with concrete suffix (such as <code>LC_</code>).</p>
+<p>You can find the sample source code <a href=https://gist.github.com/svett/b7f56afc966a6b6ac2fc>here</a>.</p>
+</div>
+<div class=form-subscribe>
+<div id=form-subscribe-box>
+<h4>All about Golang, Distributed Systems and Backend development.</h4>
+<p>Sign up to receive the latest articles and updates</p>
+<form id=mc-embedded-subscribe-form method=post class=form>
+<div class=form-item>
+<label><span id=form-subscribe-info></span></label>
+<div class=append>
+<input type=email name=EMAIL id=mc-email placeholder=Email>
+<button class=button>Subscribe</button>
+</div>
+</div>
+<div style=position:absolute;left:-5000px aria-hidden=true>
+<input type=text tabindex=-1>
+</div>
+</form>
+<h4>Follow me on</h4>
+<ul class=social-icons>
+<li><a href=https://twitter.com/ralch class=social-icon> <i class="fa fa-twitter"></i></a></li>
+<li><a href=https://github.com/svett class=social-icon> <i class="fa fa-github"></i></a></li>
+<li><a href=http://uk.linkedin.com/in/ralchev class=social-icon> <i class="fa fa-linkedin"></i></a></li>
+<li><a href=http://blog.ralch.com/index.xml class=social-icon> <i class="fa fa-rss"></i></a></li>
+</ul>
+</div>
+</div>
+<div>
+<p>
+Published
+by <span itemprop=author>Svetlin Ralchev</span>
+<time datetime=2015-07-18T11:26:07+01:00>
+18 Jul, 2015
+</time>
+in <span itemprop=articleSection><a href=/categories/programming-languages/>programming languages</a> and <a href=/categories/tutorial/>tutorial</a></span>
+and tagged <a href=/tags/go/>#go</a>
+using <span itemprop=wordCount>758</span> words.
+</p>
+<aside>
+<heade><strong>Related Content</strong></header>
+<hr>
+<ul>
+<li><a href=/articles/advanced-error-handling-in-golang/>Advanced Error Handling in Golang</a> &ndash; 2 minutes
+<li><a href=/articles/network-programming-and-proxies-in-golang/>Network Programming and Proxies in Golang</a> &ndash; 3 minutes
+<li><a href=/articles/golang-reflect-struct-tag/>Golang: Extending reflect.StructTag to support duplicates</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-decorator/>Design Patterns in Golang: Decorator</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-composite/>Design Patterns in Golang: Composite</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-bridge/>Desing Patterns in Golang: Bridge</a> &ndash; 3 minutes
+<li><a href=/articles/golang-handling-errors/>Errors handling in Golang</a> &ndash; 3 minutes
+</ul>
+</aside>
+</div>
+<article>
+<div id=disqus_thread></div>
+<script type=text/javascript>(function(){var a,b;if(window.location.hostname=="localhost")return;a=document.createElement('script'),a.type='text/javascript',a.async=!0,b='ralch',a.src='//'+b+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the comments powered by <a href=http://disqus.com/?ref_noscript>Disqus.</a></noscript>
+</article>
+</div>
+</div>
+</main>
+<footer> <footer id=footer>
+<nav>
+<ul>
+<li><span>Svetlin Ralchev</span></li>
+<li>
+<a href=https://www.phogolabs.com>Company</a>
+</li>
+<li>
+<a href=/articles/>Articles</a>
+</li>
+<li>
+<a href=https://twitter.com/ralch>Twitter</a>
+</li>
+<li>
+<a href=https://github.com/svett>Github</a>
+</li>
+</ul>
+</nav>
+<p>
+powered by <a href=http://www.gohugo.io>Hugo</a>
+based on <a href=https://github.com/jeblister/kube>Kube</a> theme
+&copy; 2021 Licence MIT modified by Svetlin Ralchev
+</p>
+<script>(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)})(window,document,'script','//www.google-analytics.com/analytics.js','ga'),ga('create','UA-62134307-2','auto'),ga('send','pageview')</script>
+</footer>
+</footer>
+<script src=/js/kube.js type=text/javascript></script>
+<script src=/js/kube.legenda.js type=text/javascript></script>
+<script src=/js/master.js type=text/javascript></script>
+</body>
+</html>

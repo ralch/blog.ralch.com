@@ -1,0 +1,391 @@
+<!doctype html><html lang=en-us>
+<head>
+<meta name=generator content="Hugo 0.88.1">
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title> Reflection in Golang </title>
+<meta name=author content="Svetlin Ralchev">
+<meta property="og:title" content="Reflection in Golang">
+<meta property="og:description" content="What is reflection?  In computer science, reflection is the ability of a computer program to examine and modify its own structure and behavior (specifically the values, meta-data, properties and functions) at runtime.
+ source: Wikipedia
+Reflection can be used for observing and modifying program execution at runtime. A reflection-oriented program component can monitor the execution of an enclosure of code and can modify itself according to a desired goal related to that enclosure.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://blog.ralch.com/articles/golang-reflection/"><meta property="article:section" content="articles">
+<meta property="article:published_time" content="2015-12-21T08:15:16+00:00">
+<meta property="article:modified_time" content="2015-12-21T08:15:16+00:00">
+<link rel=canonical href=http://blog.ralch.com/articles/golang-reflection/>
+<link rel=apple-touch-icon sizes=57x57 href=/img/favicons/apple-icon-57x57.png>
+<link rel=apple-touch-icon sizes=60x60 href=/img/favicons/apple-icon-60x60.png>
+<link rel=apple-touch-icon sizes=72x72 href=/img/favicons/apple-icon-72x72.png>
+<link rel=apple-touch-icon sizes=76x76 href=/img/favicons/apple-icon-76x76.png>
+<link rel=apple-touch-icon sizes=114x114 href=/img/favicons/apple-icon-114x114.png>
+<link rel=apple-touch-icon sizes=120x120 href=/img/favicons/apple-icon-120x120.png>
+<link rel=apple-touch-icon sizes=144x144 href=/img/favicons/apple-icon-144x144.png>
+<link rel=apple-touch-icon sizes=152x152 href=/img/favicons/apple-icon-152x152.png>
+<link rel=apple-touch-icon sizes=180x180 href=/img/favicons/apple-icon-180x180.png>
+<link rel=icon type=image/png sizes=192x192 href=/img/favicons/android-icon-192x192.png>
+<link rel=icon type=image/png sizes=32x32 href=/img/favicons/favicon-32x32.png>
+<link rel=icon type=image/png sizes=96x96 href=/img/favicons/favicon-96x96.png>
+<link rel=icon type=image/png sizes=16x16 href=/img/favicons/favicon-16x16.png>
+<link rel=manifest href=/img/favicons/manifest.json>
+<meta name=msapplication-TileColor content="#ffffff">
+<meta name=msapplication-TileImage content="/img/favicons/ms-icon-144x144.png">
+<meta name=theme-color content="#ffffff">
+<link href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css rel=stylesheet>
+<link href=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css rel=stylesheet>
+<link href=/css/font.css rel=stylesheet type=text/css>
+<link href=/css/kube.min.css rel=stylesheet type=text/css>
+<link href=/css/kube.legenda.css rel=stylesheet type=text/css>
+<link href=/css/master.css rel=stylesheet type=text/css>
+<link href=/css/theme.css rel=stylesheet type=text/css>
+<link href=/css/social.css rel=stylesheet type=text/css>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js type=text/javascript></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js></script>
+<script src=/js/jquery.ajaxchimp.js></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</head>
+<body class=page-kube>
+<header> <div class=show-sm>
+<div id=nav-toggle-box>
+<div id=nav-toggle-brand>
+<a href=/>Svetlin Ralchev</a>
+</div>
+<a data-component=toggleme data-target=#top href=# id=nav-toggle><i class=kube-menu></i></a>
+</div>
+</div>
+<div class=hide-sm id=top>
+<div id=top-brand>
+<a href=/ title=home>Svetlin Ralchev</a>
+</div>
+<nav id=top-nav-main>
+<ul>
+<li><a href=/about/>About</a></li>
+<li><a href=/articles/>Articles</a></li>
+</ul>
+</nav>
+<nav id=top-nav-extra>
+</nav>
+</div>
+</header>
+<main>
+<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
+<meta itemprop=name content="Reflection in Golang">
+<meta itemprop=description content="What is reflection?  In computer science, reflection is the ability of a computer program to examine and modify its own structure and behavior (specifically the values, meta-data, properties and functions) at runtime.
+ source: Wikipedia
+Reflection can be used for observing and modifying program execution at runtime. A reflection-oriented program component can monitor the execution of an enclosure of code and can modify itself according to a desired goal related to that enclosure."><meta itemprop=datePublished content="2015-12-21T08:15:16+00:00">
+<meta itemprop=dateModified content="2015-12-21T08:15:16+00:00">
+<meta itemprop=wordCount content="1191">
+<meta itemprop=keywords content="go,reflection,metadata,">
+<div id=hero>
+<h1 itemprop=headline>Reflection in Golang</h1>
+<time class=post-time><span class=icon>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+</span>
+<span>6 minute read</span>
+<span class=icon>
+<i class="fa fa-pencil" aria-hidden=true></i>
+</span>
+Published: <time datetime=2015-12-21T08:15:16+00:00>21 Dec, 2015</time>
+</time>
+</div>
+<div id=post-box>
+<div id=post itemprop=articleBody>
+<h4 id=what-is-reflection>What is reflection?</h4>
+<blockquote>
+<p>In computer science, reflection is the ability of a computer program to examine
+and modify its own structure and behavior (specifically the values,
+meta-data, properties and functions) at runtime.</p>
+</blockquote>
+<p><em>source: <a href=http://bit.ly/1Rpm16G>Wikipedia</a></em></p>
+<p>Reflection can be used for observing and modifying program execution at
+runtime. A reflection-oriented program component can monitor the execution of
+an enclosure of code and can modify itself according to a desired goal related
+to that enclosure. This is typically accomplished by dynamically assigning
+program code at runtime.</p>
+<p>In <code>Golang</code> reflection allows inspection of struct, interfaces, fields and
+methods at runtime without knowing the names of the interfaces, fields, methods
+at compile time. It also allows instantiation of new objects and invocation of
+methods.</p>
+<h4 id=reflection-in-action>Reflection in action</h4>
+<p>Reflection objects are used for obtaining type information at runtime. The
+structs that give access to the metadata of a running program are in the
+<code>reflect</code> package. The package contains structs that allow you to obtain
+information about the application and to dynamically emits types, values, and
+objects to the program.</p>
+<p>Even that reflection is not idiomatic for Golang. We will explore in details some
+of <code>reflect</code> package capabilities.</p>
+<h4 id=example-querybuilder>Example: QueryBuilder</h4>
+<p>Lets assume that we are developing an object-relation mapping packages like
+<a href=https://github.com/jinzhu/gorm>gorm</a>. We will implement <code>QueryBuilder</code> struct
+that is responsible for generating <code>SQL</code> queries for update, delete and insert.</p>
+<p>The <code>QueryBuilder</code> has a field <code>Type</code> that keep a metadata information about the
+type that builder generates <code>SQL</code> queries for:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-golang data-lang=golang><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>QueryBuilder</span> <span style=color:#66d9ef>struct</span> {
+	<span style=color:#a6e22e>Type</span> <span style=color:#a6e22e>reflect</span>.<span style=color:#a6e22e>Type</span>
+}
+</code></pre></div><p>Typically the metadata for particular type could be accessed by instaciating the
+<code>reflect.Type</code>. Lets have the followin struct:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-golang data-lang=golang><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Employee</span> <span style=color:#66d9ef>struct</span> {
+	<span style=color:#a6e22e>ID</span>        <span style=color:#66d9ef>uint32</span>
+	<span style=color:#a6e22e>FirstName</span> <span style=color:#66d9ef>string</span>
+	<span style=color:#a6e22e>LastName</span>  <span style=color:#66d9ef>string</span>
+	<span style=color:#a6e22e>Birthday</span>  <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Time</span>
+}
+</code></pre></div><p>We need to instaciate <code>reflection.Type</code> in order to access its type metadata.
+It is the representation of a Go type. We should use the following code snippet:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-golang data-lang=golang><span style=color:#a6e22e>t</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>reflect</span>.<span style=color:#a6e22e>TypeOf</span>(<span style=color:#f92672>&amp;</span><span style=color:#a6e22e>Employee</span>{}).<span style=color:#a6e22e>Elem</span>()
+<span style=color:#a6e22e>builder</span> <span style=color:#f92672>:=</span> <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>QueryBuilder</span>{<span style=color:#a6e22e>Type</span>: <span style=color:#a6e22e>t</span>}
+</code></pre></div><p>Note in case of pointer type, we should retrieve the underlying actual type by
+getting the result from the <code>Elem</code> function. It panics if the type&rsquo;s
+Kind is not Array, Chan, Map, Ptr, or Slice.</p>
+<p>Lets inspect the implementation of <code>QueryBuilder</code> function <code>CreateSelectQuery</code>:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-golang data-lang=golang><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>qb</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>QueryBuilder</span>) <span style=color:#a6e22e>CreateSelectQuery</span>() <span style=color:#66d9ef>string</span> {
+	<span style=color:#a6e22e>buffer</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>bytes</span>.<span style=color:#a6e22e>NewBufferString</span>(<span style=color:#e6db74>&#34;&#34;</span>)
+
+	<span style=color:#66d9ef>for</span> <span style=color:#a6e22e>index</span> <span style=color:#f92672>:=</span> <span style=color:#ae81ff>0</span>; <span style=color:#a6e22e>index</span> &lt; <span style=color:#a6e22e>qb</span>.<span style=color:#a6e22e>Type</span>.<span style=color:#a6e22e>NumField</span>(); <span style=color:#a6e22e>index</span><span style=color:#f92672>++</span> {
+		<span style=color:#a6e22e>field</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>qb</span>.<span style=color:#a6e22e>Type</span>.<span style=color:#a6e22e>Field</span>(<span style=color:#a6e22e>index</span>)
+
+		<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>index</span> <span style=color:#f92672>==</span> <span style=color:#ae81ff>0</span> {
+			<span style=color:#a6e22e>buffer</span>.<span style=color:#a6e22e>WriteString</span>(<span style=color:#e6db74>&#34;SELECT &#34;</span>)
+		} <span style=color:#66d9ef>else</span> {
+			<span style=color:#a6e22e>buffer</span>.<span style=color:#a6e22e>WriteString</span>(<span style=color:#e6db74>&#34;, &#34;</span>)
+		}
+		<span style=color:#a6e22e>column</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>field</span>.<span style=color:#a6e22e>Name</span>
+		<span style=color:#a6e22e>buffer</span>.<span style=color:#a6e22e>WriteString</span>(<span style=color:#a6e22e>column</span>)
+	}
+
+	<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>buffer</span>.<span style=color:#a6e22e>Len</span>() &gt; <span style=color:#ae81ff>0</span> {
+		<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Fprintf</span>(<span style=color:#a6e22e>buffer</span>, <span style=color:#e6db74>&#34; FROM %s&#34;</span>, <span style=color:#a6e22e>qb</span>.<span style=color:#a6e22e>Type</span>.<span style=color:#a6e22e>Name</span>())
+	}
+
+	<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>buffer</span>.<span style=color:#a6e22e>String</span>()
+}
+</code></pre></div><p>The type <code>NumField</code> function returns the struct type&rsquo;s field count. The <code>for-loop</code>
+interates over that count and obtain every field by index. The type&rsquo;s <code>Field</code> function
+returns a <code>StructField</code> value that describes the field owned by the underlying struct:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-golang data-lang=golang><span style=color:#75715e>// A StructField describes a single field in a struct.
+</span><span style=color:#75715e></span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>StructField</span> <span style=color:#66d9ef>struct</span> {
+	<span style=color:#75715e>// Name is the field name.
+</span><span style=color:#75715e></span>	<span style=color:#75715e>// PkgPath is the package path that qualifies a lower case (unexported)
+</span><span style=color:#75715e></span>	<span style=color:#75715e>// field name.  It is empty for upper case (exported) field names.
+</span><span style=color:#75715e></span>	<span style=color:#75715e>// See https://golang.org/ref/spec#Uniqueness_of_identifiers
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>Name</span>    <span style=color:#66d9ef>string</span>
+	<span style=color:#a6e22e>PkgPath</span> <span style=color:#66d9ef>string</span>
+
+	<span style=color:#a6e22e>Type</span>      <span style=color:#a6e22e>Type</span>      <span style=color:#75715e>// field type
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>Tag</span>       <span style=color:#a6e22e>StructTag</span> <span style=color:#75715e>// field tag string
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>Offset</span>    <span style=color:#66d9ef>uintptr</span>   <span style=color:#75715e>// offset within struct, in bytes
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>Index</span>     []<span style=color:#66d9ef>int</span>     <span style=color:#75715e>// index sequence for Type.FieldByIndex
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>Anonymous</span> <span style=color:#66d9ef>bool</span>      <span style=color:#75715e>// is an embedded field
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>Then we are appending the field name to the select query. The final implementation
+produces the following result for <code>Employee</code> struct:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-SQL data-lang=SQL><span style=color:#66d9ef>SELECT</span> ID, FirstName, LastName, Birthday <span style=color:#66d9ef>FROM</span> Employee
+</code></pre></div><p>But how to handle the case when our field are represented with different names
+in underlying database. Lets say that we want to represent <code>ID</code> field as
+<code>id_pk</code>, <code>FirstName</code> field as <code>first_name</code> and <code>LastName</code> field as <code>last_name</code>.</p>
+<p>We can implement that kind of mapping by using <a href=https://golang.org/pkg/reflect/#example_StructTag>field
+tags</a>.</p>
+<p>The use of tags strongly depends on how your struct is used. A typical use is
+to add specifications or constraints for persistence or serialisation. For
+example, when using the <a href=https://golang.org/pkg/encoding/json/>JSON
+parser/encoder</a>, tags are used to
+specify how the struct will be read from JSON or written in JSON, when the
+default encoding scheme (i.e. the name of the field) isn&rsquo;t to be used.</p>
+<p>Lets change the <code>Employee</code> struct declaration to use tags that carries additional
+information about how the field should be mapped into the underlying database:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-golang data-lang=golang><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Employee</span> <span style=color:#66d9ef>struct</span> {
+	<span style=color:#a6e22e>ID</span>        <span style=color:#66d9ef>uint32</span> <span style=color:#e6db74>`orm:&#34;id_pk&#34;`</span>
+	<span style=color:#a6e22e>FirstName</span> <span style=color:#66d9ef>string</span> <span style=color:#e6db74>`orm:&#34;first_name&#34;`</span>
+	<span style=color:#a6e22e>LastName</span>  <span style=color:#66d9ef>string</span> <span style=color:#e6db74>`orm:&#34;last_name&#34;`</span>
+	<span style=color:#a6e22e>Birthday</span>  <span style=color:#a6e22e>time</span>.<span style=color:#a6e22e>Time</span>
+}
+</code></pre></div><p>Then we can access the associated tags by using <code>field.Tag</code> field. It provides
+a <code>Get</code> function that allows access to any of the tags by name:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-golang data-lang=golang><span style=color:#a6e22e>column</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>field</span>.<span style=color:#a6e22e>Name</span>
+<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>tag</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>field</span>.<span style=color:#a6e22e>Tag</span>.<span style=color:#a6e22e>Get</span>(<span style=color:#e6db74>&#34;orm&#34;</span>); <span style=color:#a6e22e>tag</span> <span style=color:#f92672>!=</span> <span style=color:#e6db74>&#34;&#34;</span> {
+	<span style=color:#a6e22e>column</span> = <span style=color:#a6e22e>tag</span>
+}
+
+<span style=color:#a6e22e>buffer</span>.<span style=color:#a6e22e>WriteString</span>(<span style=color:#a6e22e>column</span>)
+</code></pre></div><p>Then the generated select query would be:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-SQL data-lang=SQL><span style=color:#66d9ef>SELECT</span> id_pk, first_name, last_name, Birthday <span style=color:#66d9ef>FROM</span> Employee
+</code></pre></div><h4 id=example-validating-fields>Example: Validating fields</h4>
+<p>In the following example, we will explore how to read and validate fields values.
+Lets assume that we have the following <code>PaymentTransaction</code> struct:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-golang data-lang=golang><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>PaymentTransaction</span> <span style=color:#66d9ef>struct</span> {
+	<span style=color:#a6e22e>Amount</span>      <span style=color:#66d9ef>float64</span> <span style=color:#e6db74>`validate:&#34;positive&#34;`</span>
+	<span style=color:#a6e22e>Description</span> <span style=color:#66d9ef>string</span>  <span style=color:#e6db74>`validate:&#34;max_length:250&#34;`</span>
+}
+</code></pre></div><p>Like the previous example, we will use the tag annotation. The implementation of
+<code>Validate</code> function is the following code snippet:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-golang data-lang=golang><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>Validate</span>(<span style=color:#a6e22e>obj</span> <span style=color:#66d9ef>interface</span>{}) <span style=color:#66d9ef>error</span> {
+	<span style=color:#a6e22e>v</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>reflect</span>.<span style=color:#a6e22e>ValueOf</span>(<span style=color:#a6e22e>obj</span>).<span style=color:#a6e22e>Elem</span>()
+	<span style=color:#a6e22e>t</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>v</span>.<span style=color:#a6e22e>Type</span>()
+
+	<span style=color:#66d9ef>for</span> <span style=color:#a6e22e>index</span> <span style=color:#f92672>:=</span> <span style=color:#ae81ff>0</span>; <span style=color:#a6e22e>index</span> &lt; <span style=color:#a6e22e>v</span>.<span style=color:#a6e22e>NumField</span>(); <span style=color:#a6e22e>index</span><span style=color:#f92672>++</span> {
+		<span style=color:#a6e22e>vField</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>v</span>.<span style=color:#a6e22e>Field</span>(<span style=color:#a6e22e>index</span>)
+		<span style=color:#a6e22e>tField</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>t</span>.<span style=color:#a6e22e>Field</span>(<span style=color:#a6e22e>index</span>)
+
+		<span style=color:#a6e22e>tag</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>tField</span>.<span style=color:#a6e22e>Tag</span>.<span style=color:#a6e22e>Get</span>(<span style=color:#e6db74>&#34;validate&#34;</span>)
+		<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>tag</span> <span style=color:#f92672>==</span> <span style=color:#e6db74>&#34;&#34;</span> {
+			<span style=color:#66d9ef>continue</span>
+		}
+
+		<span style=color:#66d9ef>switch</span> <span style=color:#a6e22e>vField</span>.<span style=color:#a6e22e>Kind</span>() {
+		<span style=color:#66d9ef>case</span> <span style=color:#a6e22e>reflect</span>.<span style=color:#a6e22e>Float64</span>:
+			<span style=color:#a6e22e>value</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>vField</span>.<span style=color:#a6e22e>Float</span>()
+			<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>tag</span> <span style=color:#f92672>==</span> <span style=color:#e6db74>&#34;positive&#34;</span> <span style=color:#f92672>&amp;&amp;</span> <span style=color:#a6e22e>value</span> &lt; <span style=color:#ae81ff>0</span> {
+				<span style=color:#a6e22e>value</span> = <span style=color:#a6e22e>math</span>.<span style=color:#a6e22e>Abs</span>(<span style=color:#a6e22e>value</span>)
+				<span style=color:#a6e22e>vField</span>.<span style=color:#a6e22e>SetFloat</span>(<span style=color:#a6e22e>value</span>)
+			}
+		<span style=color:#66d9ef>case</span> <span style=color:#a6e22e>reflect</span>.<span style=color:#a6e22e>String</span>:
+			<span style=color:#a6e22e>value</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>vField</span>.<span style=color:#a6e22e>String</span>()
+			<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>tag</span> <span style=color:#f92672>==</span> <span style=color:#e6db74>&#34;upper_case&#34;</span> {
+				<span style=color:#a6e22e>value</span> = <span style=color:#a6e22e>strings</span>.<span style=color:#a6e22e>ToUpper</span>(<span style=color:#a6e22e>value</span>)
+				<span style=color:#a6e22e>vField</span>.<span style=color:#a6e22e>SetString</span>(<span style=color:#a6e22e>value</span>)
+			}
+		<span style=color:#66d9ef>default</span>:
+			<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Errorf</span>(<span style=color:#e6db74>&#34;Unsupported kind &#39;%s&#39;&#34;</span>, <span style=color:#a6e22e>vField</span>.<span style=color:#a6e22e>Kind</span>())
+		}
+	}
+
+	<span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>
+}
+</code></pre></div><p>The <code>reflect.Value</code> is the reflection interface to a Go value. It is used to
+access all member for particular object (fields, function and interfaces). By
+invoking the <code>Kind</code> function we determine the field type. Then we could access
+the actual value with the appropriate type function (such as <code>Float</code> or <code>String</code>).
+To change the field value we should use some of the setters functions.</p>
+<h4 id=example-recognising-interfaces-and-calling-functions>Example: Recognising interfaces and calling functions</h4>
+<p>The <code>reflect</code> package can used to identify whether a particular interface is
+implemented.</p>
+<p>Lets have the <code>Validator</code> interface which provide a <code>Validate</code> function called
+every time when an object is validated:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-golang data-lang=golang><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Validator</span> <span style=color:#66d9ef>interface</span> {
+	<span style=color:#a6e22e>Validate</span>() <span style=color:#66d9ef>error</span>
+}
+</code></pre></div><p>We will extend the implementation of <code>PaymentTransaction</code> struct by implementing
+the <code>Validator</code> interface:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-golang data-lang=golang><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>p</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>PaymentTransaction</span>) <span style=color:#a6e22e>Validate</span>() <span style=color:#66d9ef>error</span> {
+	<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Println</span>(<span style=color:#e6db74>&#34;Validating payment transaction&#34;</span>)
+	<span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>
+}
+</code></pre></div><p>In order to determine whether the <code>PaymentTransaction</code> implements the interface,
+we should call the <code>reflect.Type</code> function <code>Implements</code>. It returns <code>true</code> if
+the type obeys the interface signature.</p>
+<p>To call a particular function, we could either case the object to the <code>Validator</code>
+interface or retrieve the method via <code>MethodByName</code> function:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-golang data-lang=golang><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>CustomValidate</span>(<span style=color:#a6e22e>obj</span> <span style=color:#66d9ef>interface</span>{}) <span style=color:#66d9ef>error</span> {
+	<span style=color:#a6e22e>v</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>reflect</span>.<span style=color:#a6e22e>ValueOf</span>(<span style=color:#a6e22e>obj</span>)
+	<span style=color:#a6e22e>t</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>v</span>.<span style=color:#a6e22e>Type</span>()
+
+	<span style=color:#a6e22e>interfaceT</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>reflect</span>.<span style=color:#a6e22e>TypeOf</span>((<span style=color:#f92672>*</span><span style=color:#a6e22e>Validator</span>)(<span style=color:#66d9ef>nil</span>)).<span style=color:#a6e22e>Elem</span>()
+	<span style=color:#66d9ef>if</span> !<span style=color:#a6e22e>t</span>.<span style=color:#a6e22e>Implements</span>(<span style=color:#a6e22e>interfaceT</span>) {
+		<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Errorf</span>(<span style=color:#e6db74>&#34;The Validator interface is not implemented&#34;</span>)
+	}
+
+	<span style=color:#a6e22e>validateFunc</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>v</span>.<span style=color:#a6e22e>MethodByName</span>(<span style=color:#e6db74>&#34;Validate&#34;</span>)
+	<span style=color:#a6e22e>validateFunc</span>.<span style=color:#a6e22e>Call</span>(<span style=color:#66d9ef>nil</span>)
+	<span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>
+}
+</code></pre></div><p>You can read more about different features provided by the <code>reflect</code> package
+in <a href=https://golang.org/pkg/reflect/>the official documentation</a>.</p>
+<h4 id=conclusion>Conclusion</h4>
+<p>The <code>reflect</code> package is great way to make descision at runtime. However, we
+should be aware that it gives us some performance penalties. I would try to
+avoid using reflection. It&rsquo;s not idiomatic, but it&rsquo;s very powerfull in
+particular cases. Do not forget to follow <a href=http://blog.golang.org/laws-of-reflection>the laws of
+reflection</a>.</p>
+</div>
+<div class=form-subscribe>
+<div id=form-subscribe-box>
+<h4>All about Golang, Distributed Systems and Backend development.</h4>
+<p>Sign up to receive the latest articles and updates</p>
+<form id=mc-embedded-subscribe-form method=post class=form>
+<div class=form-item>
+<label><span id=form-subscribe-info></span></label>
+<div class=append>
+<input type=email name=EMAIL id=mc-email placeholder=Email>
+<button class=button>Subscribe</button>
+</div>
+</div>
+<div style=position:absolute;left:-5000px aria-hidden=true>
+<input type=text tabindex=-1>
+</div>
+</form>
+<h4>Follow me on</h4>
+<ul class=social-icons>
+<li><a href=https://twitter.com/ralch class=social-icon> <i class="fa fa-twitter"></i></a></li>
+<li><a href=https://github.com/svett class=social-icon> <i class="fa fa-github"></i></a></li>
+<li><a href=http://uk.linkedin.com/in/ralchev class=social-icon> <i class="fa fa-linkedin"></i></a></li>
+<li><a href=http://blog.ralch.com/index.xml class=social-icon> <i class="fa fa-rss"></i></a></li>
+</ul>
+</div>
+</div>
+<div>
+<p>
+Published
+by <span itemprop=author>Svetlin Ralchev</span>
+<time datetime=2015-12-21T08:15:16+00:00>
+21 Dec, 2015
+</time>
+in <span itemprop=articleSection><a href=/categories/programming-languages/>programming languages</a></span>
+and tagged <a href=/tags/go/>#go</a>, <a href=/tags/metadata/>#metadata</a> and <a href=/tags/reflection/>#reflection</a>
+using <span itemprop=wordCount>1191</span> words.
+</p>
+<aside>
+<heade><strong>Related Content</strong></header>
+<hr>
+<ul>
+<li><a href=/articles/advanced-error-handling-in-golang/>Advanced Error Handling in Golang</a> &ndash; 2 minutes
+<li><a href=/articles/network-programming-and-proxies-in-golang/>Network Programming and Proxies in Golang</a> &ndash; 3 minutes
+<li><a href=/articles/golang-reflect-struct-tag/>Golang: Extending reflect.StructTag to support duplicates</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-decorator/>Design Patterns in Golang: Decorator</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-composite/>Design Patterns in Golang: Composite</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-bridge/>Desing Patterns in Golang: Bridge</a> &ndash; 3 minutes
+<li><a href=/articles/golang-handling-errors/>Errors handling in Golang</a> &ndash; 3 minutes
+</ul>
+</aside>
+</div>
+<article>
+<div id=disqus_thread></div>
+<script type=text/javascript>(function(){var a,b;if(window.location.hostname=="localhost")return;a=document.createElement('script'),a.type='text/javascript',a.async=!0,b='ralch',a.src='//'+b+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the comments powered by <a href=http://disqus.com/?ref_noscript>Disqus.</a></noscript>
+</article>
+</div>
+</div>
+</main>
+<footer> <footer id=footer>
+<nav>
+<ul>
+<li><span>Svetlin Ralchev</span></li>
+<li>
+<a href=https://www.phogolabs.com>Company</a>
+</li>
+<li>
+<a href=/articles/>Articles</a>
+</li>
+<li>
+<a href=https://twitter.com/ralch>Twitter</a>
+</li>
+<li>
+<a href=https://github.com/svett>Github</a>
+</li>
+</ul>
+</nav>
+<p>
+powered by <a href=http://www.gohugo.io>Hugo</a>
+based on <a href=https://github.com/jeblister/kube>Kube</a> theme
+&copy; 2021 Licence MIT modified by Svetlin Ralchev
+</p>
+<script>(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)})(window,document,'script','//www.google-analytics.com/analytics.js','ga'),ga('create','UA-62134307-2','auto'),ga('send','pageview')</script>
+</footer>
+</footer>
+<script src=/js/kube.js type=text/javascript></script>
+<script src=/js/kube.legenda.js type=text/javascript></script>
+<script src=/js/master.js type=text/javascript></script>
+</body>
+</html>

@@ -1,0 +1,280 @@
+<!doctype html><html lang=en-us>
+<head>
+<meta name=generator content="Hugo 0.88.1">
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title> Desing Patterns in Golang: Bridge </title>
+<meta name=author content="Svetlin Ralchev">
+<meta property="og:title" content="Desing Patterns in Golang: Bridge">
+<meta property="og:description" content="Introduction The Bridge Pattern is a creational design pattern used to decouple an abstraction from its implementation. The bridge uses encapsulation, aggregation, and can use inheritance to separate responsibilities into different classes.
+Purpose  Decouple an abstraction from its implementation that allows both to vary independently. Publish interface in an inheritance hierarchy, and bury implementation in its own inheritance hierarchy.  Design Pattern Diagram The objects participating in this pattern are presented on the following diagram:">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://blog.ralch.com/articles/design-patterns/golang-bridge/"><meta property="article:section" content="articles">
+<meta property="article:published_time" content="2016-03-17T17:26:46+00:00">
+<meta property="article:modified_time" content="2016-03-17T17:26:46+00:00">
+<link rel=canonical href=http://blog.ralch.com/articles/design-patterns/golang-bridge/>
+<link rel=apple-touch-icon sizes=57x57 href=/img/favicons/apple-icon-57x57.png>
+<link rel=apple-touch-icon sizes=60x60 href=/img/favicons/apple-icon-60x60.png>
+<link rel=apple-touch-icon sizes=72x72 href=/img/favicons/apple-icon-72x72.png>
+<link rel=apple-touch-icon sizes=76x76 href=/img/favicons/apple-icon-76x76.png>
+<link rel=apple-touch-icon sizes=114x114 href=/img/favicons/apple-icon-114x114.png>
+<link rel=apple-touch-icon sizes=120x120 href=/img/favicons/apple-icon-120x120.png>
+<link rel=apple-touch-icon sizes=144x144 href=/img/favicons/apple-icon-144x144.png>
+<link rel=apple-touch-icon sizes=152x152 href=/img/favicons/apple-icon-152x152.png>
+<link rel=apple-touch-icon sizes=180x180 href=/img/favicons/apple-icon-180x180.png>
+<link rel=icon type=image/png sizes=192x192 href=/img/favicons/android-icon-192x192.png>
+<link rel=icon type=image/png sizes=32x32 href=/img/favicons/favicon-32x32.png>
+<link rel=icon type=image/png sizes=96x96 href=/img/favicons/favicon-96x96.png>
+<link rel=icon type=image/png sizes=16x16 href=/img/favicons/favicon-16x16.png>
+<link rel=manifest href=/img/favicons/manifest.json>
+<meta name=msapplication-TileColor content="#ffffff">
+<meta name=msapplication-TileImage content="/img/favicons/ms-icon-144x144.png">
+<meta name=theme-color content="#ffffff">
+<link href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css rel=stylesheet>
+<link href=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css rel=stylesheet>
+<link href=/css/font.css rel=stylesheet type=text/css>
+<link href=/css/kube.min.css rel=stylesheet type=text/css>
+<link href=/css/kube.legenda.css rel=stylesheet type=text/css>
+<link href=/css/master.css rel=stylesheet type=text/css>
+<link href=/css/theme.css rel=stylesheet type=text/css>
+<link href=/css/social.css rel=stylesheet type=text/css>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js type=text/javascript></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js></script>
+<script src=/js/jquery.ajaxchimp.js></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</head>
+<body class=page-kube>
+<header> <div class=show-sm>
+<div id=nav-toggle-box>
+<div id=nav-toggle-brand>
+<a href=/>Svetlin Ralchev</a>
+</div>
+<a data-component=toggleme data-target=#top href=# id=nav-toggle><i class=kube-menu></i></a>
+</div>
+</div>
+<div class=hide-sm id=top>
+<div id=top-brand>
+<a href=/ title=home>Svetlin Ralchev</a>
+</div>
+<nav id=top-nav-main>
+<ul>
+<li><a href=/about/>About</a></li>
+<li><a href=/articles/>Articles</a></li>
+</ul>
+</nav>
+<nav id=top-nav-extra>
+</nav>
+</div>
+</header>
+<main>
+<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
+<meta itemprop=name content="Desing Patterns in Golang: Bridge">
+<meta itemprop=description content="Introduction The Bridge Pattern is a creational design pattern used to decouple an abstraction from its implementation. The bridge uses encapsulation, aggregation, and can use inheritance to separate responsibilities into different classes.
+Purpose  Decouple an abstraction from its implementation that allows both to vary independently. Publish interface in an inheritance hierarchy, and bury implementation in its own inheritance hierarchy.  Design Pattern Diagram The objects participating in this pattern are presented on the following diagram:"><meta itemprop=datePublished content="2016-03-17T17:26:46+00:00">
+<meta itemprop=dateModified content="2016-03-17T17:26:46+00:00">
+<meta itemprop=wordCount content="441">
+<meta itemprop=keywords content="go,bridge,creational design patterns,">
+<div id=hero>
+<h1 itemprop=headline>Desing Patterns in Golang: Bridge</h1>
+<time class=post-time><span class=icon>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+</span>
+<span>3 minute read</span>
+<span class=icon>
+<i class="fa fa-pencil" aria-hidden=true></i>
+</span>
+Published: <time datetime=2016-03-17T17:26:46+00:00>17 Mar, 2016</time>
+</time>
+</div>
+<div id=post-box>
+<div id=post itemprop=articleBody>
+<h4 id=introduction>Introduction</h4>
+<p>The Bridge Pattern is a creational design pattern used to decouple an
+abstraction from its implementation. The bridge uses encapsulation,
+aggregation, and can use inheritance to separate responsibilities into
+different classes.</p>
+<h4 id=purpose>Purpose</h4>
+<ul>
+<li>Decouple an abstraction from its implementation that allows both to vary independently.</li>
+<li>Publish interface in an inheritance hierarchy, and bury implementation in its own inheritance hierarchy.</li>
+</ul>
+<h4 id=design-pattern-diagram>Design Pattern Diagram</h4>
+<p>The objects participating in this pattern are presented on the following diagram:</p>
+<figure><img src=/media/golang/design-patterns/bridge.gif alt="Bridge Class Diagram">
+</figure>
+<ul>
+<li><code>Abstraction</code> defines the abstraction&rsquo;s interface and maintains a reference to an object of type <code>Implementor</code></li>
+<li><code>RefinedAbstraction</code> extends the interface defined by <code>Abstraction</code></li>
+<li><code>Implementor</code> defines the interface for implementation objects</li>
+<li><code>ConcreteImplementor</code> implements the <code>Implementor</code> interface and defines its concrete implementation</li>
+</ul>
+<h4 id=implementation>Implementation</h4>
+<p>Consider building an UI package that supports drawing different shapes on the
+screen by supporting <code>OpenGL</code> and <code>Direct2D</code> rendering technologies. In our
+particular example should be able to draw a circle by supporting both rendering
+systems.</p>
+<p>In order to do that we should separate the <code>Circle</code> struct from its drawing
+implementation:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Golang data-lang=Golang><span style=color:#75715e>// Circle represents a circle shape
+</span><span style=color:#75715e></span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Circle</span> <span style=color:#66d9ef>struct</span> {
+	<span style=color:#75715e>// DrawingContext for this circle
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>DrawingContext</span> <span style=color:#a6e22e>Drawer</span>
+	<span style=color:#75715e>// Center of the circle
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>Center</span> <span style=color:#a6e22e>Point</span>
+	<span style=color:#75715e>// Radius of the circle
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>Radius</span> <span style=color:#66d9ef>float64</span>
+}
+
+<span style=color:#75715e>// Draw draws a circle
+</span><span style=color:#75715e></span><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>circle</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>Circle</span>) <span style=color:#a6e22e>Draw</span>() <span style=color:#66d9ef>error</span> {
+	<span style=color:#a6e22e>rect</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>Rect</span>{
+		<span style=color:#a6e22e>Location</span>: <span style=color:#a6e22e>Point</span>{
+			<span style=color:#a6e22e>X</span>: <span style=color:#a6e22e>circle</span>.<span style=color:#a6e22e>Center</span>.<span style=color:#a6e22e>X</span> <span style=color:#f92672>-</span> <span style=color:#a6e22e>circle</span>.<span style=color:#a6e22e>Radius</span>,
+			<span style=color:#a6e22e>Y</span>: <span style=color:#a6e22e>circle</span>.<span style=color:#a6e22e>Center</span>.<span style=color:#a6e22e>Y</span> <span style=color:#f92672>-</span> <span style=color:#a6e22e>circle</span>.<span style=color:#a6e22e>Radius</span>,
+		},
+		<span style=color:#a6e22e>Size</span>: <span style=color:#a6e22e>Size</span>{
+			<span style=color:#a6e22e>Width</span>:  <span style=color:#ae81ff>2</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>circle</span>.<span style=color:#a6e22e>Radius</span>,
+			<span style=color:#a6e22e>Height</span>: <span style=color:#ae81ff>2</span> <span style=color:#f92672>*</span> <span style=color:#a6e22e>circle</span>.<span style=color:#a6e22e>Radius</span>,
+		},
+	}
+
+	<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>circle</span>.<span style=color:#a6e22e>DrawingContext</span>.<span style=color:#a6e22e>DrawEllipseInRect</span>(<span style=color:#a6e22e>rect</span>)
+}
+</code></pre></div><p>The <code>Drawer</code> defines the contract between the <code>Circle</code> abstraction and its
+implementation:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Golang data-lang=Golang><span style=color:#75715e>// Drawer draws on the underlying graphics device
+</span><span style=color:#75715e></span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Drawer</span> <span style=color:#66d9ef>interface</span> {
+	<span style=color:#75715e>// DrawEllipseInRect draws an ellipse in rectanlge
+</span><span style=color:#75715e></span>	<span style=color:#a6e22e>DrawEllipseInRect</span>(<span style=color:#a6e22e>Rect</span>) <span style=color:#66d9ef>error</span>
+}
+</code></pre></div><p>For every of the supported rendering technologies we should implement a struct
+that obeys the <code>Drawer</code> interface:</p>
+<p>This is a sample implementation of <code>OpenGL</code> drawer:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Golang data-lang=Golang><span style=color:#75715e>// OpenGL drawer
+</span><span style=color:#75715e></span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>OpenGL</span> <span style=color:#66d9ef>struct</span>{}
+
+<span style=color:#75715e>// DrawEllipseInRect draws an ellipse in rectangle
+</span><span style=color:#75715e></span><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>gl</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>OpenGL</span>) <span style=color:#a6e22e>DrawEllipseInRect</span>(<span style=color:#a6e22e>r</span> <span style=color:#a6e22e>Rect</span>) <span style=color:#66d9ef>error</span> {
+	<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;OpenGL is drawing ellipse in rect %v&#34;</span>, <span style=color:#a6e22e>r</span>)
+	<span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>
+}
+</code></pre></div><p>This is a sample implementation of <code>Direct2D</code> drawer:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Golang data-lang=Golang><span style=color:#75715e>// Direct2D drawer
+</span><span style=color:#75715e></span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>Direct2D</span> <span style=color:#66d9ef>struct</span>{}
+
+<span style=color:#75715e>// DrawEllipseInRect draws an ellipse in rectangle
+</span><span style=color:#75715e></span><span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>d2d</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>Direct2D</span>) <span style=color:#a6e22e>DrawEllipseInRect</span>(<span style=color:#a6e22e>r</span> <span style=color:#a6e22e>Rect</span>) <span style=color:#66d9ef>error</span> {
+	<span style=color:#a6e22e>fmt</span>.<span style=color:#a6e22e>Printf</span>(<span style=color:#e6db74>&#34;Direct2D is drawing ellipse in rect %v&#34;</span>, <span style=color:#a6e22e>r</span>)
+	<span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>
+}
+</code></pre></div><p>Then we can easily render a circle by using the desired drawing system. We should
+just change the implementation by setting <code>DrawingContext</code> field:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Golang data-lang=Golang><span style=color:#a6e22e>openGL</span> <span style=color:#f92672>:=</span> <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>uikit</span>.<span style=color:#a6e22e>OpenGL</span>{}
+<span style=color:#a6e22e>direct2D</span> <span style=color:#f92672>:=</span> <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>uikit</span>.<span style=color:#a6e22e>Direct2D</span>{}
+
+<span style=color:#a6e22e>circle</span> <span style=color:#f92672>:=</span> <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>uikit</span>.<span style=color:#a6e22e>Circle</span>{
+	<span style=color:#a6e22e>Center</span>: <span style=color:#a6e22e>uikit</span>.<span style=color:#a6e22e>Point</span>{<span style=color:#a6e22e>X</span>: <span style=color:#ae81ff>100</span>, <span style=color:#a6e22e>Y</span>: <span style=color:#ae81ff>100</span>},
+	<span style=color:#a6e22e>Radius</span>: <span style=color:#ae81ff>50</span>,
+}
+
+<span style=color:#a6e22e>circle</span>.<span style=color:#a6e22e>DrawingContext</span> = <span style=color:#a6e22e>openGL</span>
+<span style=color:#a6e22e>circle</span>.<span style=color:#a6e22e>Draw</span>()
+
+<span style=color:#a6e22e>circle</span>.<span style=color:#a6e22e>DrawingContext</span> = <span style=color:#a6e22e>direct2D</span>
+<span style=color:#a6e22e>circle</span>.<span style=color:#a6e22e>Draw</span>()
+</code></pre></div><h4 id=verdict>Verdict</h4>
+<p>The Bridge Pattern is designed up-front to let the abstraction and the
+implementation vary independently. That allows us to independently change the
+implementation from its abstraction.</p>
+</div>
+<div class=form-subscribe>
+<div id=form-subscribe-box>
+<h4>All about Golang, Distributed Systems and Backend development.</h4>
+<p>Sign up to receive the latest articles and updates</p>
+<form id=mc-embedded-subscribe-form method=post class=form>
+<div class=form-item>
+<label><span id=form-subscribe-info></span></label>
+<div class=append>
+<input type=email name=EMAIL id=mc-email placeholder=Email>
+<button class=button>Subscribe</button>
+</div>
+</div>
+<div style=position:absolute;left:-5000px aria-hidden=true>
+<input type=text tabindex=-1>
+</div>
+</form>
+<h4>Follow me on</h4>
+<ul class=social-icons>
+<li><a href=https://twitter.com/ralch class=social-icon> <i class="fa fa-twitter"></i></a></li>
+<li><a href=https://github.com/svett class=social-icon> <i class="fa fa-github"></i></a></li>
+<li><a href=http://uk.linkedin.com/in/ralchev class=social-icon> <i class="fa fa-linkedin"></i></a></li>
+<li><a href=http://blog.ralch.com/index.xml class=social-icon> <i class="fa fa-rss"></i></a></li>
+</ul>
+</div>
+</div>
+<div>
+<p>
+Published
+by <span itemprop=author>Svetlin Ralchev</span>
+<time datetime=2016-03-17T17:26:46+00:00>
+17 Mar, 2016
+</time>
+in <span itemprop=articleSection><a href=/categories/design-patterns/>design patterns</a> and <a href=/categories/programming-languages/>programming languages</a></span>
+and tagged <a href=/tags/bridge/>#bridge</a>, <a href=/tags/creational-design-patterns/>#creational design patterns</a> and <a href=/tags/go/>#go</a>
+using <span itemprop=wordCount>441</span> words.
+</p>
+<aside>
+<heade><strong>Related Content</strong></header>
+<hr>
+<ul>
+<li><a href=/articles/advanced-error-handling-in-golang/>Advanced Error Handling in Golang</a> &ndash; 2 minutes
+<li><a href=/articles/network-programming-and-proxies-in-golang/>Network Programming and Proxies in Golang</a> &ndash; 3 minutes
+<li><a href=/articles/golang-reflect-struct-tag/>Golang: Extending reflect.StructTag to support duplicates</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-decorator/>Design Patterns in Golang: Decorator</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-composite/>Design Patterns in Golang: Composite</a> &ndash; 3 minutes
+<li><a href=/articles/golang-handling-errors/>Errors handling in Golang</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-adapter/>Design Patterns in Golang: Adapter</a> &ndash; 5 minutes
+</ul>
+</aside>
+</div>
+<article>
+<div id=disqus_thread></div>
+<script type=text/javascript>(function(){var a,b;if(window.location.hostname=="localhost")return;a=document.createElement('script'),a.type='text/javascript',a.async=!0,b='ralch',a.src='//'+b+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the comments powered by <a href=http://disqus.com/?ref_noscript>Disqus.</a></noscript>
+</article>
+</div>
+</div>
+</main>
+<footer> <footer id=footer>
+<nav>
+<ul>
+<li><span>Svetlin Ralchev</span></li>
+<li>
+<a href=https://www.phogolabs.com>Company</a>
+</li>
+<li>
+<a href=/articles/>Articles</a>
+</li>
+<li>
+<a href=https://twitter.com/ralch>Twitter</a>
+</li>
+<li>
+<a href=https://github.com/svett>Github</a>
+</li>
+</ul>
+</nav>
+<p>
+powered by <a href=http://www.gohugo.io>Hugo</a>
+based on <a href=https://github.com/jeblister/kube>Kube</a> theme
+&copy; 2021 Licence MIT modified by Svetlin Ralchev
+</p>
+<script>(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)})(window,document,'script','//www.google-analytics.com/analytics.js','ga'),ga('create','UA-62134307-2','auto'),ga('send','pageview')</script>
+</footer>
+</footer>
+<script src=/js/kube.js type=text/javascript></script>
+<script src=/js/kube.legenda.js type=text/javascript></script>
+<script src=/js/master.js type=text/javascript></script>
+</body>
+</html>

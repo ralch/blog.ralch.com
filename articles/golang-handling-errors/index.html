@@ -1,0 +1,285 @@
+<!doctype html><html lang=en-us>
+<head>
+<meta name=generator content="Hugo 0.88.1">
+<meta charset=utf-8>
+<meta http-equiv=x-ua-compatible content="IE=edge">
+<meta name=viewport content="width=device-width,initial-scale=1">
+<title> Errors handling in Golang </title>
+<meta name=author content="Svetlin Ralchev">
+<meta property="og:title" content="Errors handling in Golang">
+<meta property="og:description" content="Go does not have an Exception handling model as most of the main stream languages. However, it uses the error interface type as the return type for any error that is going to be returned from a function or method:
+type error interface { Error() string } It is an interface type. An error variable represents any value that can describe itself as a string. The most commonly-used error implementation is in the errors package.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="http://blog.ralch.com/articles/golang-handling-errors/"><meta property="article:section" content="articles">
+<meta property="article:published_time" content="2016-03-10T08:52:29+00:00">
+<meta property="article:modified_time" content="2016-03-10T08:52:29+00:00">
+<link rel=canonical href=http://blog.ralch.com/articles/golang-handling-errors/>
+<link rel=apple-touch-icon sizes=57x57 href=/img/favicons/apple-icon-57x57.png>
+<link rel=apple-touch-icon sizes=60x60 href=/img/favicons/apple-icon-60x60.png>
+<link rel=apple-touch-icon sizes=72x72 href=/img/favicons/apple-icon-72x72.png>
+<link rel=apple-touch-icon sizes=76x76 href=/img/favicons/apple-icon-76x76.png>
+<link rel=apple-touch-icon sizes=114x114 href=/img/favicons/apple-icon-114x114.png>
+<link rel=apple-touch-icon sizes=120x120 href=/img/favicons/apple-icon-120x120.png>
+<link rel=apple-touch-icon sizes=144x144 href=/img/favicons/apple-icon-144x144.png>
+<link rel=apple-touch-icon sizes=152x152 href=/img/favicons/apple-icon-152x152.png>
+<link rel=apple-touch-icon sizes=180x180 href=/img/favicons/apple-icon-180x180.png>
+<link rel=icon type=image/png sizes=192x192 href=/img/favicons/android-icon-192x192.png>
+<link rel=icon type=image/png sizes=32x32 href=/img/favicons/favicon-32x32.png>
+<link rel=icon type=image/png sizes=96x96 href=/img/favicons/favicon-96x96.png>
+<link rel=icon type=image/png sizes=16x16 href=/img/favicons/favicon-16x16.png>
+<link rel=manifest href=/img/favicons/manifest.json>
+<meta name=msapplication-TileColor content="#ffffff">
+<meta name=msapplication-TileImage content="/img/favicons/ms-icon-144x144.png">
+<meta name=theme-color content="#ffffff">
+<link href=https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.6.3/css/font-awesome.css rel=stylesheet>
+<link href=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/styles/atom-one-light.min.css rel=stylesheet>
+<link href=/css/font.css rel=stylesheet type=text/css>
+<link href=/css/kube.min.css rel=stylesheet type=text/css>
+<link href=/css/kube.legenda.css rel=stylesheet type=text/css>
+<link href=/css/master.css rel=stylesheet type=text/css>
+<link href=/css/theme.css rel=stylesheet type=text/css>
+<link href=/css/social.css rel=stylesheet type=text/css>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js type=text/javascript></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/highlight.min.js></script>
+<script src=https://cdnjs.cloudflare.com/ajax/libs/highlight.js/9.12.0/languages/go.min.js></script>
+<script src=/js/jquery.ajaxchimp.js></script>
+<script>hljs.initHighlightingOnLoad()</script>
+</head>
+<body class=page-kube>
+<header> <div class=show-sm>
+<div id=nav-toggle-box>
+<div id=nav-toggle-brand>
+<a href=/>Svetlin Ralchev</a>
+</div>
+<a data-component=toggleme data-target=#top href=# id=nav-toggle><i class=kube-menu></i></a>
+</div>
+</div>
+<div class=hide-sm id=top>
+<div id=top-brand>
+<a href=/ title=home>Svetlin Ralchev</a>
+</div>
+<nav id=top-nav-main>
+<ul>
+<li><a href=/about/>About</a></li>
+<li><a href=/articles/>Articles</a></li>
+</ul>
+</nav>
+<nav id=top-nav-extra>
+</nav>
+</div>
+</header>
+<main>
+<div class=push-center itemscope itemtype=http://schema.org/BlogPosting>
+<meta itemprop=name content="Errors handling in Golang">
+<meta itemprop=description content="Go does not have an Exception handling model as most of the main stream languages. However, it uses the error interface type as the return type for any error that is going to be returned from a function or method:
+type error interface { Error() string } It is an interface type. An error variable represents any value that can describe itself as a string. The most commonly-used error implementation is in the errors package."><meta itemprop=datePublished content="2016-03-10T08:52:29+00:00">
+<meta itemprop=dateModified content="2016-03-10T08:52:29+00:00">
+<meta itemprop=wordCount content="617">
+<meta itemprop=keywords content="go,errors,">
+<div id=hero>
+<h1 itemprop=headline>Errors handling in Golang</h1>
+<time class=post-time><span class=icon>
+<i class="fa fa-clock-o" aria-hidden=true></i>
+</span>
+<span>3 minute read</span>
+<span class=icon>
+<i class="fa fa-pencil" aria-hidden=true></i>
+</span>
+Published: <time datetime=2016-03-10T08:52:29+00:00>10 Mar, 2016</time>
+</time>
+</div>
+<div id=post-box>
+<div id=post itemprop=articleBody>
+<p><code>Go</code> does not have an <code>Exception</code> handling model as most of the main stream
+languages. However, it uses the error interface type as the return type for any
+error that is going to be returned from a function or method:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Golang data-lang=Golang><span style=color:#66d9ef>type</span> <span style=color:#66d9ef>error</span> <span style=color:#66d9ef>interface</span> {
+    <span style=color:#a6e22e>Error</span>() <span style=color:#66d9ef>string</span>
+}
+</code></pre></div><p>It is an interface type. An error variable represents any value
+that can describe itself as a string. The most commonly-used error
+implementation is in the <a href=https://golang.org/pkg/errors/>errors</a> package.</p>
+<p>It can be instaciated in the following way:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Golang data-lang=Golang><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>DivideBy</span>(<span style=color:#a6e22e>divider</span> <span style=color:#66d9ef>float64</span>) (<span style=color:#66d9ef>float64</span>, <span style=color:#66d9ef>error</span>) {
+    <span style=color:#66d9ef>if</span> <span style=color:#a6e22e>divider</span> <span style=color:#f92672>&lt;=</span> <span style=color:#ae81ff>0</span> {
+        <span style=color:#66d9ef>return</span> <span style=color:#ae81ff>0</span>, <span style=color:#a6e22e>errors</span>.<span style=color:#a6e22e>New</span>(<span style=color:#e6db74>&#34;Divider cannot be zero or negative number.&#34;</span>)
+    }
+    <span style=color:#75715e>// implementation
+</span><span style=color:#75715e></span>}
+</code></pre></div><p>The <code>errors.New</code> functions constructs an exported type <code>errorString</code> that
+implements the <code>Error</code> interface:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Golang data-lang=Golang><span style=color:#75715e>// Copyright 2011 The Go Authors.  All rights reserved.
+</span><span style=color:#75715e>// Use of this source code is governed by a BSD-style
+</span><span style=color:#75715e>// license that can be found in the LICENSE file.
+</span><span style=color:#75715e></span>
+<span style=color:#75715e>// Package errors implements functions to manipulate errors.
+</span><span style=color:#75715e></span><span style=color:#f92672>package</span> <span style=color:#a6e22e>errors</span>
+
+<span style=color:#75715e>// New returns an error that formats as the given text.
+</span><span style=color:#75715e></span><span style=color:#66d9ef>func</span> <span style=color:#a6e22e>New</span>(<span style=color:#a6e22e>text</span> <span style=color:#66d9ef>string</span>) <span style=color:#66d9ef>error</span> {
+	<span style=color:#66d9ef>return</span> <span style=color:#f92672>&amp;</span><span style=color:#a6e22e>errorString</span>{<span style=color:#a6e22e>text</span>}
+}
+
+<span style=color:#75715e>// errorString is a trivial implementation of error.
+</span><span style=color:#75715e></span><span style=color:#66d9ef>type</span> <span style=color:#a6e22e>errorString</span> <span style=color:#66d9ef>struct</span> {
+	<span style=color:#a6e22e>s</span> <span style=color:#66d9ef>string</span>
+}
+
+<span style=color:#66d9ef>func</span> (<span style=color:#a6e22e>e</span> <span style=color:#f92672>*</span><span style=color:#a6e22e>errorString</span>) <span style=color:#a6e22e>Error</span>() <span style=color:#66d9ef>string</span> {
+	<span style=color:#66d9ef>return</span> <span style=color:#a6e22e>e</span>.<span style=color:#a6e22e>s</span>
+}
+</code></pre></div><p>It is pretty straighforward to implement your own error type that has additional
+data.</p>
+<p>The error model in <code>Golang</code> does not provide a way to find out, which function
+returned the error. We should be aware and log the errors very carefully in
+order to understand where this error occurred.</p>
+<p>Fortunately, the <code>Golang</code> runtime provides a set of functions that we can use to
+generate a stacktrace that we can trace down easily.</p>
+<p>In the following paragraphs, we will explore the Planatir
+<a href=https://github.com/palantir/stacktrace>stacktrace</a> package that does this for
+us.</p>
+<h3 id=getting-started>Getting Started</h3>
+<p>The package captures a strategic places along the call stack and attaches relevant
+contextual information like messages and variables. It is keeping stack traces
+compact and maximally useful.</p>
+<h3 id=installation>Installation</h3>
+<p>In order to use the package, we should install it first by using the well known
+<code>go get</code> command:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Bash data-lang=Bash>$ go get github.com/palantir/stacktrace
+</code></pre></div><h3 id=usage>Usage</h3>
+<p>The package provides a various functions to propagate and generate that
+contextual information.</p>
+<h5 id=error-propagation>Error propagation</h5>
+<p><code>stacktrace.Propagate</code> function replaces the usage of <code>fmt.Errorf</code> function. It
+wraps an error to include line number information. This is going to be your
+most common stacktrace call.</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Golang data-lang=Golang><span style=color:#a6e22e>db</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>sql</span>.<span style=color:#a6e22e>Open</span>(<span style=color:#e6db74>&#34;postgres&#34;</span>, <span style=color:#a6e22e>conninfo</span>)
+<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+   <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>stacktrace</span>.<span style=color:#a6e22e>Propagate</span>(<span style=color:#a6e22e>err</span>, <span style=color:#e6db74>&#34;Failed to connect %v&#34;</span>, <span style=color:#a6e22e>conninfo</span>)
+}
+</code></pre></div><h4 id=creating-errors>Creating errors</h4>
+<p><code>stacktrace.NewError</code> creates a new error that includes line number information:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Golang data-lang=Golang><span style=color:#66d9ef>if</span> <span style=color:#a6e22e>amount</span> <span style=color:#f92672>&lt;=</span> <span style=color:#ae81ff>0</span> {
+    <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>stacktrace</span>.<span style=color:#a6e22e>NewError</span>(<span style=color:#e6db74>&#34;Expected amount %v to be positive number&#34;</span>, <span style=color:#a6e22e>arg</span>)
+}
+</code></pre></div><h5 id=error-codes>Error Codes</h5>
+<p>Sometimes it&rsquo;s useful to propagate an error code while unwinding the
+stack. For instance, a RESTful API may use the error code to set the HTTP status
+code. The type <code>stacktrace.ErrorCode</code> is used to name the set of error codes
+relevant to your application:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Golang data-lang=Golang><span style=color:#66d9ef>const</span> (
+    <span style=color:#a6e22e>ConnectionTimeout</span> = <span style=color:#a6e22e>stacktrace</span>.<span style=color:#a6e22e>ErrorCode</span>(<span style=color:#66d9ef>iota</span>)
+		<span style=color:#a6e22e>ConnectionLost</span>
+)
+</code></pre></div><p>The value <code>stacktrace.NoCode</code> is equal to <code>math.MaxUint16</code>, so avoid using
+that. <code>NoCode</code> is the default value of errors that does not have explicitly set
+error code.</p>
+<p>You can use <code>stacktrace.PropagateWithCode</code> and <code>stacktrace.NewErrorWithCode</code> to
+instaciated an error that has specific code:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Golang data-lang=Golang><span style=color:#a6e22e>db</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>sql</span>.<span style=color:#a6e22e>Open</span>(<span style=color:#e6db74>&#34;postgres&#34;</span>, <span style=color:#a6e22e>conninfo</span>)
+<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+   <span style=color:#66d9ef>return</span> <span style=color:#a6e22e>stacktrace</span>.<span style=color:#a6e22e>PropagateWithCode</span>(<span style=color:#a6e22e>err</span>, <span style=color:#a6e22e>ConnectionTimeout</span>, <span style=color:#e6db74>&#34;Failed to connect %v&#34;</span>, <span style=color:#a6e22e>conninfo</span>)
+}
+</code></pre></div><p>You can extract the error code from the error by using <code>stacktrace.GetCode</code>
+function:</p>
+<div class=highlight><pre tabindex=0 style=color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4><code class=language-Golang data-lang=Golang><span style=color:#a6e22e>data</span>, <span style=color:#a6e22e>err</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>fetch</span>()
+<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>err</span> <span style=color:#f92672>!=</span> <span style=color:#66d9ef>nil</span> {
+  <span style=color:#a6e22e>code</span> <span style=color:#f92672>:=</span> <span style=color:#a6e22e>stacktrace</span>.<span style=color:#a6e22e>GetCode</span>(<span style=color:#a6e22e>err</span>)
+	<span style=color:#66d9ef>if</span> <span style=color:#a6e22e>code</span> <span style=color:#f92672>==</span> <span style=color:#a6e22e>ConnectionTimeout</span> {
+	   <span style=color:#66d9ef>return</span> <span style=color:#66d9ef>nil</span>
+	}
+}
+</code></pre></div><h3 id=verdict>Verdict</h3>
+<p>The <code>stacktrace</code> package is very pleasant and easy to use. It comforms the Golang
+idiomatic way of handling errors and provides us with additional contextual information
+about the file and the line where the error occurred.</p>
+</div>
+<div class=form-subscribe>
+<div id=form-subscribe-box>
+<h4>All about Golang, Distributed Systems and Backend development.</h4>
+<p>Sign up to receive the latest articles and updates</p>
+<form id=mc-embedded-subscribe-form method=post class=form>
+<div class=form-item>
+<label><span id=form-subscribe-info></span></label>
+<div class=append>
+<input type=email name=EMAIL id=mc-email placeholder=Email>
+<button class=button>Subscribe</button>
+</div>
+</div>
+<div style=position:absolute;left:-5000px aria-hidden=true>
+<input type=text tabindex=-1>
+</div>
+</form>
+<h4>Follow me on</h4>
+<ul class=social-icons>
+<li><a href=https://twitter.com/ralch class=social-icon> <i class="fa fa-twitter"></i></a></li>
+<li><a href=https://github.com/svett class=social-icon> <i class="fa fa-github"></i></a></li>
+<li><a href=http://uk.linkedin.com/in/ralchev class=social-icon> <i class="fa fa-linkedin"></i></a></li>
+<li><a href=http://blog.ralch.com/index.xml class=social-icon> <i class="fa fa-rss"></i></a></li>
+</ul>
+</div>
+</div>
+<div>
+<p>
+Published
+by <span itemprop=author>Svetlin Ralchev</span>
+<time datetime=2016-03-10T08:52:29+00:00>
+10 Mar, 2016
+</time>
+in <span itemprop=articleSection><a href=/categories/programming-languages/>programming languages</a> and <a href=/categories/tutorial/>tutorial</a></span>
+and tagged <a href=/tags/errors/>#errors</a> and <a href=/tags/go/>#go</a>
+using <span itemprop=wordCount>617</span> words.
+</p>
+<aside>
+<heade><strong>Related Content</strong></header>
+<hr>
+<ul>
+<li><a href=/articles/advanced-error-handling-in-golang/>Advanced Error Handling in Golang</a> &ndash; 2 minutes
+<li><a href=/articles/network-programming-and-proxies-in-golang/>Network Programming and Proxies in Golang</a> &ndash; 3 minutes
+<li><a href=/articles/golang-reflect-struct-tag/>Golang: Extending reflect.StructTag to support duplicates</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-decorator/>Design Patterns in Golang: Decorator</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-composite/>Design Patterns in Golang: Composite</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-bridge/>Desing Patterns in Golang: Bridge</a> &ndash; 3 minutes
+<li><a href=/articles/design-patterns/golang-adapter/>Design Patterns in Golang: Adapter</a> &ndash; 5 minutes
+</ul>
+</aside>
+</div>
+<article>
+<div id=disqus_thread></div>
+<script type=text/javascript>(function(){var a,b;if(window.location.hostname=="localhost")return;a=document.createElement('script'),a.type='text/javascript',a.async=!0,b='ralch',a.src='//'+b+'.disqus.com/embed.js',(document.getElementsByTagName('head')[0]||document.getElementsByTagName('body')[0]).appendChild(a)})()</script>
+<noscript>Please enable JavaScript to view the comments powered by <a href=http://disqus.com/?ref_noscript>Disqus.</a></noscript>
+</article>
+</div>
+</div>
+</main>
+<footer> <footer id=footer>
+<nav>
+<ul>
+<li><span>Svetlin Ralchev</span></li>
+<li>
+<a href=https://www.phogolabs.com>Company</a>
+</li>
+<li>
+<a href=/articles/>Articles</a>
+</li>
+<li>
+<a href=https://twitter.com/ralch>Twitter</a>
+</li>
+<li>
+<a href=https://github.com/svett>Github</a>
+</li>
+</ul>
+</nav>
+<p>
+powered by <a href=http://www.gohugo.io>Hugo</a>
+based on <a href=https://github.com/jeblister/kube>Kube</a> theme
+&copy; 2021 Licence MIT modified by Svetlin Ralchev
+</p>
+<script>(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)})(window,document,'script','//www.google-analytics.com/analytics.js','ga'),ga('create','UA-62134307-2','auto'),ga('send','pageview')</script>
+</footer>
+</footer>
+<script src=/js/kube.js type=text/javascript></script>
+<script src=/js/kube.legenda.js type=text/javascript></script>
+<script src=/js/master.js type=text/javascript></script>
+</body>
+</html>
