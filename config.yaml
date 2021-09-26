@@ -1,24 +1,53 @@
 ---
-baseurl: "http://blog.ralch.com"
-languageCode: "en-us"
-title: "Software adventures and thoughts"
-theme: "kube"
-paginate: 5
+BaseUrl: "http://blog.ralch.com"
+LanguageCode: "en-us"
+Title: "Svetlin Ralchev"
+Theme: "PaperMod"
 
-params:
- RSSLink: "/index.xml"
- author: "Svetlin Ralchev"
- info: "http://www.ralch.com"
- twitter: "https://twitter.com/ralch"
- github: "https://github.com/iamralch"
- linkedin: "http://uk.linkedin.com/in/ralchev"
- disqus: "ralch"
- googletrackingid: "UA-62134307-2"
- domain: "blog.ralch.com"
- contact_email: "links-walleye-02@icloud.com"
+Paginate: 5
+EnableInlineShortcodes: true
+EnableRobotsTXT: true
+BuildDrafts: false
+buildFuture: false
+buildExpired: false
+EnableEmoji: true
+
+GoogleAnalytics: "UA-62134307-2"
+
+Params:
+  Author: "Svetlin Ralchev"
+
+  SocialIcons:
+    - name: "linkedin"
+      url: "http://uk.linkedin.com/in/ralchev"
+    - name: "twitter"
+      url: "https://twitter.com/ralch"
+    - name: "github"
+      url: "https://github.com/iamralch"
+    - name: "website"
+      url: "https://www.ralch.com"
+    - name: "rss"
+      url: "index.xml"
+
+  HomeInfoParams:
+    Title: Hello World!
+    Content: git clone https://github.com/iamralch/whoami
+
+  Env: production
+  ShowReadingTime: true
+  ShowBreadCrumbs: true
+  ShowShareButtons: true
+  ShowPostNavLinks: true
+  ShowCodeCopyButtons: true
 
 menu:
- main:
-  - name: "Articles"
-    identifier: "articles"
-    url: "/articles/"
+  main:
+   - name: Archive
+     url: archives
+     weight: 5
+   - name: Tags
+     url: tags/
+     weight: 10
+   - name: Categories
+     url: categories/
+     weight: 10
