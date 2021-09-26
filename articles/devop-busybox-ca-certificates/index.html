@@ -3,7 +3,7 @@
 <meta http-equiv=x-ua-compatible content="IE=edge">
 <meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
 <meta name=robots content="index, follow">
-<title>SSL support for Busybox docker containers | Svetlin Ralchev</title>
+<title>SSL support for Busybox docker containers | Svetlin Ralchev | Blog</title>
 <meta name=keywords content="busybox,ssl">
 <meta name=description content="I am running my official website and this blog on busybox docker containers. I noticed today that this image does not support certificate trust stores and therefore cannot request an SSL-enabled web services.
 My website is using Google recaptcha to handle spam requests on its contact form. However, the website throws the following exception when recaptch API is requested:
@@ -41,14 +41,14 @@ My website is using Google recaptcha to handle spam requests on its contact form
 x509: failed to load system roots and no roots provided
 First approach would be to use COPY command to load the certificate store bundle in to the image.">
 <script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":2,"name":"Articles","item":"http://blog.ralch.com/articles/"},{"@type":"ListItem","position":3,"name":"SSL support for Busybox docker containers","item":"http://blog.ralch.com/articles/devop-busybox-ca-certificates/"}]}</script>
-<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"SSL support for Busybox docker containers","name":"SSL support for Busybox docker containers","description":"I am running my official website and this blog on busybox docker containers. I noticed today that this image does not support certificate trust stores and therefore cannot request an SSL-enabled web services.\nMy website is using Google recaptcha to handle spam requests on its contact form. However, the website throws the following exception when recaptch API is requested:\nx509: failed to load system roots and no roots provided\nFirst approach would be to use COPY command to load the certificate store bundle in to the image.","keywords":["busybox","ssl"],"articleBody":"I am running my official website and this blog on busybox docker containers. I noticed today that this image does not support certificate trust stores and therefore cannot request an SSL-enabled web services.\nMy website is using Google recaptcha to handle spam requests on its contact form. However, the website throws the following exception when recaptch API is requested:\nx509: failed to load system roots and no roots provided\nFirst approach would be to use COPY command to load the certificate store bundle in to the image.\nI do not want to keep the certificates on docker image, so I fixed the issue by mounting the host’s certificate store in to the container file system.\nThe following command is solving the issue for me:\nCERT_DIR=/etc/ssl/certs docker run -v $CERT_DIR:$CERT_DIR --name web -d busybox ","wordCount":"133","inLanguage":"en","datePublished":"2015-04-23T21:50:49+01:00","dateModified":"2015-04-23T21:50:49+01:00","author":{"@type":"Person","name":"Svetlin Ralchev"},"mainEntityOfPage":{"@type":"WebPage","@id":"http://blog.ralch.com/articles/devop-busybox-ca-certificates/"},"publisher":{"@type":"Organization","name":"Svetlin Ralchev","logo":{"@type":"ImageObject","url":"http://blog.ralch.com/favicon.ico"}}}</script>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"SSL support for Busybox docker containers","name":"SSL support for Busybox docker containers","description":"I am running my official website and this blog on busybox docker containers. I noticed today that this image does not support certificate trust stores and therefore cannot request an SSL-enabled web services.\nMy website is using Google recaptcha to handle spam requests on its contact form. However, the website throws the following exception when recaptch API is requested:\nx509: failed to load system roots and no roots provided\nFirst approach would be to use COPY command to load the certificate store bundle in to the image.","keywords":["busybox","ssl"],"articleBody":"I am running my official website and this blog on busybox docker containers. I noticed today that this image does not support certificate trust stores and therefore cannot request an SSL-enabled web services.\nMy website is using Google recaptcha to handle spam requests on its contact form. However, the website throws the following exception when recaptch API is requested:\nx509: failed to load system roots and no roots provided\nFirst approach would be to use COPY command to load the certificate store bundle in to the image.\nI do not want to keep the certificates on docker image, so I fixed the issue by mounting the host’s certificate store in to the container file system.\nThe following command is solving the issue for me:\nCERT_DIR=/etc/ssl/certs docker run -v $CERT_DIR:$CERT_DIR --name web -d busybox ","wordCount":"133","inLanguage":"en","datePublished":"2015-04-23T21:50:49+01:00","dateModified":"2015-04-23T21:50:49+01:00","author":{"@type":"Person","name":"Svetlin Ralchev"},"mainEntityOfPage":{"@type":"WebPage","@id":"http://blog.ralch.com/articles/devop-busybox-ca-certificates/"},"publisher":{"@type":"Organization","name":"Svetlin Ralchev | Blog","logo":{"@type":"ImageObject","url":"http://blog.ralch.com/favicon.ico"}}}</script>
 </head>
 <body id=top>
 <script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add('dark'):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove('dark'):window.matchMedia('(prefers-color-scheme: dark)').matches&&document.body.classList.add('dark')</script>
 <header class=header>
 <nav class=nav>
 <div class=logo>
-<a href=http://blog.ralch.com accesskey=h title="Svetlin Ralchev (Alt + H)">Svetlin Ralchev</a>
+<a href=http://blog.ralch.com accesskey=h title="Svetlin Ralchev | Blog (Alt + H)">Svetlin Ralchev | Blog</a>
 <span class=logo-switches>
 <button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
 </button>
@@ -61,13 +61,13 @@ First approach would be to use COPY command to load the certificate store bundle
 </a>
 </li>
 <li>
-<a href=http://blog.ralch.com/categories/ title=Categories>
-<span>Categories</span>
+<a href=http://blog.ralch.com/tags/ title=Tags>
+<span>Tags</span>
 </a>
 </li>
 <li>
-<a href=http://blog.ralch.com/tags/ title=Tags>
-<span>Tags</span>
+<a href=http://blog.ralch.com/categories/ title=Categories>
+<span>Categories</span>
 </a>
 </li>
 </ul>
@@ -130,7 +130,7 @@ docker run -v $CERT_DIR:$CERT_DIR --name web -d busybox
 </article>
 </main>
 <footer class=footer>
-<span>&copy; 2021 <a href=http://blog.ralch.com>Svetlin Ralchev</a></span>
+<span>&copy; 2021 <a href=http://blog.ralch.com>Svetlin Ralchev | Blog</a></span>
 <span>
 Powered by
 <a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &

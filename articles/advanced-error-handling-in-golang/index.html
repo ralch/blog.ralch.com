@@ -3,7 +3,7 @@
 <meta http-equiv=x-ua-compatible content="IE=edge">
 <meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
 <meta name=robots content="index, follow">
-<title>Advanced Error Handling in Golang | Svetlin Ralchev</title>
+<title>Advanced Error Handling in Golang | Svetlin Ralchev | Blog</title>
 <meta name=keywords content="go">
 <meta name=description content="If you have ever written any Golang code you have probably noticed the built-in error type interface. Golang uses error values to indicate an abnormal state. The error type represents any value that can describe itself as a string. Here is the interface&rsquo;s declaration:
 type error interface { Error() string } The most commonly-used error implementation is the errors package&rsquo;s implementation that allows you to instantiate errors by using the following code snippet:">
@@ -35,14 +35,14 @@ type error interface { Error() string } The most commonly-used error implementat
 <meta name=twitter:description content="If you have ever written any Golang code you have probably noticed the built-in error type interface. Golang uses error values to indicate an abnormal state. The error type represents any value that can describe itself as a string. Here is the interface&rsquo;s declaration:
 type error interface { Error() string } The most commonly-used error implementation is the errors package&rsquo;s implementation that allows you to instantiate errors by using the following code snippet:">
 <script type=application/ld+json>{"@context":"https://schema.org","@type":"BreadcrumbList","itemListElement":[{"@type":"ListItem","position":2,"name":"Articles","item":"http://blog.ralch.com/articles/"},{"@type":"ListItem","position":3,"name":"Advanced Error Handling in Golang","item":"http://blog.ralch.com/articles/advanced-error-handling-in-golang/"}]}</script>
-<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"Advanced Error Handling in Golang","name":"Advanced Error Handling in Golang","description":"If you have ever written any Golang code you have probably noticed the built-in error type interface. Golang uses error values to indicate an abnormal state. The error type represents any value that can describe itself as a string. Here is the interface\u0026rsquo;s declaration:\ntype error interface { Error() string } The most commonly-used error implementation is the errors package\u0026rsquo;s implementation that allows you to instantiate errors by using the following code snippet:","keywords":["go"],"articleBody":"If you have ever written any Golang code you have probably noticed the built-in error type interface. Golang uses error values to indicate an abnormal state. The error type represents any value that can describe itself as a string. Here is the interface’s declaration:\ntype error interface { Error() string } The most commonly-used error implementation is the errors package’s implementation that allows you to instantiate errors by using the following code snippet:\nerr: = errors.New(\"http: operation is not allowed\") However, the error handling is so simplified that does not provide us with information about where the error occurred in the source code. This can cause some difficulties in tracing errors in your application log. Also, there are some particular situations that you have multiple errors that you want to correlate with particular operation step.\nWe can still have all that by just adopting a few Golang third-party packages in our application.\nStack tracing errors with status codes The errorx is a package that provides an error interface implementation inspired by PostgreSQL styleguide.\nBy installing it with the following command:\n$ go get github.com/goware/errorx It provides us with stack trace, error codes and nesting of errors:\nif err := step(); err != nil { errx := errorx.New(http.StatusInternalServerError, \"Operation failed\") errx.Wrap(err) } Handling multiple errors The go-multierror is a package for Go that provides a mechanism for representing a list of error values as a single error.\nLet’s first install it:\n$ go get github.com/hashicorp/go-multierror Then we can use it in the following way:\nvar result error if err := step1(); err != nil { result = multierror.Append(result, err) } if err := step2(); err != nil { result = multierror.Append(result, err) } return result ","wordCount":"284","inLanguage":"en","datePublished":"2017-09-25T16:28:10+01:00","dateModified":"2017-09-25T16:28:10+01:00","author":{"@type":"Person","name":"Svetlin Ralchev"},"mainEntityOfPage":{"@type":"WebPage","@id":"http://blog.ralch.com/articles/advanced-error-handling-in-golang/"},"publisher":{"@type":"Organization","name":"Svetlin Ralchev","logo":{"@type":"ImageObject","url":"http://blog.ralch.com/favicon.ico"}}}</script>
+<script type=application/ld+json>{"@context":"https://schema.org","@type":"BlogPosting","headline":"Advanced Error Handling in Golang","name":"Advanced Error Handling in Golang","description":"If you have ever written any Golang code you have probably noticed the built-in error type interface. Golang uses error values to indicate an abnormal state. The error type represents any value that can describe itself as a string. Here is the interface\u0026rsquo;s declaration:\ntype error interface { Error() string } The most commonly-used error implementation is the errors package\u0026rsquo;s implementation that allows you to instantiate errors by using the following code snippet:","keywords":["go"],"articleBody":"If you have ever written any Golang code you have probably noticed the built-in error type interface. Golang uses error values to indicate an abnormal state. The error type represents any value that can describe itself as a string. Here is the interface’s declaration:\ntype error interface { Error() string } The most commonly-used error implementation is the errors package’s implementation that allows you to instantiate errors by using the following code snippet:\nerr: = errors.New(\"http: operation is not allowed\") However, the error handling is so simplified that does not provide us with information about where the error occurred in the source code. This can cause some difficulties in tracing errors in your application log. Also, there are some particular situations that you have multiple errors that you want to correlate with particular operation step.\nWe can still have all that by just adopting a few Golang third-party packages in our application.\nStack tracing errors with status codes The errorx is a package that provides an error interface implementation inspired by PostgreSQL styleguide.\nBy installing it with the following command:\n$ go get github.com/goware/errorx It provides us with stack trace, error codes and nesting of errors:\nif err := step(); err != nil { errx := errorx.New(http.StatusInternalServerError, \"Operation failed\") errx.Wrap(err) } Handling multiple errors The go-multierror is a package for Go that provides a mechanism for representing a list of error values as a single error.\nLet’s first install it:\n$ go get github.com/hashicorp/go-multierror Then we can use it in the following way:\nvar result error if err := step1(); err != nil { result = multierror.Append(result, err) } if err := step2(); err != nil { result = multierror.Append(result, err) } return result ","wordCount":"284","inLanguage":"en","datePublished":"2017-09-25T16:28:10+01:00","dateModified":"2017-09-25T16:28:10+01:00","author":{"@type":"Person","name":"Svetlin Ralchev"},"mainEntityOfPage":{"@type":"WebPage","@id":"http://blog.ralch.com/articles/advanced-error-handling-in-golang/"},"publisher":{"@type":"Organization","name":"Svetlin Ralchev | Blog","logo":{"@type":"ImageObject","url":"http://blog.ralch.com/favicon.ico"}}}</script>
 </head>
 <body id=top>
 <script>localStorage.getItem("pref-theme")==="dark"?document.body.classList.add('dark'):localStorage.getItem("pref-theme")==="light"?document.body.classList.remove('dark'):window.matchMedia('(prefers-color-scheme: dark)').matches&&document.body.classList.add('dark')</script>
 <header class=header>
 <nav class=nav>
 <div class=logo>
-<a href=http://blog.ralch.com accesskey=h title="Svetlin Ralchev (Alt + H)">Svetlin Ralchev</a>
+<a href=http://blog.ralch.com accesskey=h title="Svetlin Ralchev | Blog (Alt + H)">Svetlin Ralchev | Blog</a>
 <span class=logo-switches>
 <button id=theme-toggle accesskey=t title="(Alt + T)"><svg id="moon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"/></svg><svg id="sun" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentcolor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg>
 </button>
@@ -55,13 +55,13 @@ type error interface { Error() string } The most commonly-used error implementat
 </a>
 </li>
 <li>
-<a href=http://blog.ralch.com/categories/ title=Categories>
-<span>Categories</span>
+<a href=http://blog.ralch.com/tags/ title=Tags>
+<span>Tags</span>
 </a>
 </li>
 <li>
-<a href=http://blog.ralch.com/tags/ title=Tags>
-<span>Tags</span>
+<a href=http://blog.ralch.com/categories/ title=Categories>
+<span>Categories</span>
 </a>
 </li>
 </ul>
@@ -154,7 +154,7 @@ single error.</p>
 </article>
 </main>
 <footer class=footer>
-<span>&copy; 2021 <a href=http://blog.ralch.com>Svetlin Ralchev</a></span>
+<span>&copy; 2021 <a href=http://blog.ralch.com>Svetlin Ralchev | Blog</a></span>
 <span>
 Powered by
 <a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
