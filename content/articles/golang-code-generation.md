@@ -6,28 +6,27 @@ share = "yes"
 title = "Golang code generation"
 categories = ["programming languages", "tutorial"]
 tags = ["go", "code generation"]
-
 +++
 
 Programs that produce source code are important elements in software engineering.
-Since Go 1.4, the language ecosystem includes a command line tool that makes 
+Since Go 1.4, the language ecosystem includes a command line tool that makes
 it easier to run such tools.
 
-It's called `go generate`. It scans for special comments in Go 
+It's called `go generate`. It scans for special comments in Go
 source code that identify general commands to run:
 
 ```
-//go:generate <subcommand> <arguments> 
+//go:generate <subcommand> <arguments>
 ```
 
-`Go generate` is not part of go build. It does not do dependency analysis and 
-must be run explicitly before running go build. It is intended to be used by 
+`Go generate` is not part of go build. It does not do dependency analysis and
+must be run explicitly before running go build. It is intended to be used by
 the author of the Go package, not its consumers.
 
 The `go generate` command is easy to use. Usually it is executed in the following way:
 
 ```
-// it scans all 
+// it scans all
 $ go generate ./...
 ```
 
@@ -35,15 +34,13 @@ After identifying all `go:generate` comments it will execute the specified comma
 
 In this article, we will explore a various tools that produce source code for us.
 
-
-
 ### JSON Enums
 
 Have you ever had an enum that you want to serialize in JSON as a string instead of integer?
 Are you bored of developing a `switch` cases that handle that? It is time to automate this
 task by using `jsonenums`.
 
-[jsonenums](http://github.com/campoy/jsonenums) is a code generation tool to automate the creation of methods 
+[jsonenums](http://github.com/campoy/jsonenums) is a code generation tool to automate the creation of methods
 that satisfy the [json.Marshaler](https://golang.org/pkg/encoding/json/#Marshaler) and [json.Unmarshaler](https://golang.org/pkg/encoding/json/#Unmarshaler) interfaces.
 
 #### Installing
@@ -56,7 +53,7 @@ $ go get github.com/campoy/jsonenums
 
 Lets have this enum definition:
 
-``` 
+```
 //go:generate jsonenums -type=Status
 type Status int
 
@@ -90,21 +87,21 @@ You can download the whole code snippet from [here](https://gist.github.com/iamr
 
 ### Fast JSON
 
-[ffjson](http://github.com/pquerna/ffjson)  generates `MarshalJSON` and `UnmarshalJSON` functions for struct types.
-These functions reduce the reliance unpon runtime reflection to do serialization. 
-According to the author notes, it is generally 2 to 3 times faster than 
+[ffjson](http://github.com/pquerna/ffjson) generates `MarshalJSON` and `UnmarshalJSON` functions for struct types.
+These functions reduce the reliance unpon runtime reflection to do serialization.
+According to the author notes, it is generally 2 to 3 times faster than
 `encoding/json` package.
 
 #### Installing
 
 ```
-$ go get github.com/pquerna/ffjson 
+$ go get github.com/pquerna/ffjson
 ```
 
 #### Usage
 
 The generated code is baed upon existing struct types. Lets have `education.go` file.
-`ffjson` will generate a new file `education_ffjson.go` that contains serialization 
+`ffjson` will generate a new file `education_ffjson.go` that contains serialization
 functions for all structs found in `education.go`. In order to do that we should
 add the following `go:generate` comment in `education.go`:
 
@@ -170,7 +167,7 @@ The sample code can be downloaded from [here](https://gist.github.com/iamralch/0
 
 ### Stringer
 
-[Stringer](https://godoc.org/golang.org/x/tools/cmd/stringer) is a similar to `jsonenums`. 
+[Stringer](https://godoc.org/golang.org/x/tools/cmd/stringer) is a similar to `jsonenums`.
 But it generates a [fmt.Stringer interface](https://golang.org/pkg/fmt/#Stringer) implementation for enums.
 
 #### Installing
@@ -210,5 +207,5 @@ Full source code can be download from [here](https://gist.github.com/iamralch/b5
 ## Conclusion
 
 `Go generate` is great opportunity to automate many implementation tasks
-that are very common in our day to day job. I am really pleased to see more and 
+that are very common in our day to day job. I am really pleased to see more and
 more tools coming up.

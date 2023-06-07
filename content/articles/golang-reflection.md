@@ -5,7 +5,6 @@ share = "yes"
 title = "Reflection in Golang"
 categories = ["programming languages"]
 tags = ["go", "reflection", "metadata"]
-
 +++
 
 #### What is reflection?
@@ -14,7 +13,7 @@ tags = ["go", "reflection", "metadata"]
 > and modify its own structure and behavior (specifically the values,
 > meta-data, properties and functions) at runtime.
 
-*source: [Wikipedia](http://bit.ly/1Rpm16G)*
+_source: [Wikipedia](http://bit.ly/1Rpm16G)_
 
 Reflection can be used for observing and modifying program execution at
 runtime. A reflection-oriented program component can monitor the execution of
@@ -64,7 +63,6 @@ type Employee struct {
 	Birthday  time.Time
 }
 ```
-
 
 We need to instaciate `reflection.Type` in order to access its type metadata.
 It is the representation of a Go type. We should use the following code snippet:
@@ -141,7 +139,7 @@ We can implement that kind of mapping by using [field
 tags](https://golang.org/pkg/reflect/#example_StructTag).
 
 The use of tags strongly depends on how your struct is used. A typical use is
-to add specifications or constraints for persistence or serialisation.  For
+to add specifications or constraints for persistence or serialisation. For
 example, when using the [JSON
 parser/encoder](https://golang.org/pkg/encoding/json/), tags are used to
 specify how the struct will be read from JSON or written in JSON, when the
@@ -266,28 +264,5 @@ To call a particular function, we could either case the object to the `Validator
 interface or retrieve the method via `MethodByName` function:
 
 ```golang
-func CustomValidate(obj interface{}) error {
-	v := reflect.ValueOf(obj)
-	t := v.Type()
-
-	interfaceT := reflect.TypeOf((*Validator)(nil)).Elem()
-	if !t.Implements(interfaceT) {
-		return fmt.Errorf("The Validator interface is not implemented")
-	}
-
-	validateFunc := v.MethodByName("Validate")
-	validateFunc.Call(nil)
-	return nil
-}
+func CustomValidate(obj interface{
 ```
-
-You can read more about different features provided by the `reflect` package
-in [the official documentation](https://golang.org/pkg/reflect/).
-
-#### Conclusion
-
-The `reflect` package is great way to make descision at runtime. However, we
-should be aware that it gives us some performance penalties. I would try to
-avoid using reflection. It's not idiomatic, but it's very powerfull in
-particular cases. Do not forget to follow [the laws of
-reflection](http://blog.golang.org/laws-of-reflection).

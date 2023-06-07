@@ -102,23 +102,24 @@ if err != nil {
 }
 ```
 
-The *forwardDialer* is the dialer that will be used internally by the proxy to
+The _forwardDialer_ is the dialer that will be used internally by the proxy to
 establish a connection to the remote host. In our case, we use a
 [proxy.Direct](https://godoc.org/golang.org/x/net/proxy#Variables) dialer which
 establishes direct connections:
 
 ```golang
 type direct struct{}
- 
+
 // Direct is a direct proxy: one that makes network connections directly.
 var Direct = direct{}
- 
+
 func (direct) Dial(network, addr string) (net.Conn, error) {
      return net.Dial(network, addr)
 }
 ```
 
 #### Advanced usage
+
 If you need more control over the dialer, you can instantiate [proxy.PerHost]()
 struct that allows you to specify different rules. It requires a default dialer
 and bypass dialer. The default dialer is used when the request does not obey
@@ -151,6 +152,3 @@ if err != nil {
 
 fmt.Println(status)
 ```
-
-
-

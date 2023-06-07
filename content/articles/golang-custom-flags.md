@@ -6,12 +6,11 @@ share = "yes"
 tags = ["go"]
 categories = ["programming languages", "tutorial"]
 title = "Golang: Using user defined type as flag in terminal applications"
-
 +++
 
-As we saw in the [previous article](http://blog.ralch.com/tutorial/golang-subcommands/) 
+As we saw in the [previous article](http://blog.ralch.com/tutorial/golang-subcommands/)
 [the flag](https://golang.org/pkg/flag/) package gives us flexibility to develop
-command-line applications that suite our needs. 
+command-line applications that suite our needs.
 
 In this post, I will show how you can develop a flag argument for user
 defined type.
@@ -45,7 +44,7 @@ type UrlFlag struct {
 }
 ```
 
-Then you should define `String()` function that converts this struct as a string: 
+Then you should define `String()` function that converts this struct as a string:
 
 ```
 func (arr *UrlFlag) String() string {
@@ -54,7 +53,7 @@ func (arr *UrlFlag) String() string {
 ```
 
 The `Set(string)` is called by `flag.Parse`
-function. It initializes this flag from command line arguments. 
+function. It initializes this flag from command line arguments.
 In our case, we will expect comma-separated list of values:
 
 ```
@@ -79,7 +78,7 @@ func (arr *UrlFlag) Set(value string) error {
     if len(arr.urls) > 0 {
     	return fmt.Errorf("The url flag is already set")
     }
-    
+
     urls := strings.Split(value, ",")
     for _, item := range urls {
     	if parsedUrl, err := url.Parse(item); err != nil {

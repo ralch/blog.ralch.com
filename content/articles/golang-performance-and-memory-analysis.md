@@ -5,7 +5,6 @@ share = "yes"
 title = "Performance and memory analysis of Golang programs"
 categories = ["programming languages"]
 tags = ["go", "metrics", "performance", "analysis", "pprof"]
-
 +++
 
 As we continue looking at program metrics in Golang, it is time to look at
@@ -117,7 +116,7 @@ func init() {
 ```
 
 The named profile could be create by executing `pprof.NewProfile` constructor
-function.  In addition the `net/http/pprof` packages provides a `Handler`
+function. In addition the `net/http/pprof` packages provides a `Handler`
 function that register a handler for a particular profile by name.
 
 Then you can add/remove the profile sampling data with the following code snippet:

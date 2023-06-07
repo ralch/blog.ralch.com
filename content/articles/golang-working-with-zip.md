@@ -9,17 +9,17 @@ categories = ["programming languages", "tutorial"]
 +++
 
 Golang has several packages that work with different type of archives.
-In this post I will show you how to use `archive/zip` package to compress and 
+In this post I will show you how to use `archive/zip` package to compress and
 uncompress `zip` archives.
 
 [Zip](http://bit.ly/1OeinbI) is one of the most common
-file formats. It supports `lossless data compression` of one ore more files and 
+file formats. It supports `lossless data compression` of one ore more files and
 directories.
 
 ### Extracting
 
-You can read the content of `zip` package by using zip reader. Its `File` property 
-exposes all files and directories of particular zip package. If you want to extract 
+You can read the content of `zip` package by using zip reader. Its `File` property
+exposes all files and directories of particular zip package. If you want to extract
 the package, you should recreate all directories and files:
 
 ```
@@ -63,10 +63,10 @@ func unzip(archive, target string) error {
 
 ### Compressing
 
-This operation is more complicated than `extracing`. You can compress a single file 
-or an hierarchy of directories. Handling both cases requires to change the file 
+This operation is more complicated than `extracing`. You can compress a single file
+or an hierarchy of directories. Handling both cases requires to change the file
 header name depending on its type. If the copied content is directory, the header name
-should be changed to `<directory_name>/`. For a regular files, its header name is relative 
+should be changed to `<directory_name>/`. For a regular files, its header name is relative
 path `<directory_name>/<file_name>`.
 
 The following function illustrates the algorithm:

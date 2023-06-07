@@ -7,7 +7,6 @@ categories = ["programming languages"]
 tags = ["go", "embedded resources"]
 +++
 
-
 ### What's an Embedded Resource?
 
 An embedded resource in a application is a file that is included as part of
@@ -32,7 +31,7 @@ to customize the output being generated:
 - `ignore` value Regex pattern to ignore
 - `mode` uint Optional file mode override for all files.
 - `modtime` int Optional modification unix timestamp override for all files.
-- `nocompress` Assets will *not* be GZIP compressed when this flag is specified.
+- `nocompress` Assets will _not_ be GZIP compressed when this flag is specified.
 - `nomemcopy` Use a .rodata hack to get rid of unnecessary memcopies. Refer to the documentation to see what implications this carries.
 - `nometadata` Assets will not preserve size, mode, and modtime info.
 - `o` string Optional name of the output file to be generated. (default "./bindata.go")
@@ -89,7 +88,6 @@ During the development phase it loads required assets directly from disk.
 Afterwards upon deployment the resource files could be included to a executable
 using the rice command line tool, without changing the source code for your
 package.
-
 
 #### Installation
 

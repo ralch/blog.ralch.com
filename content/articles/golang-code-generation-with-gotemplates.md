@@ -10,8 +10,8 @@ tags = ["go", "code generation"]
 +++
 
 In one of my previous blog posts, we discovered `go generate` command line
-tool. Lets take the next step and evaluate its advanced benefits to generate a source code 
-by using our own templates. We will explore [gotemplate](https://github.com/ncw/gotemplate) 
+tool. Lets take the next step and evaluate its advanced benefits to generate a source code
+by using our own templates. We will explore [gotemplate](https://github.com/ncw/gotemplate)
 command line tool.
 
 ### Overview
@@ -33,10 +33,9 @@ Note that the command installs the predefined templates as well.
 $ go get github.com/ncw/gotemplate/...
 ```
 
-
 ### Usage
 
-To instaciate a particular template, you must use it using a special comment in your code: 
+To instaciate a particular template, you must use it using a special comment in your code:
 
 ```
 //go:generate gotemplate "github.com/ncw/gotemplate/list" StudentList(Student)
@@ -47,7 +46,7 @@ type Student struct {
 }
 ```
 
-Afte executing `go generate` command, a file [gotemplate_StudentList.go](https://gist.github.com/86acbeea21c02af69e70) 
+Afte executing `go generate` command, a file [gotemplate_StudentList.go](https://gist.github.com/86acbeea21c02af69e70)
 is generated. It contains the `StudentList` type that defines a list struct
 that works with `Student` type. It has the following methods and functions:
 
@@ -94,7 +93,7 @@ func main() {
 }
 ```
 
-Using an initial capital when you name your template instantiation will make 
+Using an initial capital when you name your template instantiation will make
 any external functions and types public. If you want to generate them as private
 you must use lower case like:
 
@@ -104,6 +103,7 @@ you must use lower case like:
 ```
 
 Then code generation produces `gotemplate_stringSet.go` and `gotemplate_floateSet.go` files.
+
 ```
 $ go generate
 substituting "github.com/ncw/gotemplate/set" with stringSet(string) into package main
@@ -114,12 +114,12 @@ Written 'gotemplate_floatSet.go'
 
 ### Creating a custom templates
 
-Templates must be valid go packages. They should compile and have tests and be usable as-is. 
+Templates must be valid go packages. They should compile and have tests and be usable as-is.
 
-To make the package a valid template it should have one or more declarations and 
+To make the package a valid template it should have one or more declarations and
 a special comment that declares the its template name and parameters.
 
-The line below indicates that the base name for the template is `TemplateType` 
+The line below indicates that the base name for the template is `TemplateType`
 and it has one type parameter `TParameter`. Supported parameterized declarations
 are type, const, var and func.
 
@@ -176,8 +176,8 @@ $ go get github.com/iamralch/gotemplate/stack
 $ go generate
 ```
 
-When the template is instantiated, a new file `gotemplate_StudentStack.go` is create. 
-It is a result of substition of actual template with `StudentStack(*Student)` declaration. 
+When the template is instantiated, a new file `gotemplate_StudentStack.go` is create.
+It is a result of substition of actual template with `StudentStack(*Student)` declaration.
 All `TValue` occurances are replaced with `Student`. The `Stack` struct is changed to `StudentStack`.
 
 The template can be downloaded from [here](https://github.com/iamralch/gotemplate/).
@@ -186,6 +186,3 @@ The template can be downloaded from [here](https://github.com/iamralch/gotemplat
 
 `Gotemplate` is great tool for automatic a common development tasks. Because of its
 extensibility, we can focus on what should be generated instead of how to generate it.
-
-
-

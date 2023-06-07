@@ -8,13 +8,14 @@ categories = ["programming languages", "tutorial"]
 title = "Golang: Pipes and redirection in command line applications"
 +++
 
-Powerful features of the Linux command line shell are redirection and 
+Powerful features of the Linux command line shell are redirection and
 pipes that allow the output and even input of a program to be sent to a file
 or another program.
 
 In this article, I will demonstrates how we can pipe a file into a `go` application.
 
 ## Pipes
+
 Pipes allow you to funnel the output from one command into another where it
 will be used as the input. We should use `|` symbol to redirect the output.
 
@@ -24,7 +25,7 @@ A good way to see how many devices are available is the following command:
 ls -l /dev | wc -l
 ```
 
-We are counting the number of devices by sending the `ls` output to world count 
+We are counting the number of devices by sending the `ls` output to world count
 command `wc` input. The `-l` parameter display only the number of lines.
 
 ## Implementation
@@ -95,12 +96,9 @@ if (info.Mode() & os.ModeCharDevice) == os.ModeCharDevice {
 
 You can check whether there is a content to read from by comparing `info.Size()`.
 
-*Note: Character devices in Linux/Unix are unbuffered devices that have direct
-access to underlying hardware. They do not necessarily allow you to read or 
-write single character at a time. Example: audio or graphics cards, 
-or input devices like keyboard and mouse.*
+_Note: Character devices in Linux/Unix are unbuffered devices that have direct
+access to underlying hardware. They do not necessarily allow you to read or
+write single character at a time. Example: audio or graphics cards,
+or input devices like keyboard and mouse._
 
 You can get the sample source code from [here](https://gist.github.com/iamralch/a95595069e560173a3c8).
-
-
-

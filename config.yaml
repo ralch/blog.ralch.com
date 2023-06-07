@@ -6,7 +6,7 @@ Theme: "PaperMod"
 LanguageCode: "en-us"
 
 Title: "Svetlin Ralchev | Blog"
-Copyright: "(c) 2021 Svetlin Ralchev"
+Copyright: "(c) 2023 Svetlin Ralchev"
 
 BuildDrafts: false
 BuildExpired: false
@@ -52,12 +52,12 @@ Params:
 
 menu:
   main:
-   - name: Archive
-     url: archives
-     weight: 10
-   - name: Tags
-     url: tags/
-     weight: 15
-   - name: Categories
-     url: categories/
-     weight: 20
+    - name: Archive
+      url: archives
+      weight: 10
+    - name: Tags
+      url: tags/
+      weight: 15
+    - name: Categories
+      url: categories/
+      weight: 20

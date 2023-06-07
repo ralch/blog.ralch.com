@@ -6,7 +6,6 @@ share = "yes"
 tags = ["go"]
 categories = ["programming languages", "tutorial"]
 title = "Golang: Implementing subcommands for command line applications"
-
 +++
 
 Golang [flag](https://golang.org/pkg/flag/) package provides flag and
@@ -29,14 +28,14 @@ func main() {
 }
 ```
 
-Once all flags are declared, call `flag.Parse()` to execute 
+Once all flags are declared, call `flag.Parse()` to execute
 the command-line parsing.
 
-Good way to organize an command line arguments are `subcommands`. They are 
-an auxiliary commands of the main application. They group an application 
-functionalities in logical units. 
+Good way to organize an command line arguments are `subcommands`. They are
+an auxiliary commands of the main application. They group an application
+functionalities in logical units.
 
-`git` is an simple example: 
+`git` is an simple example:
 
 ```
 git log
@@ -44,10 +43,10 @@ git status
 ```
 
 Lets a develop an application called `siri` that has a
-multiple *subcommans* and additional `flags`:
+multiple _subcommans_ and additional `flags`:
 
 ```
-siri send -recipient=john@example.com -message="Call me?" 
+siri send -recipient=john@example.com -message="Call me?"
 siri ask -question="What is the whether in London?"
 ```
 
@@ -63,15 +62,15 @@ recipientFlag := sendCommand.String("recipient", "", "Recipient of your message"
 messageFlag := sendCommand.String("message", "", "Text message")
 ```
 
-The `name` argument defines the command name. The second argument defines the 
+The `name` argument defines the command name. The second argument defines the
 error handling behavior:
 
 - `flag.ContinueOnError` - continue on parsing error
 - `flag.ExitOnError` - application exits with status code 2 on parsing error
 - `flag.PanicOnError` - application panics on parsing error
 
-Each application has `os.Args` array that includes all arguments passed to it. 
-The first item is always the application name. 
+Each application has `os.Args` array that includes all arguments passed to it.
+The first item is always the application name.
 
 We are using `os.Args` to determine, which subcommand should be executed:
 

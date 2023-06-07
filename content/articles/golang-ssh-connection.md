@@ -6,7 +6,6 @@ share = "yes"
 title = "SSH Client connection in Golang"
 tags = ["go"]
 categories = ["programming languages", "tutorial"]
-
 +++
 
 [SSH](https://en.wikipedia.org/wiki/Secure_Shell) is a network protocol
@@ -14,7 +13,7 @@ for establishing a secure shell session on distant servers. In Golang the packag
 [godoc.org/golang.org/x/crypto/ssh](https://godoc.org/golang.org/x/crypto/ssh)
 implements SSH client and SSH server.
 
-In this article, we are using SSH client to run a shell command on a remote 
+In this article, we are using SSH client to run a shell command on a remote
 machine. Every SSH connection requires an `ssh.CleintConfig` object that
 defines configuration options such as authentication.
 
@@ -67,7 +66,7 @@ Then you should instanciate `ssh.ClientConfig`:
 sshConfig := &ssh.ClientConfig{
 	User: "your_user_name",
 	Auth: []ssh.AuthMethod{
-		PublicKeyFile("/path/to/your/pub/certificate/key")	
+		PublicKeyFile("/path/to/your/pub/certificate/key")
 	},
 }
 ```
@@ -76,7 +75,7 @@ sshConfig := &ssh.ClientConfig{
 
 [SSH Agent](https://en.wikipedia.org/wiki/Ssh-agent) is a program that runs during
 user session in `*nix` system. It stores the private keys in an encrypted form.
-Because typing the passphrase can be tedious, many users would prefer to using it 
+Because typing the passphrase can be tedious, many users would prefer to using it
 to store their private keys.
 
 You can obtain all stored keys via `SSH_AUTH_SOCK` environment variable which
@@ -93,7 +92,7 @@ func SSHAgent() ssh.AuthMethod {
 }
 ```
 
-Then you can use the function to instanciate the client config in the following 
+Then you can use the function to instanciate the client config in the following
 way:
 
 ```
@@ -139,8 +138,8 @@ if err != nil {
 
 Before we will be able to run the command on the remote machine, we should create
 a [pseudo terminal](http://linux.die.net/man/7/pty) on the remote machine.
-*A pseudoterminal (or "pty") is a pair of virtual 
-character devices that provide a bidirectional communication channel.*
+_A pseudoterminal (or "pty") is a pair of virtual
+character devices that provide a bidirectional communication channel._
 
 We should create an `xterm` terminal that has `80` columns and `40` rows.
 
@@ -158,10 +157,10 @@ if err := session.RequestPty("xterm", 80, 40, modes); err != nil {
 ```
 
 If we want to attach our `os.Stdin`, `os.Stdout` and `os.Stderr` to remote command
-we should open pipes between the local process and remote process. 
-Forthunatelly, `ssh.Session` object provides that out of the box by invoking 
+we should open pipes between the local process and remote process.
+Forthunatelly, `ssh.Session` object provides that out of the box by invoking
 `session.Stdinpipe()`, `session.Stdoutpipe()` and `session.Stdouterr()` functions.
-Then we should asyncronously copy the end of the pipes to the right file 
+Then we should asyncronously copy the end of the pipes to the right file
 descriptors by using go routines and `os.Copy` function.
 
 ```
@@ -194,7 +193,7 @@ err = session.Run("ls -l $LC_USR_DIR")
 ```
 
 If we want to transfer some environment variable to the remote machine, we should
-use `session.Setenv` function to do that. 
+use `session.Setenv` function to do that.
 
 ```
 if err := session.Setenv("LC_USR_DIR", "/usr"); err != nil {

@@ -6,17 +6,16 @@ title = "Golang refactoring tools"
 Description = ""
 tags = ["go"]
 categories = ["programming languages", "tutorial", "tools"]
-
 +++
 
-[Go](https://golang.org) language provides many useful tools as part of its 
+[Go](https://golang.org) language provides many useful tools as part of its
 development eco system. We will explore most of them in the upcoming blog posts.
-But in the article lets focus on refactoring tools. 
+But in the article lets focus on refactoring tools.
 
 ## Gofmt
 
-In average programming languages developers can adapt to different formatting 
-styles. Common problem is how to approach unknown code base without a long 
+In average programming languages developers can adapt to different formatting
+styles. Common problem is how to approach unknown code base without a long
 prescriptive style guide.
 
 Go takes an unusual approach and keep this responsibility to format the source code
@@ -58,11 +57,11 @@ func FormatMessage(name string) string {
 }
 ```
 
-*Note that `gofmt` uses tabs for indentation and
-blanks for alignment.*
+_Note that `gofmt` uses tabs for indentation and
+blanks for alignment._
 
 The code is reformatted to obey all `Go` coding style standards. It does not rename
-any variables and functions. There is a tool that do static analyses on your code. 
+any variables and functions. There is a tool that do static analyses on your code.
 We will talk about it in one of the next articles.
 
 These are the flags supported by `gofmt`:
@@ -71,7 +70,7 @@ These are the flags supported by `gofmt`:
 - `-e` print all errors
 - `-l` prints the filename to standard out when file formatting is changed
 - `-r` applies the rewrite rule to the source before reformatting.
-- `-s` simplifies code 
+- `-s` simplifies code
 - `-w` overwrites file with its formatted version
 
 In the next two paragraphs we will explore how to simplify and apply rewrites rules
@@ -113,7 +112,7 @@ func ListEndpoints(startIndex int) {
 }
 ```
 
-The package will be simplified to: 
+The package will be simplified to:
 
 ```
 // filename: transport.go
@@ -147,7 +146,7 @@ func ListEndpoints(startIndex int) {
 These are the applied rules:
 
 - An array, slice, or map composite literal of the form `[]T{T{}, T{}}`
-will be simplified to `[]T{{}, {}}`.
+  will be simplified to `[]T{{}, {}}`.
 - A slice expression of the form `s[a:len(s)]` will be simplified to `s[a:]`.
 - A range of the form `for x, _ = range v {...}` will be simplified to `for x = range v {...}`.
 - A range of the form `for _ = range v {...}` will be simplified to `for range v {...}`.
@@ -159,8 +158,8 @@ the following format:
 pattern -> replacement
 ```
 
-Both pattern and replacement must be valid `Go` expressions. The pattern serves 
-as wildcards matching arbitrary sub-expressions. They will be substituted for 
+Both pattern and replacement must be valid `Go` expressions. The pattern serves
+as wildcards matching arbitrary sub-expressions. They will be substituted for
 the same identifiers in the replacement.
 
 Lets rename `Endpoint` struct to `Server` in `transport` package:
@@ -204,8 +203,8 @@ func ListServers(startIndex int) {
 
 ## Gorename
 
-The `gorename` is another tool for code refactoring. It command performs precise 
-type-safe renaming of identifiers in Go source code. It is installed with 
+The `gorename` is another tool for code refactoring. It command performs precise
+type-safe renaming of identifiers in Go source code. It is installed with
 the following command:
 
 ```
@@ -250,7 +249,7 @@ executing `gorename`:
 $ gorename -from '"university".Student.Fullname' -to String
 ```
 
-The `-from` flag must obey the following format specifies the object to rename 
+The `-from` flag must obey the following format specifies the object to rename
 using a query notation like that:
 
 ```
@@ -266,11 +265,11 @@ json.go::x                            object x within file json.go
 
 The `-to` flag defines the new name of the object.
 
-## Eg 
+## Eg
 
 The `Eg` command is a tool that implements example-based refactoring of expressions.
 The transformation is specified as a Go file defining two functions,
-`before` and `after` of identical types. The parameters of both functions are 
+`before` and `after` of identical types. The parameters of both functions are
 wildcards that may match any expression assignable to that type:
 
 ```
@@ -323,7 +322,6 @@ func (s *Student) Fullname() string {
 ## Conclusion
 
 As part of our job is not only to develop new features, but also improve
-existing code base. `Gofmt`, `gorename` and `eg` are tools that can help to 
-boost the productivity and keep source code in well formatted shape 
+existing code base. `Gofmt`, `gorename` and `eg` are tools that can help to
+boost the productivity and keep source code in well formatted shape
 that fits the `Go` coding style standard.
-

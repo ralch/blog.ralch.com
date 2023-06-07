@@ -9,9 +9,10 @@ categories = ["programming languages", "tutorial"]
 +++
 
 ### Gzip
-[Gzip](https://en.wikipedia.org/wiki/Gzip) is another file compression format 
+
+[Gzip](https://en.wikipedia.org/wiki/Gzip) is another file compression format
 that was created to replace the `compress` program used in early `unix` system.
-It is normally used to compress just single files.  Compressed archives are 
+It is normally used to compress just single files. Compressed archives are
 created by packaging collections of files into a single tar archive,
 and then compressing that archive with gzip. The final `.tar.gz` or `.tgz` file is a tarball.
 
@@ -60,11 +61,11 @@ func gzipit(source, target string) error {
 }
 ```
 
-*Note that `target` argument should be a directory.*
+_Note that `target` argument should be a directory._
 
 #### Decompressing a file
 
-This operation is simple as its contrapart. But in this case we should use 
+This operation is simple as its contrapart. But in this case we should use
 `gzip.Reader` to read the compressed array of bytes. We can read the metadata information
 such as compressed file name via `gzip.Header` struct (embedded in `gzip.Reader`)
 
@@ -96,7 +97,7 @@ func ungzip(source, target string) error {
 }
 ```
 
-*Note that `target` argument should be a directory.*
+_Note that `target` argument should be a directory._
 
 You can download the `gzip` example from [here]().
 
@@ -110,11 +111,12 @@ ungzip("/tmp/document.txt.gz", "/tmp")
 ```
 
 ### Tar
-[Tar](http://bit.ly/1DqSuzH) is an archive file for 
-distribution of hudge fileset. Known as `tap archive` it was developed to
-write data to sequential `io` devices. 
 
-The tar contains multiple paramaeters, such as timestamp, ownership, file 
+[Tar](http://bit.ly/1DqSuzH) is an archive file for
+distribution of hudge fileset. Known as `tap archive` it was developed to
+write data to sequential `io` devices.
+
+The tar contains multiple paramaeters, such as timestamp, ownership, file
 permissions and directories.
 
 If you want to create a tar package, you should use the following
@@ -147,7 +149,7 @@ func tarit(source, target string) error {
 		baseDir = filepath.Base(source)
 	}
 
-	return filepath.Walk(source, 
+	return filepath.Walk(source,
 	func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -222,7 +224,7 @@ func untar(tarball, target string) error {
 	}
 ```
 
-*Note that `target` argument should be a directoy.*
+_Note that `target` argument should be a directoy._
 
 You can download the `tar` code snippets from [here](https://gist.github.com/iamralch/76799ba2edca89961be6).
 

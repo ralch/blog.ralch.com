@@ -5,7 +5,6 @@ share = "yes"
 title = "Data validation in Golang"
 categories = ["programming languages"]
 tags = ["go", "model", "data", "validation"]
-
 +++
 
 Almost every application requires high data integrirty and quality. Very likely

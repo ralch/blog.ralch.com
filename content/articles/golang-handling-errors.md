@@ -6,7 +6,6 @@ share = "yes"
 title = "Errors handling in Golang"
 categories = ["programming languages", "tutorial"]
 tags = ["go", "errors"]
-
 +++
 
 `Go` does not have an `Exception` handling model as most of the main stream
@@ -163,4 +162,3 @@ if err != nil {
 The `stacktrace` package is very pleasant and easy to use. It comforms the Golang
 idiomatic way of handling errors and provides us with additional contextual information
 about the file and the line where the error occurred.
-

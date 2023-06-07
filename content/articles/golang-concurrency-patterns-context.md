@@ -46,10 +46,10 @@ Both are never canceled, have no values, and has no deadline.
 In order to setup a deadline you should use one of the following constructors:
 
 - `context.WithDeadline` returns a copy of the parent context with the deadline adjusted
-to be no later than a specified `time.Time`. The returned context's Done
-channel is closed when the deadline expires, when the returned cancel function
-is called, or when the parent context's Done channel is closed, whichever
-happens first.
+  to be no later than a specified `time.Time`. The returned context's Done
+  channel is closed when the deadline expires, when the returned cancel function
+  is called, or when the parent context's Done channel is closed, whichever
+  happens first.
 - `context.WithTimeout` just calls `context.WithDeadline` for particular `time.Duration`
 
 If you want to have a context that could be canceled only, you should use
@@ -147,5 +147,3 @@ func Get(ctx context.Context, client *http.Client, url string)
 func Head(ctx context.Context, client *http.Client, url string)
 func PostForm(ctx context.Context, client *http.Client, url string, data url.Values)
 ```
-
-

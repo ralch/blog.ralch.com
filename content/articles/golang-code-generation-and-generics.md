@@ -6,11 +6,10 @@ share = "yes"
 title = "Generics in Golang"
 categories = ["programming languages", "tutorial"]
 tags = ["go", "generics", "code generation"]
-
 +++
 
 In the article we will take the advantage of [generics] even that they are not
-first citizen in `Go`. We will explore [gen](http://clipperhouse.github.io/gen) and 
+first citizen in `Go`. We will explore [gen](http://clipperhouse.github.io/gen) and
 [genny](https://github.com/cheekybits/genny) command line tools.
 
 ### Gen
@@ -21,15 +20,15 @@ part of your package and does not have any external dependencies. This approach
 avoids any reflection and produces an efficient concrete implementation for any
 annotated type.
 
-By default the package generates various query functions. They can be used to 
+By default the package generates various query functions. They can be used to
 project, filter, sort and group slices of the annotated types.
 
 #### Installation
 
 We should use `go get` command to install `gen`:
 
-``` 
-$ go get clipperhouse.github.io/gen 
+```
+$ go get clipperhouse.github.io/gen
 ```
 
 #### Usage
@@ -42,8 +41,8 @@ declared before the desired type declaration.
 type AnnotatedType
 ```
 
-It begins with the `+gen` directive. Optionally it is followed by a `[*]`, 
-indicating that the generated type should be a pointer. Tags and values are 
+It begins with the `+gen` directive. Optionally it is followed by a `[*]`,
+indicating that the generated type should be a pointer. Tags and values are
 interpreted by the available type writers. They are responsible for the actual
 code generation. We will learn more about them in the next section. For now we
 will use the default slice type writer.
@@ -69,8 +68,8 @@ After declaring the type annoation, we should execute `gen`:
 $ gen
 ```
 
-It produces `comapany_slice.go` file that contains the concrete implementation 
-for any listed function in the comment. 
+It produces `comapany_slice.go` file that contains the concrete implementation
+for any listed function in the comment.
 
 Lets use the generated functions with the following slice:
 
@@ -86,7 +85,7 @@ companies := company.CompanySlice{
 ```
 
 Lets get all companies that are based on USA. For that you should use the `Where`
-function, which receives predicate function as an argument. 
+function, which receives predicate function as an argument.
 
 The clojure function receives a company object as argument and returns
 boolean value. It is executed for every item in the slice. It should retun
@@ -178,8 +177,8 @@ You can read more about another auxiliary function in the [official documentatio
 
 #### Implementing a type writer
 
-The type writers are responsible for interpreting the annotated tags and 
-generating go code. They are implementing the following interface: 
+The type writers are responsible for interpreting the annotated tags and
+generating go code. They are implementing the following interface:
 
 ```
 type Interface interface {
@@ -191,7 +190,7 @@ type Interface interface {
 
 - `Name` returns the writer's name
 - `Imports` function returns a slice of packages that are required and written
-as imports in the generated file
+  as imports in the generated file
 - `Write` function writes the actual generated code
 
 Lets implement a writer that generates the `Stack` data structure. `Gen` uses
@@ -295,7 +294,7 @@ func (tw *writer) Write(w io.Writer, t typewriter.Type) error {
 	if _, err := w.Write([]byte(header)); err != nil {
 		return err
 	}
-	
+
 	// A template for the exact tag is retrieved
 	tmpl, err := templates.ByTag(t, tag)
 	if err != nil {
@@ -310,7 +309,7 @@ func (tw *writer) Write(w io.Writer, t typewriter.Type) error {
 }
 ```
 
-In ored to use the template we should declare annotation. Lets annotate 
+In ored to use the template we should declare annotation. Lets annotate
 `company.Company` struct:
 
 ```
@@ -337,7 +336,7 @@ A complete implementation of the custom type writer can be pulled from
 
 ### Genny
 
-`Genny` is a code-generation tool that replaces usage of generics. It allows 
+`Genny` is a code-generation tool that replaces usage of generics. It allows
 to transform a Go source code into specific implementation by replacing its
 generic types.
 
@@ -370,7 +369,7 @@ result of substition between the template and provided parameters.
 
 ### Declaring generics
 
-The template can contains as many as we require parameters. They should be defined 
+The template can contains as many as we require parameters. They should be defined
 using the special genny type `generic.Type`:
 
 ```

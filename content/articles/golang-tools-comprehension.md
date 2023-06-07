@@ -6,23 +6,23 @@ share = "yes"
 title = "Golang code comprehension tools"
 tags = ["go"]
 categories = ["programming languages", "tutorial", "tools"]
-
 +++
 
-Software engineers spend a greater part of time reading and understanding programs. 
-Indeed, most of the time it takes to develop a program is spent reading it and 
-making logical conclusion about what it does.  
+Software engineers spend a greater part of time reading and understanding programs.
+Indeed, most of the time it takes to develop a program is spent reading it and
+making logical conclusion about what it does.
 
-`Go` programmers are no exception. Thanks to [gofmt](http://blog.ralch.com/tutorial/golang-tools-refactoring/) 
-they should not worry about source code formatting. The machines are 
-better suited to analyse source code and accomplish comprehension tasks than us. 
+`Go` programmers are no exception. Thanks to [gofmt](http://blog.ralch.com/tutorial/golang-tools-refactoring/)
+they should not worry about source code formatting. The machines are
+better suited to analyse source code and accomplish comprehension tasks than us.
 
-In this article we will explore several of `Go` comprehension tools that are 
+In this article we will explore several of `Go` comprehension tools that are
 responsible for locating definitions, ascertaining types of expressions, deducing implementation
-relation, computing method sets, finding callers/callees, jumping through channels, 
+relation, computing method sets, finding callers/callees, jumping through channels,
 understanding aliasing.
 
 ## Oracle
+
 The `oralce` is a source analysis tool that answers question about your Go source code.
 It is installed by executing this command:
 
@@ -31,7 +31,7 @@ $ go get golang.org/x/tools/cmd/oracle
 ```
 
 A `-pos` flag is always required. It defines the current cursor position that
-should be analysed. The expected value is a bytes offset from the beginning of 
+should be analysed. The expected value is a bytes offset from the beginning of
 the file.
 
 These are the subcommands that determines the query to perform:
@@ -54,7 +54,7 @@ The `-format` flag set the output format to:
 - `xml` structured data in XML syntax.
 
 Overall, the tools provides an friendly interface for adopting it in different
-development editor: [Vim](https://github.com/fatih/vim-go), [Emacs](https://www.gnu.org/software/emacs/), 
+development editor: [Vim](https://github.com/fatih/vim-go), [Emacs](https://www.gnu.org/software/emacs/),
 [Atom](https://atom.io), IntelliJ and etc.
 
 Let see `oracle` in action:
@@ -63,7 +63,7 @@ Let see `oracle` in action:
 
 ## Pythia
 
-`Pythia` is a browser based user interface for oracle. It is based on 
+`Pythia` is a browser based user interface for oracle. It is based on
 the following packages:
 
 - [oracle](https://godoc.org/golang.org/x/tools/oracle)
@@ -79,10 +79,10 @@ The `pythia` command tool now can be found in `$GOPATH/bin/pythia`. A specific
 package can be opened with the following command:
 
 ```
-$ pythia net/http 
+$ pythia net/http
 ```
 
-By default the command opens your default browser: 
+By default the command opens your default browser:
 
 {{< figure src="/media/golang/golang-pythia-in-action.png" alt="Pythia in Action" >}}
 
@@ -92,7 +92,7 @@ This can be disabled with `-open` flag:
 $ pythia -open=false net/http
 ```
 
-The default listening port is `:8080`. It can be changed via `-http` flag: 
+The default listening port is `:8080`. It can be changed via `-http` flag:
 
 ```
 $ pythia -http :9876 net/http
@@ -106,7 +106,7 @@ $ pythia -tags=unix net/http
 
 ## Godepgraph
 
-`Godepgraph` is a program for generating a dependency graph of Go packages. 
+`Godepgraph` is a program for generating a dependency graph of Go packages.
 Use `go get` command to install it:
 
 ```

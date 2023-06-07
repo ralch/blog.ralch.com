@@ -5,7 +5,6 @@ comments = "yes"
 title = "Serialization objects with protocol buffers in Golang"
 categories = ["programming languages"]
 tags = ["go", "serialization", "protobuffer"]
-
 +++
 
 #### What is protocol buffers?
@@ -46,7 +45,7 @@ communication.
 #### Installation
 
 1. Install the C++ implementation of protocol buffers from
-[here](https://github.com/google/protobuf):
+   [here](https://github.com/google/protobuf):
 
 ```bash
 $ git clone https://github.com/google/protobuf
@@ -59,9 +58,9 @@ $ make install
 ```
 
 2. Install the Golang packages to work with protocol buffers. I recommend using
-the `gogo` protocol buffers [fork](https://github.com/gogo/protobuf) that is
-performance optimized. Like most of the go package, we should install it by
-executing the following commands:
+   the `gogo` protocol buffers [fork](https://github.com/gogo/protobuf) that is
+   performance optimized. Like most of the go package, we should install it by
+   executing the following commands:
 
 ```bash
 $ go get github.com/gogo/protobuf/proto

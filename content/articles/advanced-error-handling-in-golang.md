@@ -29,7 +29,7 @@ err: = errors.New("http: operation is not allowed")
 
 However, the error handling is so simplified that does not provide us with
 information about where the error occurred in the source code. This can cause
-some difficulties in tracing errors in your application log.  Also, there are
+some difficulties in tracing errors in your application log. Also, there are
 some particular situations that you have multiple errors that you want to
 correlate with particular operation step.
 
@@ -40,7 +40,7 @@ in our application.
 
 The [errorx](github.com/goware/errorx) is a package that provides an error
 interface implementation inspired by [PostgreSQL
-styleguide](http://www.postgresql.org/docs/devel/static/error-style-guide.html). 
+styleguide](http://www.postgresql.org/docs/devel/static/error-style-guide.html).
 
 By installing it with the following command:
 

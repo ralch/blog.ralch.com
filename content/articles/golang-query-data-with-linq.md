@@ -6,31 +6,30 @@ share = "yes"
 title = "Query data with Golang and LINQ"
 categories = ["programming languages", "tutorial"]
 tags = ["go", "LINQ", "query"]
-
 +++
 
 Query langauges provide a set of features to querying, projecting and retrieving
 data (usually relational data). But how to introduces these standard,
-easily-learned patterns for querying data? 
+easily-learned patterns for querying data?
 
 In this article we will explore [Go LINQ](http://ahmetalpbalkan.github.io/go-linq/)
 packages that bridges the gap between the world of objects and the world of data.
 
-### LINQ 
+### LINQ
 
 For first time is introduced by [Microsoft in their programming language C#](https://msdn.microsoft.com/en-us/library/bb397926.aspx).
-Its purpose is to bridge the gap between query languages such as SQL and 
-programming languages. 
+Its purpose is to bridge the gap between query languages such as SQL and
+programming languages.
 
-`Go LINQ` is a query package for Go. Essentially it has ability to apply 
-queries to slices and collections using SQL-like methods. 
+`Go LINQ` is a query package for Go. Essentially it has ability to apply
+queries to slices and collections using SQL-like methods.
 
 #### Installation
 
 As any other `go package` we should execute `go get` command:
 
-``` 
-$ go get ahmetalpbalkan.github.io/go-linq 
+```
+$ go get ahmetalpbalkan.github.io/go-linq
 ```
 
 #### Usage
@@ -78,7 +77,7 @@ The difference between both libraries is that `Gen` relies on code generation
 while `LINQ` works by using reflection. I haven't done any performance comparisions
 to evaluate how slow LINQ is.
 
-Most of the clojure functions receive `linq.T` object as arguments. 
+Most of the clojure functions receive `linq.T` object as arguments.
 
 ```
 // selects all companies located at USA
@@ -101,7 +100,7 @@ sortedCompanies := From(companies).OrderBy(func(compA T, compB T) bool {
 })
 ```
 
-Grouping a slice is processed by `GroupBy` function which accepts as argument 
+Grouping a slice is processed by `GroupBy` function which accepts as argument
 two selector functions. The first clojure selects the group key, while the second
 returns the object for that key. The result is again a `map[T]T`.
 
@@ -130,7 +129,7 @@ companyNames := From(companies).Select(func(comp T) (T, error) {
 #### Advanced Samples
 
 The `LINQ` package provides some advanced features that are very first citizen
-in the query langauges. 
+in the query langauges.
 
 You can intersect two slices by using the following code snippet:
 
@@ -211,11 +210,11 @@ The code snippet above produces a slice of objects that have `Company` and `Coun
 properties:
 
 ```
-{[{Microsoft https://en.wikipedia.org/wiki/United_States} 
-{Google https://en.wikipedia.org/wiki/United_States} 
-{Facebook https://en.wikipedia.org/wiki/United_States} 
-{Uber https://en.wikipedia.org/wiki/United_States} 
-{Tweeter https://en.wikipedia.org/wiki/United_States} 
+{[{Microsoft https://en.wikipedia.org/wiki/United_States}
+{Google https://en.wikipedia.org/wiki/United_States}
+{Facebook https://en.wikipedia.org/wiki/United_States}
+{Uber https://en.wikipedia.org/wiki/United_States}
+{Tweeter https://en.wikipedia.org/wiki/United_States}
 {SoundCloud https://en.wikipedia.org/wiki/Germany}] <nil>}
 ```
 
@@ -249,4 +248,3 @@ You can read more about the rest of features in the [official documentation](htt
 LINQ package is not very `Go` idiomatic due to its reflection. However, it provides
 us with great set of features which does not require any code generation and can be
 use out of the box.
-

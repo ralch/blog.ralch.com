@@ -5,7 +5,6 @@ share = "yes"
 title = "Expose application metrics with expvar"
 categories = ["programming languages"]
 tags = ["go", "metrics", "expvar"]
-
 +++
 
 To determine whether your application meets its performance objectives and to
@@ -130,6 +129,7 @@ expvar.Do(func(variable expvar.KeyValue) {
 ```
 
 The package allows exporting of integers, floats and string variables.
+
 ```
 var (
 	orderCounter      *expvar.Int

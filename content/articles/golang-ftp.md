@@ -9,7 +9,7 @@ categories = ["golang", "ftp", "package"]
 
 One of the benefits of using [Golang](www.golang.org) is its
 [http](https://golang.org/pkg/net/http/) package that provides an easy way to
-build robust REST APIs. 
+build robust REST APIs.
 
 Unfortunately, it does not provide out of the box away to build FTP server or
 connect to FTP server.
@@ -20,7 +20,7 @@ party packages that allow that.
 ### Connecting to FTP server
 
 The most robust and broadly used package that provides an FTP client build by
-[Julien](https://github.com/jlaffaye). 
+[Julien](https://github.com/jlaffaye).
 
 ##### Installation
 
@@ -59,6 +59,7 @@ for _, entry := range entries {
   client.Delete(name)
 }
 ```
+
 For more advanced use cases, you can read the
 [documentation](https://godoc.org/github.com/jlaffaye/ftp).
 
@@ -77,7 +78,7 @@ go get github.com/goftp/server
 
 ##### Usage
 
-In order to run the server, you have to develop or use a driver that implements 
+In order to run the server, you have to develop or use a driver that implements
 an interface that acts as bridge between the FTP protocol and your desired
 backing store:
 
@@ -132,4 +133,3 @@ support single user authentication by using `SimplePerm` or you can use more
 advanced [LevelDB](https://github.com/goftp/leveldb-perm) authentication.
 
 It's so easy, right?
-

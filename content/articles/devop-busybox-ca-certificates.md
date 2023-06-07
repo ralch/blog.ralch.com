@@ -6,7 +6,6 @@ share = "yes"
 tags = ["busybox", "ssl"]
 categories = ["devop", "tutorial"]
 title = "SSL support for Busybox docker containers"
-
 +++
 
 I am running my [official website](http://www.ralch.com) and this blog on busybox
@@ -19,10 +18,10 @@ exception when recaptch API is requested:
 
 `x509: failed to load system roots and no roots provided`
 
-First approach would be to use [COPY](https://docs.docker.com/reference/builder/#copy) 
+First approach would be to use [COPY](https://docs.docker.com/reference/builder/#copy)
 command to load the certificate store bundle in to the image.
 
-I do not want to keep the certificates on docker image, so I fixed the issue 
+I do not want to keep the certificates on docker image, so I fixed the issue
 by mounting the host's certificate store in to the container file system.
 
 The following command is solving the issue for me:
@@ -32,5 +31,3 @@ CERT_DIR=/etc/ssl/certs
 
 docker run -v $CERT_DIR:$CERT_DIR --name web -d busybox
 ```
-
-

@@ -6,7 +6,6 @@ share = "yes"
 title = "Develop code generation tool for Golang"
 categories = ["programming languages", "tutorial", "tools"]
 tags = ["go", "code generation"]
-
 +++
 
 In my previous blog post, we discussed one of my favourite code generation tools
@@ -23,18 +22,18 @@ developers.
 
 This is the format of `go:generate` comments:
 
-``` 
+```
 //go:generate <subcommand> <arguments>
 ```
 
 After identifying all `go:generate` comments it will execute the specified
 commands.
 
-#### Implementation 
+#### Implementation
 
-We will build a command line tool that generates an implementation of 
+We will build a command line tool that generates an implementation of
 [io.WriterTo](https://golang.org/pkg/io/#WriterTo) interface for concrete type
-and format. 
+and format.
 
 Lets name the tool `wordsmith`. Note that in the sample we will use only `json`.
 
@@ -180,7 +179,7 @@ func (g *Generator) template() (*template.Template, error) {
 ```
 
 You can read more about text templates in [the official golang
-documentation](https://golang.org/pkg/text/template/). 
+documentation](https://golang.org/pkg/text/template/).
 
 The `wordsmith` can be used from command line prompt or by annotating `Point`
 struct with the following comment:

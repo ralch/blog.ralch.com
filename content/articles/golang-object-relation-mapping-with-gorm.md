@@ -4,7 +4,6 @@ date = "2015-11-15T08:54:02Z"
 share = "yes"
 title = "Object relation mapping with GORM"
 categories = ["programming languages", "object relation mapping", "database"]
-
 +++
 
 ### What is object-relation mapping (ORM, O/RM, and O/R mapping)?
@@ -14,7 +13,7 @@ categories = ["programming languages", "object relation mapping", "database"]
 > programming languages. This creates, in effect, a "virtual object database"
 > that can be used from within the programming language.
 
-*source: [Wikipedia](https://en.wikipedia.org/wiki/Object-relational_mapping)*
+_source: [Wikipedia](https://en.wikipedia.org/wiki/Object-relational_mapping)_
 
 ### What is GORM?
 

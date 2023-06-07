@@ -6,24 +6,23 @@ share = "yes"
 title = "Sharing Golang packages to C and Go"
 tags = ["go", "cgo", "c", "compilation"]
 categories = ["programming languages", "tutorial"]
-
 +++
 
-The latest [Go 1.5](https://blog.golang.org/go1.5) version is out. As part of 
-the [new features](https://golang.org/doc/go1.5), `Go compiler` can compile 
-packages as a shared libraries. 
+The latest [Go 1.5](https://blog.golang.org/go1.5) version is out. As part of
+the [new features](https://golang.org/doc/go1.5), `Go compiler` can compile
+packages as a shared libraries.
 
-It accepts `-buildmode` argument that determines how a package is compiled. 
+It accepts `-buildmode` argument that determines how a package is compiled.
 These are the following options:
 
-- `archive`: Build the listed non-main packages into .a files. Packages named 
+- `archive`: Build the listed non-main packages into .a files. Packages named
   main are ignored.
-- `c-archive`: Build the listed main package, plus all packages it imports, 
-  into a C archive file. 
-- `c-shared`: Build the listed main packages, plus all packages that they import, 
+- `c-archive`: Build the listed main package, plus all packages it imports,
+  into a C archive file.
+- `c-shared`: Build the listed main packages, plus all packages that they import,
   into C shared libraries.
 - `shared`: Combine all the listed non-main packages into a single shared library.
-- `exe`: Build the listed main packages and everything they import into executables. 
+- `exe`: Build the listed main packages and everything they import into executables.
   Packages not named main are ignored.
 
 By default, listed main packages are built into executables
@@ -54,8 +53,7 @@ func Sum(x, y int) int {
 }
 ```
 
-
-Before compile any shared library, the standard builtin packages should be installed 
+Before compile any shared library, the standard builtin packages should be installed
 as shared library. This will allow any other shared library to link with them.
 
 ```
@@ -68,8 +66,8 @@ Then the `calc` package can be compiled as shared library linked to `std` librar
 $ go install -buildmode=shared -linkshared calc
 ```
 
-*Due to a [issue](https://github.com/golang/go/issues/12236), building and installing
-shared library should be from `$GOPATH/src`.*
+_Due to a [issue](https://github.com/golang/go/issues/12236), building and installing
+shared library should be from `$GOPATH/src`._
 
 Lets use the shared library `calc` in the `cashier` application:
 
@@ -87,7 +85,7 @@ func main() {
 }
 ```
 
-The application should be compiled and linked with `calc` library 
+The application should be compiled and linked with `calc` library
 with the following command:
 
 ```
@@ -95,14 +93,15 @@ $ go build -linkshared -o app cashier
 ```
 
 The output of executing the application is:
+
 ```
 $ ./app
 Cashier Application
 Result: 15
 ```
 
-*Note that this feature is available on `linux/amd64` platform or when `gccgo`
-compiler is used.*
+_Note that this feature is available on `linux/amd64` platform or when `gccgo`
+compiler is used._
 
 ## Using shared Go library in C
 
@@ -146,12 +145,12 @@ $ go build -buildmode=c-shared -o nautilus.a nautilus.go
 ```
 
 ```
-// as c-archive 
+// as c-archive
 $ go build -buildmode=c-archive -o nautilus.a nautilus.go
 ```
 
 As result the `GO` compiler will produce a static/dynamic `C` library `nautilus.a` and
-header file `nautilus.h`. The header file contains type definitions that marshall 
+header file `nautilus.h`. The header file contains type definitions that marshall
 and unmarshall data between `Go` and `C`:
 
 ```
@@ -195,7 +194,7 @@ extern void SayBye();
 ```
 
 The header file `nautilus.h` shoulde be imported from every `C` application
-that executed `SayHello` and `SayBye` functions. 
+that executed `SayHello` and `SayBye` functions.
 
 In the example below, the `SayHello` function is called with parameter of type
 `GoString`. It includes `char*` field and its length.

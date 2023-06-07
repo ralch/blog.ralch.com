@@ -6,7 +6,6 @@ share = "yes"
 title = "Debug Golang applications: LLDB"
 tags = ["go", "debug"]
 categories = ["programming languages", "tutorial"]
-
 +++
 
 Even that ease and simplicity of using `go` are one of its main advanatages,
@@ -19,6 +18,7 @@ In this article, I will demonstrates how you can use `vim` and `lldb` to debug
 a go application. Before that you should make the application capable for debugging.
 
 ### Prerequisites
+
 You should compile the application by emitting the debug information and disable inlining.
 The `-N` flag enables debug information emitting and `-l` disables compiler inlining:
 
@@ -27,13 +27,12 @@ go build -gcflags '-N -l' <file_or_package>
 ```
 
 The compiled binary supports [DWARF](https://en.wikipedia.org/wiki/DWARF) debugging
-data format, which is supported by debuggers as [GDB](https://en.wikipedia.org/wiki/GNU_Debugger) 
+data format, which is supported by debuggers as [GDB](https://en.wikipedia.org/wiki/GNU_Debugger)
 and [LLDB](https://goo.gl/fgiab0).
 
 You should install `vim-lldb` plugin from [here](https://github.com/gilligan/vim-lldb).
 The easiest way to install it by using package manager as `bundle`. You should
 add `Bundle "gilligan/vim-lldb"` in your bundle list.
-
 
 Then you can use the following commands and shortcuts:
 
@@ -98,29 +97,29 @@ func FormatMessage(user User, message string) string {
 ```
 
 1. Compile the application:
-	```
-	$ go build -gcflags '-N -l' -o app main.go
-	```
+   ```
+   $ go build -gcflags '-N -l' -o app main.go
+   ```
 2. Open the source code:
-	```
-	$ vim main.go
-	```
+   ```
+   $ vim main.go
+   ```
 3. Set the `LLDB` target to be the compiled binary:
-	```
-	:Ltarget app
-	```
+   ```
+   :Ltarget app
+   ```
 4. Set a breakpoint on desired line by using `Lbreakpoint` command or `<leader>lb`
-shortcut.
+   shortcut.
 5. Then you can run the application in debug mode by using `Lrun` command or `<leader>lr` shortcut.
 
 You can watch the illustrates steps in the following video:
 
 {{< youtube Efk2OImodO0 >}}
 
-### Conclusion 
+### Conclusion
 
 Even though `LLDB` is very powerful and commonly used debugger, it does not work properly in the context of `Go`.
-It crashes sometimes. It made for `C\C++` not for `Go`.  It cannot follow the execution 
-flow properly due to the fact that the debugger is not aware about `defer` statement. 
-In addition sometimes `go scheduler` changes the context of current executing `go routine`. 
+It crashes sometimes. It made for `C\C++` not for `Go`. It cannot follow the execution
+flow properly due to the fact that the debugger is not aware about `defer` statement.
+In addition sometimes `go scheduler` changes the context of current executing `go routine`.
 It changes the stack frame by moving `go routine` from one thread to another.
