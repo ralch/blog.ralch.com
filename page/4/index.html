@@ -1,149 +1,15 @@
-<!doctype html><html lang=en dir=auto>
-<head><meta charset=utf-8>
-<meta http-equiv=x-ua-compatible content="IE=edge">
-<meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no">
-<meta name=robots content="index, follow">
-<title>Svetlin Ralchev | Blog</title>
-<meta name=description content>
-<meta name=author content="Svetlin Ralchev">
-<link rel=canonical href=http://blog.ralch.com/>
-<link crossorigin=anonymous href=/assets/css/stylesheet.min.5e2b4101351c21e906f398ae96901791830f58d430f96f2659dab7eaef7b3cb7.css integrity="sha256-XitBATUcIekG85iulpAXkYMPWNQw+W8mWdq36u97PLc=" rel="preload stylesheet" as=style>
-<link rel=preload href=/logo.png as=image>
-<link rel=icon href=http://blog.ralch.com/favicon.ico>
-<link rel=icon type=image/png sizes=16x16 href=http://blog.ralch.com/favicon-16x16.png>
-<link rel=icon type=image/png sizes=32x32 href=http://blog.ralch.com/favicon-32x32.png>
-<link rel=apple-touch-icon href=http://blog.ralch.com/apple-touch-icon.png>
-<link rel=mask-icon href=http://blog.ralch.com/safari-pinned-tab.svg>
-<meta name=theme-color content="#2e2e33">
-<meta name=msapplication-TileColor content="#2e2e33">
-<meta name=generator content="Hugo 0.88.1">
-<link rel=alternate type=application/rss+xml href=http://blog.ralch.com/index.xml>
-<noscript>
-<style>#theme-toggle,.top-link{display:none}</style>
-<style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--hljs-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style>
-</noscript>
-<script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(a,e,f,g,b,c,d){a.GoogleAnalyticsObject=b,a[b]=a[b]||function(){(a[b].q=a[b].q||[]).push(arguments)},a[b].l=1*new Date,c=e.createElement(f),d=e.getElementsByTagName(f)[0],c.async=1,c.src=g,d.parentNode.insertBefore(c,d)}(window,document,'script','https://www.google-analytics.com/analytics.js','ga'),ga('create','UA-62134307-2','auto'),ga('send','pageview'))</script><meta property="og:title" content="Svetlin Ralchev | Blog">
-<meta property="og:description" content>
-<meta property="og:type" content="website">
-<meta property="og:url" content="http://blog.ralch.com/">
-<meta name=twitter:card content="summary">
-<meta name=twitter:title content="Svetlin Ralchev | Blog">
-<meta name=twitter:description content>
-<script type=application/ld+json>{"@context":"https://schema.org","@type":"Organization","name":"Svetlin Ralchev | Blog","url":"http://blog.ralch.com","description":"","thumbnailUrl":"http://blog.ralch.com/favicon.ico","sameAs":["http://uk.linkedin.com/in/ralchev","https://twitter.com/ralch","https://github.com/iamralch","https://www.ralch.com","index.xml"]}</script>
-</head>
-<body class=list id=top>
-<script>window.matchMedia('(prefers-color-scheme: dark)').matches&&document.body.classList.add('dark')</script>
-<header class=header>
-<nav class=nav>
-<div class=logo>
-<a href=http://blog.ralch.com accesskey=h title="Svetlin Ralchev (Alt + H)">
-<img src=/logo.png alt=logo aria-label=logo height=35>Svetlin Ralchev</a>
-<span class=logo-switches>
-</span>
-</div>
-<ul id=menu>
-<li>
-<a href=http://blog.ralch.com/archives title=Archive>
-<span>Archive</span>
-</a>
-</li>
-<li>
-<a href=http://blog.ralch.com/tags/ title=Tags>
-<span>Tags</span>
-</a>
-</li>
-<li>
-<a href=http://blog.ralch.com/categories/ title=Categories>
-<span>Categories</span>
-</a>
-</li>
-</ul>
-</nav>
-</header>
-<main class=main>
-<article class=post-entry>
-<header class=entry-header>
-<h2>Reflection in Golang
-</h2>
-</header>
-<section class=entry-content>
-<p>What is reflection? In computer science, reflection is the ability of a computer program to examine and modify its own structure and behavior (specifically the values, meta-data, properties and functions) at runtime.
+<!doctype html><html lang=en dir=auto><head><meta name=generator content="Hugo 0.113.0"><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge"><meta name=viewport content="width=device-width,initial-scale=1,shrink-to-fit=no"><meta name=robots content="index, follow"><title>Svetlin Ralchev | Blog</title><meta name=description content><meta name=author content="Svetlin Ralchev"><link rel=canonical href=http://blog.ralch.com/><link crossorigin=anonymous href=/assets/css/stylesheet.3613efbd0b1772781e8f49935e973cae632a7f61471c05b17be155505ccf87b5.css integrity="sha256-NhPvvQsXcngej0mTXpc8rmMqf2FHHAWxe+FVUFzPh7U=" rel="preload stylesheet" as=style><link rel=icon href=http://blog.ralch.com/favicon.ico><link rel=icon type=image/png sizes=16x16 href=http://blog.ralch.com/favicon-16x16.png><link rel=icon type=image/png sizes=32x32 href=http://blog.ralch.com/favicon-32x32.png><link rel=apple-touch-icon href=http://blog.ralch.com/apple-touch-icon.png><link rel=mask-icon href=http://blog.ralch.com/safari-pinned-tab.svg><meta name=theme-color content="#2e2e33"><meta name=msapplication-TileColor content="#2e2e33"><link rel=alternate type=application/rss+xml href=http://blog.ralch.com/index.xml><noscript><style>#theme-toggle,.top-link{display:none}</style><style>@media(prefers-color-scheme:dark){:root{--theme:rgb(29, 30, 32);--entry:rgb(46, 46, 51);--primary:rgb(218, 218, 219);--secondary:rgb(155, 156, 157);--tertiary:rgb(65, 66, 68);--content:rgb(196, 196, 197);--hljs-bg:rgb(46, 46, 51);--code-bg:rgb(55, 56, 62);--border:rgb(51, 51, 51)}.list{background:var(--theme)}.list:not(.dark)::-webkit-scrollbar-track{background:0 0}.list:not(.dark)::-webkit-scrollbar-thumb{border-color:var(--theme)}}</style></noscript><script type=application/javascript>var doNotTrack=!1;doNotTrack||(function(e,t,n,s,o,i,a){e.GoogleAnalyticsObject=o,e[o]=e[o]||function(){(e[o].q=e[o].q||[]).push(arguments)},e[o].l=1*new Date,i=t.createElement(n),a=t.getElementsByTagName(n)[0],i.async=1,i.src=s,a.parentNode.insertBefore(i,a)}(window,document,"script","https://www.google-analytics.com/analytics.js","ga"),ga("create","UA-62134307-2","auto"),ga("send","pageview"))</script><meta property="og:title" content="Svetlin Ralchev | Blog"><meta property="og:description" content><meta property="og:type" content="website"><meta property="og:url" content="http://blog.ralch.com/"><meta name=twitter:card content="summary"><meta name=twitter:title content="Svetlin Ralchev | Blog"><meta name=twitter:description content><script type=application/ld+json>{"@context":"https://schema.org","@type":"Organization","name":"Svetlin Ralchev | Blog","url":"http://blog.ralch.com","description":"","thumbnailUrl":"http://blog.ralch.com/favicon.ico","sameAs":["http://uk.linkedin.com/in/ralchev","https://twitter.com/ralch","https://github.com/iamralch","https://www.ralch.com","index.xml"]}</script></head><body class=list id=top><script>window.matchMedia("(prefers-color-scheme: dark)").matches&&document.body.classList.add("dark")</script><header class=header><nav class=nav><div class=logo><a href=http://blog.ralch.com accesskey=h title="Svetlin Ralchev (Alt + H)"><img src=http://blog.ralch.com/logo.png alt aria-label=logo height=35>Svetlin Ralchev</a><div class=logo-switches></div></div><ul id=menu><li><a href=http://blog.ralch.com/archives title=Archive><span>Archive</span></a></li><li><a href=http://blog.ralch.com/tags/ title=Tags><span>Tags</span></a></li><li><a href=http://blog.ralch.com/categories/ title=Categories><span>Categories</span></a></li></ul></nav></header><main class=main><article class=post-entry><header class=entry-header><h2>Reflection in Golang</h2></header><div class=entry-content><p>What is reflection? In computer science, reflection is the ability of a computer program to examine and modify its own structure and behavior (specifically the values, meta-data, properties and functions) at runtime.
 source: Wikipedia
-Reflection can be used for observing and modifying program execution at runtime. A reflection-oriented program component can monitor the execution of an enclosure of code and can modify itself according to a desired goal related to that enclosure....</p>
-</section>
-<footer class=entry-footer>December 21, 2015&nbsp;·&nbsp;6 min&nbsp;·&nbsp;Svetlin Ralchev</footer>
-<a class=entry-link aria-label="post link to Reflection in Golang" href=http://blog.ralch.com/articles/golang-reflection/></a>
-</article>
-<article class=post-entry>
-<header class=entry-header>
-<h2>Performance and memory analysis of Golang programs
-</h2>
-</header>
-<section class=entry-content>
-<p>As we continue looking at program metrics in Golang, it is time to look at performance matrics analysis.
-Instrumentation Instrumentation is the process of adding code to your application to generate events to allow you to monitor application health and performance. Instrumentation allows you to profile applications. Profiling enables you to identify how long a particular method or operation takes to run and how efficient it is in terms of CPU and memory resource usage....</p>
-</section>
-<footer class=entry-footer>December 13, 2015&nbsp;·&nbsp;4 min&nbsp;·&nbsp;Svetlin Ralchev</footer>
-<a class=entry-link aria-label="post link to Performance and memory analysis of Golang programs" href=http://blog.ralch.com/articles/golang-performance-and-memory-analysis/></a>
-</article>
-<article class=post-entry>
-<header class=entry-header>
-<h2>Expose application metrics with expvar
-</h2>
-</header>
-<section class=entry-content>
-<p>To determine whether your application meets its performance objectives and to help identify bottlenecks, you need to measure your program’s performance and collect metrics. They tend to be response time, throughput, and resource utilization (how much CPU, memory, disk I/O, and network bandwidth your application consumes while performing its tasks).
-Metrics Metrics provide information about how close your program is to your performance goals. In addition, they also help you identify problem areas and bottlenecks within your application....</p>
-</section>
-<footer class=entry-footer>December 6, 2015&nbsp;·&nbsp;4 min&nbsp;·&nbsp;Svetlin Ralchev</footer>
-<a class=entry-link aria-label="post link to Expose application metrics with expvar" href=http://blog.ralch.com/articles/golang-metrics-with-expvar/></a>
-</article>
-<article class=post-entry>
-<header class=entry-header>
-<h2>Concurrent patterns in Golang: Context
-</h2>
-</header>
-<section class=entry-content>
-<p>What is concurrency? Concurrent applications have multiple computations executing during overlapping periods of time. Respectively sequential programs in which no computations can be executed in overlapping periods of time.
+Reflection can be used for observing and modifying program execution at runtime. A reflection-oriented program component can monitor the execution of an enclosure of code and can modify itself according to a desired goal related to that enclosure....</p></div><footer class=entry-footer><span title='2015-12-21 08:15:16 +0000 UTC'>December 21, 2015</span>&nbsp;·&nbsp;6 min&nbsp;·&nbsp;Svetlin Ralchev</footer><a class=entry-link aria-label="post link to Reflection in Golang" href=http://blog.ralch.com/articles/golang-reflection/></a></article><article class=post-entry><header class=entry-header><h2>Performance and memory analysis of Golang programs</h2></header><div class=entry-content><p>As we continue looking at program metrics in Golang, it is time to look at performance matrics analysis.
+Instrumentation Instrumentation is the process of adding code to your application to generate events to allow you to monitor application health and performance. Instrumentation allows you to profile applications. Profiling enables you to identify how long a particular method or operation takes to run and how efficient it is in terms of CPU and memory resource usage....</p></div><footer class=entry-footer><span title='2015-12-13 13:39:32 +0000 UTC'>December 13, 2015</span>&nbsp;·&nbsp;4 min&nbsp;·&nbsp;Svetlin Ralchev</footer><a class=entry-link aria-label="post link to Performance and memory analysis of Golang programs" href=http://blog.ralch.com/articles/golang-performance-and-memory-analysis/></a></article><article class=post-entry><header class=entry-header><h2>Expose application metrics with expvar</h2></header><div class=entry-content><p>To determine whether your application meets its performance objectives and to help identify bottlenecks, you need to measure your program’s performance and collect metrics. They tend to be response time, throughput, and resource utilization (how much CPU, memory, disk I/O, and network bandwidth your application consumes while performing its tasks).
+Metrics Metrics provide information about how close your program is to your performance goals. In addition, they also help you identify problem areas and bottlenecks within your application....</p></div><footer class=entry-footer><span title='2015-12-06 08:47:15 +0000 UTC'>December 6, 2015</span>&nbsp;·&nbsp;4 min&nbsp;·&nbsp;Svetlin Ralchev</footer><a class=entry-link aria-label="post link to Expose application metrics with expvar" href=http://blog.ralch.com/articles/golang-metrics-with-expvar/></a></article><article class=post-entry><header class=entry-header><h2>Concurrent patterns in Golang: Context</h2></header><div class=entry-content><p>What is concurrency? Concurrent applications have multiple computations executing during overlapping periods of time. Respectively sequential programs in which no computations can be executed in overlapping periods of time.
 Getting started with Context package The Context package is responsible for signal cancelation and operation deadlines for processes and server requests.
 The package has an context.Context interface:
-type Context interface { Deadline() (deadline time.Time, ok bool) Done() &lt;-chan struct{} Err() error Value(key interface{}) interface{} } The interface provides four functions to observe the context state:...</p>
-</section>
-<footer class=entry-footer>November 29, 2015&nbsp;·&nbsp;4 min&nbsp;·&nbsp;Svetlin Ralchev</footer>
-<a class=entry-link aria-label="post link to Concurrent patterns in Golang: Context" href=http://blog.ralch.com/articles/golang-concurrency-patterns-context/></a>
-</article>
-<article class=post-entry>
-<header class=entry-header>
-<h2>Data validation in Golang
-</h2>
-</header>
-<section class=entry-content>
-<p>Almost every application requires high data integrirty and quality. Very likely is its algorithms to behave weird and produce unexpected results due to invalid input.
+type Context interface { Deadline() (deadline time.Time, ok bool) Done() &lt;-chan struct{} Err() error Value(key interface{}) interface{} } The interface provides four functions to observe the context state:...</p></div><footer class=entry-footer><span title='2015-11-29 08:50:48 +0000 UTC'>November 29, 2015</span>&nbsp;·&nbsp;4 min&nbsp;·&nbsp;Svetlin Ralchev</footer><a class=entry-link aria-label="post link to Concurrent patterns in Golang: Context" href=http://blog.ralch.com/articles/golang-concurrency-patterns-context/></a></article><article class=post-entry><header class=entry-header><h2>Data validation in Golang</h2></header><div class=entry-content><p>Almost every application requires high data integrirty and quality. Very likely is its algorithms to behave weird and produce unexpected results due to invalid input.
 An important aspect of software development is data validation. In this article we will explore govalidate package that helps us to validate and sanitize any string, struct and slice in Go.
 The package itself is very infulenced by its javascript predaccessor validator.js.
-Installation Like any other Go package we should install it first:...</p>
-</section>
-<footer class=entry-footer>November 22, 2015&nbsp;·&nbsp;2 min&nbsp;·&nbsp;Svetlin Ralchev</footer>
-<a class=entry-link aria-label="post link to Data validation in Golang" href=http://blog.ralch.com/articles/golang-model-validation/></a>
-</article>
-<footer class=page-footer>
-<nav class=pagination>
-<a class=prev href=http://blog.ralch.com/page/3/>« Prev Page</a>
-<a class=next href=http://blog.ralch.com/page/5/>Next Page »</a>
-</nav>
-</footer>
-</main>
-<footer class=footer>
-<span>(c) 2021 Svetlin Ralchev</span>
-<span>
-Powered by
+Installation Like any other Go package we should install it first:...</p></div><footer class=entry-footer><span title='2015-11-22 19:28:31 +0000 UTC'>November 22, 2015</span>&nbsp;·&nbsp;2 min&nbsp;·&nbsp;Svetlin Ralchev</footer><a class=entry-link aria-label="post link to Data validation in Golang" href=http://blog.ralch.com/articles/golang-model-validation/></a></article><footer class=page-footer><nav class=pagination><a class=prev href=http://blog.ralch.com/page/3/>«&nbsp;Prev&nbsp;</a>
+<a class=next href=http://blog.ralch.com/page/5/>Next&nbsp;&nbsp;»</a></nav></footer></main><footer class=footer><span>(c) 2023 Svetlin Ralchev</span>
+<span>Powered by
 <a href=https://gohugo.io/ rel="noopener noreferrer" target=_blank>Hugo</a> &
-        <a href=https://git.io/hugopapermod rel=noopener target=_blank>PaperMod</a>
-</span>
-</footer>
-<a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg>
-</a>
-<script>let menu=document.getElementById('menu');menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)},document.querySelectorAll('a[href^="#"]').forEach(a=>{a.addEventListener("click",function(b){b.preventDefault();var a=this.getAttribute("href").substr(1);window.matchMedia('(prefers-reduced-motion: reduce)').matches?document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(a)}']`).scrollIntoView({behavior:"smooth"}),a==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${a}`)})})</script>
-<script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script>
-</body>
-</html>
+        <a href=https://github.com/adityatelange/hugo-PaperMod/ rel=noopener target=_blank>PaperMod</a></span></footer><a href=#top aria-label="go to top" title="Go to Top (Alt + G)" class=top-link id=top-link accesskey=g><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 12 6" fill="currentcolor"><path d="M12 6H0l6-6z"/></svg></a><script>let menu=document.getElementById("menu");menu&&(menu.scrollLeft=localStorage.getItem("menu-scroll-position"),menu.onscroll=function(){localStorage.setItem("menu-scroll-position",menu.scrollLeft)}),document.querySelectorAll('a[href^="#"]').forEach(e=>{e.addEventListener("click",function(e){e.preventDefault();var t=this.getAttribute("href").substr(1);window.matchMedia("(prefers-reduced-motion: reduce)").matches?document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView():document.querySelector(`[id='${decodeURIComponent(t)}']`).scrollIntoView({behavior:"smooth"}),t==="top"?history.replaceState(null,null," "):history.pushState(null,null,`#${t}`)})})</script><script>var mybutton=document.getElementById("top-link");window.onscroll=function(){document.body.scrollTop>800||document.documentElement.scrollTop>800?(mybutton.style.visibility="visible",mybutton.style.opacity="1"):(mybutton.style.visibility="hidden",mybutton.style.opacity="0")}</script></body></html>
